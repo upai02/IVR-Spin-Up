@@ -1,5 +1,6 @@
 #include "auton.h"
 #include "main.h"
+#include "pros/rtos.hpp"
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -28,6 +29,19 @@ void drivePID(double inches) {
         right_prev_error = right_error;
         left_side.move(left_speed);
         right_side.move(right_speed);
+        pros::delay(20);
+    }
+}
+
+void followXYPath(FollowXYPath& xyPath) {
+    while (true) {
+        std::array<double, 2> powers = xyPath.executePathLoop();
+
+        left_front_mtr.move_velocity(powers[0]);
+        right_front_mtr.move_velocity(powers[1]);
+        left_back_mtr.move_velocity(powers[0]);
+        right_back_mtr.move_velocity(powers[1]);
+
         pros::delay(20);
     }
 }

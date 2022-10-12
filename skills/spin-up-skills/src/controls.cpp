@@ -1,9 +1,13 @@
 #include "controls.h"
 #include "pros/misc.h"
+#include "robot.h"
+#include "misc/PositionTracker.cpp"
 
 using namespace pros;
 
-int mode = 0;
+int mode = 2;
+double p = 1.0;
+PositionTracker positionUpdater = PositionTracker(2.75 * 0.0254 / 2, 2.75 * 0.0254 / 2);
 
 void tank() {
     int left = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
@@ -19,19 +23,73 @@ void arcade() {
     right_side.move(fwd - turn);
 }
 
+void wannabeSwerve() {
+    double analogX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    double analogY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+
+    double joystickDistFromCenter = sqrt(pow(analogX, 2) + pow(analogY, 2));
+
+    double robotAngle = imu.get_heading();
+    double desiredAngle;
+
+    // maintain robot angle if no controller input
+    if (joystickDistFromCenter > 1) {
+        desiredAngle = atan2(master.get_analog(E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
+        desiredAngle *= (180/M_PI);
+    } else {
+        desiredAngle = robotAngle;
+    }
+
+    // switch domain to [0, 360]
+    if (desiredAngle < 0) {
+        desiredAngle += 360;
+    }
+
+    double angleDifference = desiredAngle - robotAngle;
+
+    // optimize
+    if (angleDifference > 180) {
+        angleDifference -= 360;
+    } else if (angleDifference < -180) {
+        angleDifference += 360;
+    }
+
+    double power = angleDifference * p;
+    double desiredTranslation = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+
+    if (angleDifference > 5) {
+        desiredTranslation /= 2;
+    }
+
+    left_front_mtr.move(power + desiredTranslation);
+    left_back_mtr.move(power + desiredTranslation);
+    right_front_mtr.move(-power + desiredTranslation);
+    right_back_mtr.move(-power + desiredTranslation);
+}
+
 void controls() {
+	positionUpdater.initTracker();
+
     while(1) {
         if (mode == 0) {
             tank();
         } else if (mode == 1) {
             arcade();
+        } else if (mode == 2) {
+            wannabeSwerve();
         }
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             mode = 0;
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
             mode = 1;
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+            mode = 2;
         }
+
+        std::array<double, 2> currentPose = positionUpdater.getPosition(imu.get_heading());
+        pros::lcd::set_text(3, "X position: " + std::to_string(currentPose[0]));
+        pros::lcd::set_text(4, "Y position: " + std::to_string(currentPose[1]));
 
         pros::delay(20);
     }
