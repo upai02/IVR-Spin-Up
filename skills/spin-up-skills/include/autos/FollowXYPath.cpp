@@ -44,18 +44,15 @@ class FollowXYPath {
     
     void updateDesiredPosition() {
         previousTime = iteratorNext->first;
-        // previousPosition = iteratorNext->second;
         prevXYPos[0] = iteratorNext->second[0];
         prevXYPos[1] = iteratorNext->second[1];
-        // have to call iteratorNext++ here bc apparently you can't access other variables that are defined in the private variables section :/
         iteratorNext++;
         desiredCompletionTime = iteratorNext->first;
-        // desiredPosition = iteratorNext->second;
-        // for loop to add two things bc why not
+
         for (int i = 0; i < iteratorNext->second.size(); i++) {
             desXYPos[i] = iteratorNext->second[i];
         }
-        // x, y then 
+
         desAngle = atan2(desXYPos[0] - prevXYPos[0], desXYPos[1] - prevXYPos[1]) * 180 / 3.1415;
         if (desAngle < 0) {
             desAngle += 360;
@@ -91,13 +88,10 @@ class FollowXYPath {
         if (deltaAngle > 90) {
             deltaAngle -= 180;
             reversed = true;
-            // reversed = true
-            // reversed should flip direction AND switch which motor receives which input
-            // (think about driving a path while turning, then doing that same path with the robot driving backwards)
+            // reversed flips direction AND switches which motor receives which input
         } else if (deltaAngle < -90) {
             deltaAngle += 180;
             reversed = true;
-            // reversed = true
         }
 
         return deltaAngle;
@@ -115,16 +109,12 @@ class FollowXYPath {
         if (readyForLoop == false) {
             iteratorNext = theCoords.begin();
             
-            // pros::lcd::set_text(7, "initial time value (0) " + std::to_string(iteratorNext->first));
-
             updateDesiredPosition();
 
             relativeTime = pros::c::millis();
 
             readyForLoop = true;
             count++;
-
-            // pros::lcd::set_text(3, "itNext post-init: " + std::to_string(iteratorNext->first));
         }
     }
 
@@ -132,8 +122,6 @@ class FollowXYPath {
         double currentTimeDouble = (pros::c::millis() - relativeTime) / 1000;
         // convert to int and drop decimal
         int currentTimeSec = (int) currentTimeDouble;
-        // pros::lcd::set_text(4, "itNext: " + std::to_string(iteratorNext->first));
-        // pros::lcd::set_text(5, "Current time: " + std::to_string(currentTimeSec));
 
         if (readyForLoop && !doneWithPath) {
             if (currentTimeSec >= iteratorNext->first) {
@@ -149,10 +137,7 @@ class FollowXYPath {
             deltaAngle = getDeltaAngle();
 
             // TO-DO: Make it so the speed considers how long the robot spent turning to desired angle
-            // Also TO-DO: make it so the robot is smart enough to drive backwards lol
             double power = deltaAngle * p;
-
-            pros::lcd::set_text(5, "Reversed value is: " + std::to_string(reversed));
 
             /*
             psssshhhhh imagine flipping the speed value every cycle
@@ -161,11 +146,8 @@ class FollowXYPath {
             }
             */
 
-            pros::lcd::set_text(6, "Speed val is :    " + std::to_string(speed));
-
             if (std::abs(deltaAngle) < LOWEST_OK_ANGLE_DIFF) {
                 pros::lcd::set_text(7, "Driving");
-
                 // move forward
                 if (!reversed) {
                     // normal control
@@ -181,6 +163,7 @@ class FollowXYPath {
             }
         }
 
+        // Path fully followed, stop moving
         return {0, 0};
     }
 
