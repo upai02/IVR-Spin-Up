@@ -5,7 +5,7 @@
 #include <map>
 #include "controls.h"
 #include "robot.h"
-#include "misc/PositionTracker.cpp"
+#include "misc/PositionTracker.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -53,6 +53,8 @@ void autonomous() {
 	imu.reset();
 	pros::delay(5000);
 
+	initTracker();
+
 	std::map<double, std::array<double, 2>> xyAutoCoords;
 	// x = goes to the right (relative to starting facing forward), y = goes forward
 	xyAutoCoords[0.25] = {0, 0};
@@ -81,10 +83,10 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	autonomous();
+	// autonomous();
 
-	// imu.reset();
-	// pros::delay(5000);
+	imu.reset();
+	pros::delay(5000);
 
-	// controls();
+	controls();
 }
