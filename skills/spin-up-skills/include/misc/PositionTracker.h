@@ -1,6 +1,4 @@
 #include "robot.h"
-#include <array>
-#include <cmath>
 
 extern double positionX;
 extern double positionY;

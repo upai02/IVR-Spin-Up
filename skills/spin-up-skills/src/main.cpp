@@ -3,9 +3,11 @@
 #include <array>
 #include <cmath>
 #include <map>
+#include <vector>
 #include "controls.h"
 #include "robot.h"
 #include "misc/PositionTracker.h"
+#include "movement.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -55,6 +57,20 @@ void autonomous() {
 
 	initTracker();
 
+	/*
+	std::vector<std::vector<double>> appPath = {
+		{0 , 0}, {0, 2}, {1, 3}, {2, 2}, {2, 0}, {2, -1}, {2, -2}
+	};
+	*/
+
+	std::vector<std::vector<double>> appPath = {
+		{0 , 0.4}, {0, 10}, {0, 11}, {0, 12}, {0, 13}
+	};
+
+	// 	followPath(std::vector<std::vector<double>> &path, double lookForwardRadius, double translationalRPM, double maxRPM)
+	followPath(appPath, 0.5, 120.0, 200);
+
+	/*
 	std::map<double, std::array<double, 2>> xyAutoCoords;
 	// x = goes to the right (relative to starting facing forward), y = goes forward
 	xyAutoCoords[0.25] = {0, 0};
@@ -67,6 +83,7 @@ void autonomous() {
 	xyPath.initPath();
 
 	followXYPath(xyPath);
+	*/
 }
 
 /**
@@ -83,10 +100,10 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	// autonomous();
+	autonomous();
 
-	imu.reset();
-	pros::delay(5000);
+	// imu.reset();
+	// pros::delay(5000);
 
-	controls();
+	// controls();
 }
