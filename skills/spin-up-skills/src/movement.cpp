@@ -151,44 +151,9 @@ void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius
         pros::delay(50);
     }
 
-    pros::lcd::set_text(4, "Entered final endpoint honing sequence");
-
     // victory spin
     left_front_mtr.move_velocity(-maxRPM);
     left_back_mtr.move_velocity(-maxRPM);
     right_front_mtr.move_velocity(maxRPM);
     right_back_mtr.move_velocity(maxRPM);
-
-    /*
-    The plan:
-     - get all the info you need from constructor
-     - each cycle find points on path that connect to points on circle
-     - determine which of these points are the best to go towards by...
-        - seeing which is in front of / behind the robot (behind is bad)
-        - Seeing what path segments the points belong to
-        - if no intersections then go to last point you were going towards
-          (which by default is the start of the path)
-     - drive and turn towards the point (doing a bunch of math you've done before)
-       and can do again
-
-     - do special stuff once you get close to the end
-
-    */
-}
-
-/*
-Plan for pathEnd:
-    - calculate change in angle between current pos and end of path
-    - Based on distance and angle change create an ellipse to follow between now and end of path
-    - Decrease look ahead distance for ellipse as dist to end decreases
-        - ellipse section created should always have dist to end decreasing as robot follows path
-    - follow the ellipse. End lookahead distance is 0
-
-    Using an ellipse creates a continuous line that changes the robot angle over time
-    and results in the correct end angle
-
-    Max delta angle would be 180 degrees bc if > 180 you just go in reverse and flip ellipse
-*/
-void pathEnd() {
-
 }
