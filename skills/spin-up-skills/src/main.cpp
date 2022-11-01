@@ -64,11 +64,11 @@ void autonomous() {
 	*/
 
 	std::vector<std::vector<double>> appPath = {
-		{0 , 0.4}, {0, 10}, {0, 11}, {0, 12}, {0, 13}
+		{0, 0.3}, {0, 0.6}, {0, 0.9}, {0, 1.2}, {0, 1.4}, {0, 3}, {0, 4}
 	};
 
 	// 	followPath(std::vector<std::vector<double>> &path, double lookForwardRadius, double translationalRPM, double maxRPM)
-	followPath(appPath, 0.5, 120.0, 200);
+	followPath(appPath, 0.5, 195.0, 200);
 
 	/*
 	std::map<double, std::array<double, 2>> xyAutoCoords;
