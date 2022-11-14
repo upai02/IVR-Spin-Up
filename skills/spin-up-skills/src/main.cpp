@@ -1,4 +1,15 @@
 #include "main.h"
+<<<<<<< HEAD
+=======
+#include "auton.h"
+#include <array>
+#include <cmath>
+#include <map>
+#include "controls.h"
+#include "robot.h"
+#include "misc/PositionTracker.cpp"
+
+>>>>>>> f7f1ea0431bf5a4b38a9117594627e72aa7af5f2
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -51,6 +62,22 @@ void competition_initialize() {}
 void autonomous() {
 	// drivePID(12);
 	shootPID(450);
+
+	imu.reset();
+	pros::delay(5000);
+
+	std::map<double, std::array<double, 2>> xyAutoCoords;
+	// x = goes to the right (relative to starting facing forward), y = goes forward
+	xyAutoCoords[0.25] = {0, 0};
+	xyAutoCoords[10] = {2.5, 1};
+	xyAutoCoords[20] = {-1, 1};
+	xyAutoCoords[25] = {-1, -1};
+	xyAutoCoords[30] = {0, 0};
+
+	FollowXYPath xyPath = FollowXYPath(xyAutoCoords, (2.75 * 0.0254 / 2));
+	xyPath.initPath();
+
+	followXYPath(xyPath);
 }
 
 /**
@@ -67,5 +94,10 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	controls();
+	autonomous();
+
+	// imu.reset();
+	// pros::delay(5000);
+
+	// controls();
 }

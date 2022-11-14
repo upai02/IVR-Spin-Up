@@ -16,3 +16,5 @@ extern pros::Motor intake;
 extern pros::Motor indexer;
 extern pros::Motor roller;
 extern pros::Imu imu;
+extern pros::Rotation transverseEncoder;
+extern pros::ADIEncoder radialEncoder;

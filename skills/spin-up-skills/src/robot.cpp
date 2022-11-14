@@ -1,4 +1,5 @@
 #include "robot.h"
+#include "pros/motors.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor left_front_mtr(11, true);
@@ -14,3 +15,5 @@ pros::Motor intake(2, true);
 pros::Motor indexer(1, false);
 pros::Motor roller(5, false);
 pros::Imu imu(3);
+pros::Rotation transverseEncoder(18);
+pros::ADIEncoder radialEncoder(1, 2, true);
