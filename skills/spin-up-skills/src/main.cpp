@@ -1,6 +1,4 @@
 #include "main.h"
-#include "auton.h"
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -10,6 +8,15 @@
 void initialize() {
 	pros::lcd::initialize();
 	imu.reset(true);
+	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_flywheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_flywheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	indexer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	roller.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
 
 /**
@@ -42,7 +49,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	drivePID(12);
+	// drivePID(12);
+	shootPID(450);
 }
 
 /**
