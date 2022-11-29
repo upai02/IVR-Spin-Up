@@ -63,8 +63,13 @@ void autonomous() {
 	};
 	*/
 
+	// std::vector<std::vector<double>> appPath = {
+	// 	{0, 0}, {0, 1}, {1, 1}, {1, 0.5}, {-1, 0.5}
+	// };
+
+	// figure 8
 	std::vector<std::vector<double>> appPath = {
-		{0, 0}, {0, 1}, {1, 1}, {1, 0.5}, {-1, 0.5}
+		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
 	};
 
 	// std::vector<std::vector<double>> appPath = {
@@ -72,7 +77,7 @@ void autonomous() {
 	// };
 
 	// 	followPath(std::vector<std::vector<double>> &path, double lookForwardRadius, double translationalRPM, double maxRPM)
-	followPath(appPath, 0.5, 150.0, 200, 180);
+	followPath(appPath, 0.5, 150.0, 200, 270);
 
 	/*
 	std::map<double, std::array<double, 2>> xyAutoCoords;
