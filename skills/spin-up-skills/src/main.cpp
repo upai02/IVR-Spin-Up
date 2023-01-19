@@ -57,42 +57,13 @@ void autonomous() {
 
 	initTracker();
 
-	/*
-	std::vector<std::vector<double>> appPath = {
-		{0 , 0}, {0, 2}, {1, 3}, {2, 2}, {1, 1}, {0, 2}
-	};
-	*/
-
-	// std::vector<std::vector<double>> appPath = {
-	// 	{0, 0}, {0, 1}, {1, 1}, {1, 0.5}, {-1, 0.5}
-	// };
-
-	// figure 8
+	// Figure 8
+	// x = goes to the right (relative to starting facing forward), y = goes forward
 	std::vector<std::vector<double>> appPath = {
 		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
 	};
 
-	// std::vector<std::vector<double>> appPath = {
-	// 	{0, 0.3}, {0, 0.5}, {0, 1.5}, {0, 2.0}
-	// };
-
-	// 	followPath(std::vector<std::vector<double>> &path, double lookForwardRadius, double translationalRPM, double maxRPM)
-	followPath(appPath, 0.5, 150.0, 200, 270);
-
-	/*
-	std::map<double, std::array<double, 2>> xyAutoCoords;
-	// x = goes to the right (relative to starting facing forward), y = goes forward
-	xyAutoCoords[0.25] = {0, 0};
-	xyAutoCoords[10] = {2.5, 1};
-	xyAutoCoords[20] = {-1, 1};
-	xyAutoCoords[25] = {-1, -1};
-	xyAutoCoords[30] = {0, 0};
-
-	FollowXYPath xyPath = FollowXYPath(xyAutoCoords, (2.75 * 0.0254 / 2));
-	xyPath.initPath();
-
-	followXYPath(xyPath);
-	*/
+	followPath(appPath, 0.5, 150.0, 200, 270, false);
 }
 
 /**
