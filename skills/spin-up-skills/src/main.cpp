@@ -5,9 +5,11 @@
 #include <array>
 #include <cmath>
 #include <map>
+#include <vector>
 #include "controls.h"
 #include "robot.h"
-#include "misc/PositionTracker.cpp"
+#include "misc/PositionTracker.h"
+#include "movement.h"
 
 >>>>>>> f7f1ea0431bf5a4b38a9117594627e72aa7af5f2
 /**
@@ -66,18 +68,15 @@ void autonomous() {
 	imu.reset();
 	pros::delay(5000);
 
-	std::map<double, std::array<double, 2>> xyAutoCoords;
+	initTracker();
+
+	// Figure 8
 	// x = goes to the right (relative to starting facing forward), y = goes forward
-	xyAutoCoords[0.25] = {0, 0};
-	xyAutoCoords[10] = {2.5, 1};
-	xyAutoCoords[20] = {-1, 1};
-	xyAutoCoords[25] = {-1, -1};
-	xyAutoCoords[30] = {0, 0};
+	std::vector<std::vector<double>> appPath = {
+		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
+	};
 
-	FollowXYPath xyPath = FollowXYPath(xyAutoCoords, (2.75 * 0.0254 / 2));
-	xyPath.initPath();
-
-	followXYPath(xyPath);
+	followPath(appPath, 0.5, 150.0, 200, 270, false);
 }
 
 /**

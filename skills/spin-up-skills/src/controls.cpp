@@ -2,13 +2,12 @@
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "robot.h"
-#include "misc/PositionTracker.cpp"
+#include "misc/PositionTracker.h"
 
 using namespace pros;
 
 int mode = 2;
 double p = 1.0;
-PositionTracker positionUpdater = PositionTracker(2.75 * 0.0254 / 2, 2.75 * 0.0254 / 2);
 
 // void tank() {
 //     int left = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
@@ -97,7 +96,7 @@ void wannabeSwerve() {
 }
 
 void controls() {
-	positionUpdater.initTracker();
+	initTracker();
 
     while(1) {
         mecanum();
@@ -122,9 +121,9 @@ void controls() {
             flywheel.brake();
         }
 
-        std::array<double, 2> currentPose = positionUpdater.getPosition(imu.get_heading());
-        pros::lcd::set_text(3, "X position: " + std::to_string(currentPose[0]));
-        pros::lcd::set_text(4, "Y position: " + std::to_string(currentPose[1]));
+        updatePosition(imu.get_heading());
+        pros::lcd::set_text(3, "X position: " + std::to_string(positionX));
+        pros::lcd::set_text(4, "Y position: " + std::to_string(positionY));
 
         pros::delay(20);
     }
