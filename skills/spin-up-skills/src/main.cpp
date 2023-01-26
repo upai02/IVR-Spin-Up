@@ -1,6 +1,4 @@
 #include "main.h"
-<<<<<<< HEAD
-=======
 #include "auton.h"
 #include <array>
 #include <cmath>
@@ -11,7 +9,6 @@
 #include "misc/PositionTracker.h"
 #include "movement.h"
 
->>>>>>> f7f1ea0431bf5a4b38a9117594627e72aa7af5f2
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -76,7 +73,9 @@ void autonomous() {
 		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
 	};
 
-	followPath(appPath, 0.5, 150.0, 200, 270, false);
+	// followPath(appPath, 0.5, 150.0, 200, 270, false);
+
+	turnToPoint();
 }
 
 /**
