@@ -1,38 +1,62 @@
 #include "controls.h"
 #include "pros/misc.h"
+#include "robot.h"
+#include "drive.h"
+#include "intake.h"
+#include "shooter.h"
 
 using namespace pros;
 
-int mode = 0;
-
-void tank() {
-    int left = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
-    int right = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127) * 100;
-    left_side.move(left);
-    right_side.move(right);
-}
-
-void arcade() {
-    int fwd = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
-    int turn = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) * master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127) * 100;
-    left_side.move(fwd + turn);
-    right_side.move(fwd - turn);
-}
-
-void controls() {
-    while(1) {
-        if (mode == 0) {
-            tank();
-        } else if (mode == 1) {
-            arcade();
-        }
-
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-            mode = 0;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-            mode = 1;
-        }
-
-        pros::delay(20);
+void controls()
+{
+  while (1)
+  {
+    op_drive();
+    // toggle drive mode
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      toggle_drive_mode();
     }
+    // run intake
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      intake();
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      outtake();
+    } else {
+      intake_mtr.move_voltage(0);
+      rai_mtr.move_voltage(0);
+    }
+    // intake pistons
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      toggle_intake_piston();
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      toggle_mag_piston();
+    }
+    // toggle shooter mode
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      activate_close_range();
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      activate_long_range();
+    }
+    // run flywheel
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      run_flywheel();
+    } else {
+      flywheel_mtr.move_voltage(0);
+    }
+    // release discs into flywheel
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      release_discs();
+    }
+
+
+    // print to screen
+    pros::lcd::print(0, "Drive Mode: %s", get_drive_name().c_str());
+    master.print(0, 0, "Drive Mode: %s", get_drive_name().c_str());
+    pros::lcd::print(1, "Flywheel Voltage: %d", flywheel_voltage);
+    master.print(1, 0, "Flywheel Voltage: %d", flywheel_voltage);
+
+    pros::delay(20);
+  }
 }
