@@ -8,15 +8,15 @@ int mode = 0;
 void tank() {
     int left = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
     int right = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127) * 100;
-    left_side.move(left);
-    right_side.move(right);
+    left_side.move_voltage(left);
+    right_side.move_voltage(right);
 }
 
 void arcade() {
     int fwd = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) * master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127) * 100;
     int turn = ((std::abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) * master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127) * 100;
-    left_side.move(fwd + turn);
-    right_side.move(fwd - turn);
+    left_side.move_voltage(fwd + turn);
+    right_side.move_voltage(fwd - turn);
 }
 
 void controls() {
