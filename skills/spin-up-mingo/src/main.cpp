@@ -18,17 +18,16 @@
 void initialize() {
 	pros::lcd::initialize();
 	imu.reset(true);
-	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	right_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	left_back_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	right_back_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	catapult.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	indexer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	roller.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	catpot.calibrate();
+	transverseEncoder.reset();
+	radialEncoder.reset();
 }
 
 /**

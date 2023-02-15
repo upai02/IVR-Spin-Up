@@ -47,12 +47,12 @@ double lineAndAngleAngularDiff(double dx, double dy, double angleDegrees) {
 }
 
 void moveMotors(double leftRPM, double rightRPM) {
-    left_front_mtr.move_velocity(leftRPM);
-    left_back_top_mtr.move_velocity(leftRPM);
-    left_back_bottom_mtr.move_velocity(leftRPM);
-    right_front_mtr.move_velocity(rightRPM);
-    right_back_top_mtr.move_velocity(rightRPM);
-    right_back_bottom_mtr.move_velocity(rightRPM);
+    left_front_top_mtr.move_velocity(leftRPM);
+    left_front_bottom_mtr.move_velocity(leftRPM);
+    left_back_mtr.move_velocity(leftRPM);
+    right_front_top_mtr.move_velocity(rightRPM);
+    right_front_bottom_mtr.move_velocity(rightRPM);
+    right_back_mtr.move_velocity(rightRPM);
 }
 
 void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius, double translationalRPM, double maxRPM, double finalAngleDeg, bool printMessages) {

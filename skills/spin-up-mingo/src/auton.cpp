@@ -59,12 +59,12 @@ void followXYPath(FollowXYPath& xyPath) {
     while (true) {
         std::array<double, 2> powers = xyPath.executePathLoop();
 
-        left_front_mtr.move_velocity(powers[0]);
-        right_front_mtr.move_velocity(powers[1]);
-        left_back_top_mtr.move_velocity(powers[0]);
-        right_back_top_mtr.move_velocity(powers[1]);
-        left_back_bottom_mtr.move_velocity(powers[0]);
-        right_back_bottom_mtr.move_velocity(powers[1]);
+        left_front_top_mtr.move_velocity(powers[0]);
+        right_front_top_mtr.move_velocity(powers[1]);
+        left_front_bottom_mtr.move_velocity(powers[0]);
+        right_front_bottom_mtr.move_velocity(powers[1]);
+        left_back_mtr.move_velocity(powers[0]);
+        right_back_mtr.move_velocity(powers[1]);
 
         pros::delay(20);
     }
