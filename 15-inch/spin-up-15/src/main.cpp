@@ -19,7 +19,7 @@ void initialize() {
 	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	// flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	// intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 	// rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }

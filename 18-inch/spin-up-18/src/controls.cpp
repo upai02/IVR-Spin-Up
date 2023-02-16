@@ -50,6 +50,10 @@ void controls()
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       release_discs();
     }
+    // auto aim while button is held
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      auto_aim();
+    }
 
 
     // print to screen
