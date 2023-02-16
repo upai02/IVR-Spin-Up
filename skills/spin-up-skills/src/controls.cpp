@@ -2,7 +2,7 @@
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "robot.h"
-#include "misc/PositionTracker.h"
+#include "PositionTracker.h"
 
 using namespace pros;
 
@@ -96,7 +96,7 @@ void wannabeSwerve() {
 }
 
 void controls() {
-	initTracker();
+	initTracker(0.0, 0.0);
 
     while(1) {
         mecanum();

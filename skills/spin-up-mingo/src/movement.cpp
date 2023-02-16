@@ -1,4 +1,6 @@
 #include "pros/llemu.hpp"
+#include "pros/misc.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot.h"
 #include <algorithm>
@@ -7,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "misc/PositionTracker.h"
+#include "movement.h"
 
 int sgn(double number) {
     if (number >= 0) {
@@ -30,6 +33,16 @@ double optimizeAngle(double angle) {
     return angle;
 }
 
+double reverseAngle(double angle) {
+    if (angle >= 180.0) {
+        angle -= 180.0;
+    } else {
+        angle += 180.0;
+    }
+
+    return angle;
+}
+
 /**
 Angle in degrees for [0, 360], you can also just pass in a point for dx and dy and it
 will be compared relative to the origin.
@@ -47,16 +60,90 @@ double lineAndAngleAngularDiff(double dx, double dy, double angleDegrees) {
 }
 
 void moveMotors(double leftRPM, double rightRPM) {
-    left_front_top_mtr.move_velocity(leftRPM);
-    left_front_bottom_mtr.move_velocity(leftRPM);
-    left_back_mtr.move_velocity(leftRPM);
-    right_front_top_mtr.move_velocity(rightRPM);
-    right_front_bottom_mtr.move_velocity(rightRPM);
-    right_back_mtr.move_velocity(rightRPM);
+    left_side.move_velocity(leftRPM);
+    right_side.move_velocity(rightRPM);
 }
 
-void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius, double translationalRPM, double maxRPM, double finalAngleDeg, bool printMessages) {
+void stopMotors() {
+    left_side.move_velocity(0.0);
+    right_side.move_velocity(0.0);
+}
 
+// This is mainly a random method I've used to test various movement-related code
+void SmartStop() {
+    stopMotors();
+    // double desiredVel = 175.0;
+    // moveMotors(desiredVel, desiredVel);
+    
+    // pros::delay(1000);
+
+    // updatePosition(imu.get_heading());
+    // double stopX = positionX;
+    // double stopY = positionY;
+
+    // stopMotors();
+
+    pros::delay(1000);
+
+    while (true) {
+        updatePosition(imu.get_heading());
+        /*
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            desiredVel++;
+        } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+            desiredVel = std::max(desiredVel - 1, 0.0);
+        }
+
+        moveMotors(desiredVel, desiredVel);        
+
+        pros::lcd::set_text(2, "Left front: " + std::to_string(left_front_mtr.get_actual_velocity()));
+        pros::lcd::set_text(3, "Right back: " + std::to_string(right_back_mtr.get_actual_velocity()));
+        pros::lcd::set_text(4, "Desired vel: " + std::to_string(desiredVel));
+        */
+
+
+        // pros::lcd::set_text(2, "Stop X: " + std::to_string(stopX));
+        // pros::lcd::set_text(3, "Stop Y: " + std::to_string(stopY));
+        // pros::lcd::set_text(4, "Current X: " + std::to_string(positionX));
+        // pros::lcd::set_text(5, "Current Y: " + std::to_string(positionY));
+        // pros::lcd::set_text(6, "Left front brake mode: " + std::to_string(left_front_mtr.get_brake_mode()));
+        // pros::lcd::set_text(7, "Back left brake mode: " + std::to_string(left_back_mtr.get_brake_mode()));
+
+        // moveMotors(-30, 30);
+
+        pros::delay(50);
+    }
+}
+
+double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p = 1.5) {
+    if (reversed) {
+        return optimizeAngle(desiredAngleDeg - (reverseAngle(imu.get_heading()))) * p;
+    } else {
+        return optimizeAngle(desiredAngleDeg - imu.get_heading()) * p;
+    }
+}
+
+void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
+    double degFromFinalAngle = desiredAngleDeg - imu.get_heading();
+    degFromFinalAngle = optimizeAngle(degFromFinalAngle);
+    while (std::abs(degFromFinalAngle) > toleranceDeg) {
+        updatePosition(imu.get_heading());
+        degFromFinalAngle = optimizeAngle(desiredAngleDeg - imu.get_heading());
+        double rotRPM = degFromFinalAngle * p;
+        moveMotors(rotRPM, -rotRPM);
+        if (debug) pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
+        pros::delay(50);
+    }
+}
+
+double calcGoalAngle(std::vector<double> vect) {
+    double desiredAngle = atan2(GOAL_X - vect[0], GOAL_Y - vect[1]) * 180 / M_PI;
+    if (desiredAngle < 0) desiredAngle += 360;
+
+    return desiredAngle;
+}
+
+void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, double lookForwardRadius, double final_angle_tolerance_deg, double translationalRPM, double maxRPM, bool printMessages) {
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
@@ -66,7 +153,6 @@ void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius
     double ALIGNMENT_HELPER_MULTIPLIER = 1.5;
     double ALIGN_HELPER_DIST_AWAY = ALIGNMENT_HELPER_MULTIPLIER * lookForwardRadius;
     double FINAL_LOCATION_TOLERANCE = 0.2; // meters
-    double FINAL_ANGLE_TOLERANCE_DEG = 3.0; 
     bool readyForSpin = false;
 
     double lastSegDX = path[path.size() - 1][0] - path[path.size() - 2][0];
@@ -76,8 +162,9 @@ void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius
     // If the dist between the original second to last point & the original final point is less than the 
     // dist between new second to last and original final (which is ALIGN_HELPER_DIST_AWAY) then going to the new
     // second to last point doesn't make sense because the robot would ideally drive forwards, then backwards, then forwards again. 
-    // So, we check for that and spin on spot at the end if that's the case 
-    bool spinOnSpot = (std::abs(lastAngleDiff) > 90) || (sqrt(pow(lastSegDX, 2) + pow(lastSegDY, 2)) < ALIGN_HELPER_DIST_AWAY);
+    // So, we check for that and spin on spot at the end if that's the case .
+    // There's also a manual override for spinOnSpot that's an optional argument (spinAtEnd) in case the course is too compact.
+    bool spinOnSpot = (std::abs(lastAngleDiff) > 90) || (sqrt(pow(lastSegDX, 2) + pow(lastSegDY, 2)) < ALIGN_HELPER_DIST_AWAY) || spinAtEnd;
     std::vector<double> ORIGINAL_PATH_FINAL = path[path.size() - 1];
 
 
@@ -219,11 +306,7 @@ void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius
         if (desiredAngle < 0) desiredAngle += 360;
 
         // Positive angular difference -> turn clockwise
-        double angularDifference = desiredAngle - imu.get_heading();
-
-        angularDifference = optimizeAngle(angularDifference);
-
-        double rotationalRPM = angularDifference * p;
+        double rotationalRPM = getRotationalRPM(desiredAngle, reversed);
 
         // Prioritize turning by maintaining rotationalRPM difference (rotationalRPM * 2)
         double leftRPM;
@@ -243,28 +326,44 @@ void followPath(std::vector<std::vector<double>>& path, double lookForwardRadius
             rightRPM = translationalRPM - rotationalRPM;
         }
         if (printMessages) pros::lcd::set_text(7, std::to_string(leftRPM));
-        moveMotors(leftRPM, rightRPM);
-        pros::delay(50);
-    }
-
-    // Turn to face final angle. This runs regardless of spinOnSpot to guarantee we're facing
-    // the desired final angle
-    double degFromFinalAngle = finalAngleDeg - imu.get_heading();
-    degFromFinalAngle = optimizeAngle(degFromFinalAngle);
-    while (std::abs(degFromFinalAngle) > FINAL_ANGLE_TOLERANCE_DEG) {
-        degFromFinalAngle = optimizeAngle(finalAngleDeg - imu.get_heading());
-        double rotationalRPM = degFromFinalAngle * p;
-        moveMotors(rotationalRPM, -rotationalRPM);
-        if (printMessages) pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
+        if (reversed) {
+            moveMotors(-rightRPM, -leftRPM);
+        } else {
+            moveMotors(leftRPM, rightRPM);
+        }
         pros::delay(50);
     }
 
     moveMotors(0.0, 0.0);
+    pros::delay(300); // give the robot time to come to a full stop
+
+    // Turn to face final angle. This runs regardless of spinOnSpot to guarantee we're facing
+    // the desired final angle
+    turnToAngle(finalAngleDeg, final_angle_tolerance_deg, false, p);
+    moveMotors(0.0, 0.0);
+
 
     // Delay and reprint final dist from target location to see how inaccurate this is because this isn't using a trapezoidal profile
-    pros::delay(1500);
+    // pros::delay(1500); imagine there being a random 1.5 second delay left lying around from testing
     if (printMessages) {
         pros::lcd::set_text(5, "Dist from end: " + std::to_string(sqrt(pow(positionX - ORIGINAL_PATH_FINAL[0], 2) + pow(positionY - ORIGINAL_PATH_FINAL[1], 2))));
         pros::lcd::set_text(6, "DONE");
+    }
+}
+
+// default x, y coords are the goal/net
+void turnToPoint(double pointX, double pointY) {
+    double FINAL_ANGLE_TOLERANCE = 2.0;
+    double desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
+    if (desiredAngle < 0) desiredAngle += 360;
+
+    while (std::abs(optimizeAngle(desiredAngle - imu.get_heading())) > FINAL_ANGLE_TOLERANCE) {
+        updatePosition(imu.get_heading());
+        desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
+        if (desiredAngle < 0) desiredAngle += 360;
+        double rotationalRPM = getRotationalRPM(desiredAngle, false);
+        moveMotors(rotationalRPM, -rotationalRPM);
+
+        pros::delay(50);
     }
 }
