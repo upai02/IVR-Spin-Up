@@ -31,3 +31,23 @@ void drivePID(double inches) {
         pros::delay(20);
     }
 }
+
+void turnPID(double degrees) {
+    imu.reset();
+    double target = degrees;
+    double error = target - imu.get_rotation();
+    double derivative = 0;
+    double prev_error = 0;
+    double speed = 0;
+    double kp = 1;
+    double kd = 0;
+    while (std::abs(error) > 10) {
+        error = target - imu.get_rotation();
+        derivative = error - prev_error;
+        speed = error * kp + derivative * kd;
+        prev_error = error;
+        left_side.move(-speed);
+        right_side.move(speed);
+        pros::delay(20);
+    }
+}

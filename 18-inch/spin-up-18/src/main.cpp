@@ -1,5 +1,6 @@
 #include "main.h"
 #include "auton.h"
+#include "misc/PositionTracker.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -9,7 +10,8 @@
  */
 void initialize() {
 	pros::lcd::initialize();
-	imu.reset(true);
+	horizontal_track.reset();
+	// imu.reset(true);
 }
 
 /**
@@ -42,7 +44,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	drivePID(12);
+	initTracker();
 }
 
 /**

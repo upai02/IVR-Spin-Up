@@ -38,6 +38,7 @@
 #include "robot.h"
 #include "auton.h"
 #include "controls.h"
+#include "movement.h"
 
 /**
  * You should add more #includes here

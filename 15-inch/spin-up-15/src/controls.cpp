@@ -9,6 +9,7 @@ using namespace pros;
 
 void controls()
 {
+  master.clear();
   while (1)
   {
     op_drive();
@@ -56,7 +57,10 @@ void controls()
     master.print(0, 0, "Drive Mode: %s", get_drive_name().c_str());
     pros::lcd::print(1, "Flywheel Voltage: %d", flywheel_voltage);
     master.print(1, 0, "Flywheel Voltage: %d", flywheel_voltage);
-
+    pros::lcd::print(2, "Wheel Value: %d", left_front_mtr.get_position());
+    // pros::lcd::print(2, "Vertical Encoder: %lf", (vertical_track.get_value()/5120.0)*360.0);
+    // master.print(2, 0, "Vertical Encoder: %lf", vertical_track.get_value());
     pros::delay(20);
+
   }
 }
