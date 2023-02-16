@@ -60,20 +60,17 @@ double lineAndAngleAngularDiff(double dx, double dy, double angleDegrees) {
 }
 
 void moveMotors(double leftRPM, double rightRPM) {
-    left_front_mtr.move_velocity(-leftRPM);
-    left_back_mtr.move_velocity(-leftRPM);
-    right_front_mtr.move_velocity(-rightRPM);
-    right_back_mtr.move_velocity(-rightRPM);
+    left_side.move_velocity(-leftRPM);
+    right_side.move_velocity(-rightRPM);
 }
 
 void stopMotors() {
-    left_front_mtr.move_velocity(0.0);
-    left_back_mtr.move_velocity(0.0);
-    right_front_mtr.move_velocity(0.0);
-    right_back_mtr.move_velocity(0.0);
+    left_side.move_velocity(0.0);
+    right_side.move_velocity(0.0);
 }
 
 void SmartStop() {
+    stopMotors();
     // double desiredVel = 175.0;
     // moveMotors(desiredVel, desiredVel);
     
@@ -85,7 +82,7 @@ void SmartStop() {
 
     // stopMotors();
 
-    pros::delay(3000);
+    pros::delay(1000);
 
     while (true) {
         updatePosition(imu.get_heading());
@@ -146,7 +143,6 @@ double calcGoalAngle(std::vector<double> vect) {
 }
 
 void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, double lookForwardRadius, double final_angle_tolerance_deg, double translationalRPM, double maxRPM, bool printMessages) {
-
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
@@ -366,10 +362,6 @@ void turnToPoint(double pointX, double pointY) {
         if (desiredAngle < 0) desiredAngle += 360;
         double rotationalRPM = getRotationalRPM(desiredAngle, false);
         moveMotors(rotationalRPM, -rotationalRPM);
-        pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
-        pros::lcd::set_text(2, "Robot X: " + std::to_string(positionX));
-        pros::lcd::set_text(3, "Robot Y: " + std::to_string(positionY));
-        pros::lcd::set_text(5, "RPM: " + std::to_string(rotationalRPM));
 
         pros::delay(50);
     }

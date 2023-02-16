@@ -66,8 +66,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// drivePID(12);
-	// shootPID(450);
 
 	imu.reset();
 	pros::delay(5000);
@@ -81,7 +79,6 @@ void autonomous() {
 	// pros::delay(1000);
 	// SmartStop();
 
-	// initTracker(0.0, 0.0);
 	imu.set_heading(270);
 
 	// Figure 8
@@ -90,12 +87,13 @@ void autonomous() {
 	std::vector<std::vector<double>> appPath = {
 		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
 	};
-
 	// followPath(appPath, 0.5, 150.0, 200, 270, false, true);
 
 	std::vector<std::vector<double>> reverseTestPath {
 		{0, 0}, {1, 0}, {2, 1}, {2, 0}, {1, 0}, {0, 0}
 	};
+	// followPath(reverseTestPath, 89.0, true);
+
 
 	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.52, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
 	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.46, 2.42}, {1.46, 2.17}}; // reversed, end facing 315
@@ -118,40 +116,7 @@ void autonomous() {
 	followPath(skillsPathSeg6, calcGoalAngle(skillsPathSeg6.back()), true);
 	// followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false);
 	followPath(skillsPathSeg8, 270.0, true, true, 0.5, 45.0);
-
-	SmartStop();
-
-	/*
-	while (true) {
-		updatePosition(imu.get_heading());
-		pros::lcd::set_text(3, "X: " + std::to_string(positionX));
-		pros::lcd::set_text(4, "Y: " + std::to_string(positionY));
-		pros::lcd::set_text(5, "Angle: " + std::to_string(imu.get_heading()));
-		pros::delay(50);
-	}
-	*/
-
-	// followPath(reverseTestPath, 89.0, true);
-
-	// moveMotors(0, 0);
-
-	// turnToPoint();
-
-	// moveMotors(0, 0);
-
-	// followPath(reverseTestPath, 89.0, false);
-
-	/*
-	turnToAngle(45.0, 2.0, false);
-	moveMotors(0.0, 0.0);
-	pros::delay(1000);
-	pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
-
-	turnToAngle(180, 2.0, false);
-	moveMotors(0.0, 0.0);
-	pros::delay(1000);
-	pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
-	*/
+	stopMotors();
 }
 
 /**
