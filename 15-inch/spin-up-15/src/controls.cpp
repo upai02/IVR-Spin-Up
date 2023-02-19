@@ -6,6 +6,7 @@
 #include "shooter.h"
 
 using namespace pros;
+using namespace pros::c;
 
 void controls()
 {
@@ -44,20 +45,29 @@ void controls()
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       run_flywheel();
     } else {
-      flywheel_mtr.move_voltage(0);
+      stop_flywheel();
     }
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       release_discs();
     }
+    // if discs in mag is greater than or equal to 2, soft spin
+    if (discs_in_mag >= 2) {
+      soft_spin();
+    }
 
-
+    // messing with disc_dist sensor
+    // std::cout << "disc_dist: " << distance << std::endl;
+    // std::cout << "flywheel speed rpm: " << flywheel_mtr.get_actual_velocity() << std::endl;
+    pros::lcd::print(2, "disc_dist: %lf", disc_dist.get());
+    pros::lcd::print(3, "flywheel speed rpm: %lf", flywheel_mtr.get_actual_velocity());
+    pros::lcd::print(4, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
+    pros::lcd::print(5, "discs in mag: %d", discs_in_mag);
     // print to screen
     pros::lcd::print(0, "Drive Mode: %s", get_drive_name().c_str());
     master.print(0, 0, "Drive Mode: %s", get_drive_name().c_str());
-    pros::lcd::print(1, "Flywheel Voltage: %d", flywheel_voltage);
-    master.print(1, 0, "Flywheel Voltage: %d", flywheel_voltage);
-    pros::lcd::print(2, "Wheel Value: %d", left_front_mtr.get_position());
+    master.print(1, 0, "flywheel speed rpm: %lf", flywheel_rpm);
+    pros::lcd::print(1, "Wheel Value: %d", left_front_mtr.get_position());
     // pros::lcd::print(2, "Vertical Encoder: %lf", (vertical_track.get_value()/5120.0)*360.0);
     // master.print(2, 0, "Vertical Encoder: %lf", vertical_track.get_value());
     pros::delay(20);

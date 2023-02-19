@@ -21,10 +21,11 @@ extern pros::ADIDigitalOut mag_piston;
 extern pros::ADIDigitalOut intake_piston;
 // Shooter 
 extern pros::Motor flywheel_mtr;
-extern pros::ADIDigitalOut angle_piston;
+// Endgame
+extern pros::ADIDigitalOut endgame_piston;
 // Sensors
 extern pros::Imu imu;
-extern pros::Optical disc_opt;
+extern pros::Distance disc_dist;
 extern pros::Optical roller_opt;
 extern pros::ADIEncoder vertical_track; // tracking wheel #1
 extern pros::ADIEncoder horizontal_track; // tracking wheel #2

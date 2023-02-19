@@ -81,15 +81,15 @@ void shootPID(double rpm) {
 
 void shootPF(double rpm) {
     double kF = 12000/600.0; // 600 is the max motor rpm, 12000 is the max voltage
-    double error = 0;
-    double power = kF * rpm;
+    double kP = 0.07;
+    double error = rpm - flywheel_mtr.get_actual_velocity();
+    double power = kF * rpm + kP * error;
     while (std::abs(error) > 10) {
-        error = flywheel_mtr.get_actual_velocity() - rpm;
-        power += error * kF;
+        error = rpm - flywheel_mtr.get_actual_velocity();
+        power += error * kF + error * kP;
         flywheel_mtr.move_voltage(power);
         pros::delay(20);
     }
-
 }
 
 void auton_thread() {
