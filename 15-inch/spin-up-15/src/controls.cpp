@@ -3,6 +3,8 @@
 #include "robot.h"
 #include "drive.h"
 #include "intake.h"
+#include "roller.h"
+#include "endgame.h"
 #include "shooter.h"
 
 using namespace pros;
@@ -23,6 +25,8 @@ void controls()
       intake();
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       outtake();
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+      spin_roller();
     } else {
       intake_mtr.move_voltage(0);
       rai_mtr.move_voltage(0);
@@ -31,9 +35,9 @@ void controls()
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       toggle_intake_piston();
     }
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      toggle_mag_piston();
-    }
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+    //   toggle_mag_piston();
+    // }
     // toggle shooter mode
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       activate_close_range();
@@ -51,9 +55,15 @@ void controls()
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       release_discs();
     }
+
     // if discs in mag is greater than or equal to 2, soft spin
     if (discs_in_mag >= 2) {
       soft_spin();
+    }
+
+    // endgame!
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+      activate_endgame();
     }
 
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

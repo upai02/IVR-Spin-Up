@@ -2,6 +2,7 @@
 #include "auton.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
+#include "endgame.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -24,6 +25,7 @@ void initialize() {
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	set_mag_piston(false);
 	set_intake_piston(true);
+	endgame_released = false;
 	// intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 	// rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
