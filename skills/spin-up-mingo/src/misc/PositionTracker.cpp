@@ -33,7 +33,7 @@ void initTracker(double initial_X, double initial_Y) {
 }
 
 void updatePosition(double imu_sensor_heading) {
-    double currentTransverseValue = toMeters(transverseEncoder.get_value() / 100.0, transverseWheelRad);
+    double currentTransverseValue = toMeters(transverseEncoder.get_value(), transverseWheelRad);
     double currentRadialValue = toMeters(radialEncoder.get_value(), radialWheelRad);
 
     double cosine = cos(imu_sensor_heading * M_PI / 180.0);
@@ -63,11 +63,11 @@ void updatePosition(double imu_sensor_heading) {
     // last_x_tracking_offset = x_tracking_offset;
     // last_y_tracking_offset = y_tracking_offset;
 
-    // pros::lcd::set_text(3, "Position X: " + std::to_string(positionX));
-    // pros::lcd::set_text(4, "Position Y: " + std::to_string(positionY));
-    // pros::lcd::set_text(5, "Heading: " + std::to_string(imu.get_heading()));
-    pros::lcd::set_text(4, "Transverse Raw Val: " + std::to_string(transverseEncoder.get_value()));
-    pros::lcd::set_text(5, "Transverse Val: " + std::to_string(currentTransverseValue));
-    pros::lcd::set_text(6, "Radial Raw Val: " + std::to_string(radialEncoder.get_value()));
-    pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));
+    pros::lcd::set_text(3, "Position X: " + std::to_string(positionX));
+    pros::lcd::set_text(4, "Position Y: " + std::to_string(positionY));
+    pros::lcd::set_text(5, "Heading: " + std::to_string(imu.get_heading()));
+    // pros::lcd::set_text(4, "Transverse Raw Val: " + std::to_string(transverseEncoder.get_value()));
+    // pros::lcd::set_text(5, "Transverse Val: " + std::to_string(currentTransverseValue));
+    // pros::lcd::set_text(6, "Radial Raw Val: " + std::to_string(radialEncoder.get_value()));
+    // pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));
 }

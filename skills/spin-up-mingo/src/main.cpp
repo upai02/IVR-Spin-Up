@@ -95,9 +95,9 @@ void autonomous() {
 	// followPath(reverseTestPath, 89.0, true);
 
 
-	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.56, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
-	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.5, 2.42}, {1.5, 2.17}}; // reversed, end facing 315
-	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.4, 2.11}}; // end facing goal (spin on spot)
+	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.6, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
+	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.55, 2.42}, {1.55, 2.17}}; // reversed, end facing 315
+	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.45, 2.11}}; // end facing goal (spin on spot)
 	std::vector<std::vector<double>> skillsPathSeg5 = {{skillsPathSeg4.back()}, {1.46, 2.26}}; // pick up 3 and drive back to center shooting spot again
 	// std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {1.9, 2.7}}; // go get first set of 3
 	std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {2.1, 2.7}}; // go get first set of 3	
@@ -105,11 +105,11 @@ void autonomous() {
 	std::vector<std::vector<double>> skillsPathSeg8 = {{skillsPathSeg6.back()}, {2.54, 2.7}}; // go get 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg9 = {{skillsPathSeg8.back()}, {1.9, 2.9}}; // shoot 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
-	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg9.back()}, {2.7, 2.7}, {1.8, 3.3}, {1.5, 3.278}}; // get 2nd on solo diagonal + back to drop spot
+	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
 
 
 
-
+	// intake on
 	followPath(skillsPathSeg1, 270, true);
 	followPath(skillsPathSeg2, calcGoalAngle(skillsPathSeg2.back()), false);
 	// shoot
@@ -117,15 +117,20 @@ void autonomous() {
 	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true);
 	// shoot
 	followPath(skillsPathSeg4, calcGoalAngle(skillsPathSeg4.back()), true);
+	// shoot
 	turnToAngle(270.0, 2.0);
 	followPath(skillsPathSeg5, calcGoalAngle(skillsPathSeg5.back()), true);
+	// shoot
 	followPath(skillsPathSeg6, calcGoalAngle(skillsPathSeg6.back()), true);
+	// shoot
 	// followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false);
 	followPath(skillsPathSeg8, 270.0, true, true, 0.5, 45.0);
 	followPath(skillsPathSeg9, calcGoalAngle(skillsPathSeg9.back()), false);
+	// shoot
 	followPath(skillsPathSeg10, 320, true, true, 0.5, 45.0);
-	followPath(skillsPathSeg11, calcGoalAngle(skillsPathSeg11.back()), true);
-	stopMotors();
+	followPath(skillsPathSeg11, calcGoalAngle(skillsPathSeg11.back()), true); // 0.2 off on Y with these
+	// shoot
+	SmartStop();
 }
 
 /**

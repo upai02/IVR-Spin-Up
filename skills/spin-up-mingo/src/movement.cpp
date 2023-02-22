@@ -115,7 +115,7 @@ void SmartStop() {
         // pros::lcd::set_text(6, "Left front brake mode: " + std::to_string(left_front_mtr.get_brake_mode()));
         // pros::lcd::set_text(7, "Back left brake mode: " + std::to_string(left_back_mtr.get_brake_mode()));
 
-        // moveMotors(80, 80);
+        // moveMotors(40, -40);
 
         pros::delay(50);
     }
