@@ -27,7 +27,7 @@ bool flywheel_running = false;
 
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel_mtr.move_voltage(1200);
+    flywheel_mtr.move_voltage(2000);
     soft_spinning = true;
   }
 }

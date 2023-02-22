@@ -3,8 +3,8 @@
 
 extern int flywheel_rpm;
 
-const int close_range_rpm = 300;
-const int long_range_rpm = 550;
+const int close_range_rpm = 500;
+const int long_range_rpm = 580;
 
 extern pros::Task flywheel_task;
 

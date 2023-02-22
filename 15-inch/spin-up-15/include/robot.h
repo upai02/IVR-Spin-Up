@@ -30,3 +30,5 @@ extern pros::Optical roller_opt;
 extern pros::ADIEncoder vertical_track; // tracking wheel #1
 extern pros::ADIEncoder horizontal_track; // tracking wheel #2
 // extern pros::ADIEncoder flywheel_enc;
+
+extern pros::GPS gps;

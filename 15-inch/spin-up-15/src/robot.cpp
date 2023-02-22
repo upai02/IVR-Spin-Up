@@ -28,3 +28,4 @@ pros::Distance disc_dist(5);
 // pros::Optical roller_opt(6);
 pros::ADIEncoder vertical_track(1, 2, false); // tracking wheel #1
 pros::ADIEncoder horizontal_track(3, 4, false); // tracking wheel #2
+pros::GPS gps(6, 0, 0, 0);
