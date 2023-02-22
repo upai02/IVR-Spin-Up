@@ -83,16 +83,11 @@ void SmartStop() {
     
     // pros::delay(1000);
 
-    // updatePosition(imu.get_heading());
     // double stopX = positionX;
     // double stopY = positionY;
 
     // stopMotors();
-
-    pros::delay(1000);
-
     while (true) {
-        updatePosition(imu.get_heading());
         /*
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             desiredVel++;
@@ -133,7 +128,7 @@ void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double
     double degFromFinalAngle = desiredAngleDeg - imu.get_heading();
     degFromFinalAngle = optimizeAngle(degFromFinalAngle);
     while (std::abs(degFromFinalAngle) > toleranceDeg) {
-        updatePosition(imu.get_heading());
+        // update_position();
         degFromFinalAngle = optimizeAngle(desiredAngleDeg - imu.get_heading());
         double rotRPM = degFromFinalAngle * p;
         moveMotors(rotRPM, -rotRPM);
@@ -218,7 +213,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     }
 
     while (currentIndex < path.size() - 1) {
-        updatePosition(imu.get_heading());
+        // update_position();
 
         std::vector<double> driveTowards = {path[currentIndex][0], path[currentIndex][1]};
 
@@ -364,7 +359,7 @@ void turnToPoint(double pointX, double pointY) {
     if (desiredAngle < 0) desiredAngle += 360;
 
     while (std::abs(optimizeAngle(desiredAngle - imu.get_heading())) > FINAL_ANGLE_TOLERANCE) {
-        updatePosition(imu.get_heading());
+        // update_position();
         desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
         if (desiredAngle < 0) desiredAngle += 360;
         double rotationalRPM = getRotationalRPM(desiredAngle, false);

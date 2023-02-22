@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 #include "controls.h"
+#include "pros/rtos.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "misc/PositionTracker.h"
 #include "movement.h"
@@ -28,6 +30,13 @@ void initialize() {
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	transverseEncoder.reset();
 	radialEncoder.reset();
+
+	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
+	// starting x is with front of robot on opponent low goal plane, y is against wall.
+
+	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	pros::Task position_updater(update_position);
+	pros::delay(5000);
 }
 
 /**
@@ -60,26 +69,23 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	imu.reset();
-
 	left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	pros::delay(5000);
 
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
 
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	imu.set_heading(270);
 
 	// initTracker(0.0, 0.0);
 	// pros::delay(1000);
+		
 	// SmartStop();
-
-	imu.set_heading(270);
 
 	// Figure 8
 	// x = goes to the right (relative to starting facing forward), y = goes forward
@@ -130,7 +136,8 @@ void autonomous() {
 	followPath(skillsPathSeg10, 320, true, true, 0.5, 45.0);
 	followPath(skillsPathSeg11, calcGoalAngle(skillsPathSeg11.back()), true); // 0.2 off on Y with these
 	// shoot
-	SmartStop();
+	// SmartStop();
+	stopMotors();
 }
 
 /**

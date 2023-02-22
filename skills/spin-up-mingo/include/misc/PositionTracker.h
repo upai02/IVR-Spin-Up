@@ -6,4 +6,6 @@ const double RADIAL_TRACKING_WHEEL_OFFSET = 0.0;
 
 void PositionTracker(double transverseWheelRadMeters, double radialWheelRadMeters);
 void initTracker(double initial_X = 0.0, double initial_Y = 0.0);
-void updatePosition(double imu_heading);
+void update_position();
+
+// extern pros::Task position_updater;

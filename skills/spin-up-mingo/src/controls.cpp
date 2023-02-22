@@ -160,7 +160,7 @@ void controls() {
             catapult.brake();
         }
 
-        updatePosition(imu.get_heading());
+        // update_position();
         // pros::lcd::set_text(3, "X position: " + std::to_string(positionX));
         // pros::lcd::set_text(4, "Y position: " + std::to_string(positionY));
         pros::lcd::set_text(3, "X position: " + std::to_string(transverseEncoder.get_value()));
