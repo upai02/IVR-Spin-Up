@@ -71,6 +71,12 @@ void stopMotors() {
 
 // This is mainly a random method I've used to test various movement-related code
 void SmartStop() {
+    left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     stopMotors();
     // double desiredVel = 175.0;
     // moveMotors(desiredVel, desiredVel);
@@ -109,7 +115,7 @@ void SmartStop() {
         // pros::lcd::set_text(6, "Left front brake mode: " + std::to_string(left_front_mtr.get_brake_mode()));
         // pros::lcd::set_text(7, "Back left brake mode: " + std::to_string(left_back_mtr.get_brake_mode()));
 
-        // moveMotors(-30, 30);
+        // moveMotors(80, 80);
 
         pros::delay(50);
     }
@@ -335,7 +341,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     }
 
     moveMotors(0.0, 0.0);
-    pros::delay(300); // give the robot time to come to a full stop
+    pros::delay(400); // give the robot time to come to a full stop
 
     // Turn to face final angle. This runs regardless of spinOnSpot to guarantee we're facing
     // the desired final angle
