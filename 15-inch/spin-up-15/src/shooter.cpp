@@ -1,6 +1,7 @@
 #include "shooter.h"
 #include "intake.h"
 #include "auton.h"
+#include "pros/rtos.h"
 
 int flywheel_rpm = close_range_rpm;
 
@@ -19,8 +20,10 @@ pros::Task flywheel_task(shoot_thread);
 void shoot_thread() {
   while (true) {
     shootPF(flywheel_rpm);
+    pros::c::delay(20);
   }
 }
+
 
 bool soft_spinning = false;
 bool flywheel_running = false;
@@ -42,6 +45,7 @@ void run_flywheel() {
   }
   flywheel_task.resume();
 }
+
 void stop_flywheel() {
   if (!soft_spinning) {
     flywheel_task.suspend();
