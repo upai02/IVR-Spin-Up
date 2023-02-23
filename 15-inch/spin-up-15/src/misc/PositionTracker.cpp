@@ -29,12 +29,12 @@ void initTracker(double initial_X, double initial_Y) {
     positionY = initial_Y;
 }
 
-void updatePosition(double imu_sensor_heading) {
+void updatePosition() {
     double currentTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad);
     double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
 
-    double cosine = cos(imu_sensor_heading * M_PI / 180.0);
-    double sine = sin(imu_sensor_heading * M_PI / 180.0);
+    double cosine = cos(-gps.get_rotation() * M_PI / 180.0);
+    double sine = sin(-gps.get_rotation() * M_PI / 180.0);
 
     double radialDeltaY = (currentRadialValue - lastRadialValue) * cosine;
     double transverseDeltaY = -(currentTransverseValue - lastTransverseValue) * sine; // note the - sign
@@ -53,7 +53,7 @@ void updatePosition(double imu_sensor_heading) {
     // when pure rotating (x_tracking_offset - last_x_tracking_offset) should = deltaX
 
     positionX += deltaX;
-    positionY += deltaY;
+    positionY -= deltaY;
     // positionX += deltaX - (x_tracking_offset - last_x_tracking_offset);
     // positionY += deltaY + (y_tracking_offset - last_y_tracking_offset);
 
@@ -62,7 +62,7 @@ void updatePosition(double imu_sensor_heading) {
 
     pros::lcd::set_text(3, "Position X: " + std::to_string(positionX));
     pros::lcd::set_text(4, "Position Y: " + std::to_string(positionY));
-    pros::lcd::set_text(5, "Heading: " + std::to_string(imu.get_heading()));
+    pros::lcd::set_text(5, "Heading: " + std::to_string(gps.get_heading()));
 
     pros::lcd::set_text(6, "Transverse Val: " + std::to_string(currentTransverseValue));
     pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));

@@ -80,6 +80,16 @@ void shootPF(double rpm) {
 }
 
 void auton() {
+    double init_heading = 90;
+    gps.initialize_full(0, 0, 90, 0, 0);
+    pros::delay(5000);
+    gps.set_rotation(-init_heading);
+
+    while (1) {
+        updatePosition();
+        pros::delay(10);
+    }
+
     set_flywheel_rpm(500);
     flywheel_task.resume();
     intake_mtr.move_voltage(12000);
