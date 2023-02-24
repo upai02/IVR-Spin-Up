@@ -34,7 +34,8 @@ void initialize() {
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
 
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	initTracker();
 	pros::Task position_updater(update_position);
 	pros::delay(5000);
 }
@@ -80,7 +81,7 @@ void autonomous() {
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
 
 	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
-	imu.set_heading(270);
+	// imu.set_heading(270);
 
 	// initTracker(0.0, 0.0);
 	// pros::delay(1000);
@@ -91,14 +92,17 @@ void autonomous() {
 	// x = goes to the right (relative to starting facing forward), y = goes forward
 	// clockwise increases angle value 
 	std::vector<std::vector<double>> appPath = {
-		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
+		{0, 0}, {-1, 0.75}, {0, 1.5}, {1, 2.25}, {0, 3}, {-1, 2.25}, {0, 1.5}, {1, 0.75}, {0, 0}
 	};
-	// followPath(appPath, 0.5, 150.0, 200, 270, false, true);
+	// followPath(appPath, 270, false);
 
 	std::vector<std::vector<double>> reverseTestPath {
 		{0, 0}, {1, 0}, {2, 1}, {2, 0}, {1, 0}, {0, 0}
 	};
 	// followPath(reverseTestPath, 89.0, true);
+
+	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.75}, {0, 1.5}, {0, 2.25}};
+	followPath(straight_path, 0, false);
 
 
 	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.6, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
@@ -112,8 +116,6 @@ void autonomous() {
 	std::vector<std::vector<double>> skillsPathSeg9 = {{skillsPathSeg8.back()}, {1.9, 2.9}}; // shoot 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
 	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
-
-
 
 	// intake on
 	followPath(skillsPathSeg1, 270, true);

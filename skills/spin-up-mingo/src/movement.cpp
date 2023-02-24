@@ -110,7 +110,7 @@ void SmartStop() {
         // pros::lcd::set_text(6, "Left front brake mode: " + std::to_string(left_front_mtr.get_brake_mode()));
         // pros::lcd::set_text(7, "Back left brake mode: " + std::to_string(left_back_mtr.get_brake_mode()));
 
-        // moveMotors(40, -40);
+        moveMotors(20, 20);
 
         pros::delay(50);
     }
@@ -122,6 +122,47 @@ double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p 
     } else {
         return optimizeAngle(desiredAngleDeg - imu.get_heading()) * p;
     }
+}
+
+double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double p = 1.0) {
+    double MIN_RPM = 20.0;
+    return std::min(std::max(max_translational_rpm * dist_to_goal_meters * p, MIN_RPM), max_translational_rpm);
+}
+
+double calculate_distance_two_points(std::vector<double> point_one, std::vector<double> point_two) {
+    return std::sqrt(std::pow(point_one.at(1) - point_two.at(1), 2) + std::pow(point_one.at(0) - point_two.at(0), 2));
+}
+
+std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path) { // std::vector<std::vector<double>> path
+    pros::lcd::set_text(3, "HI");
+    pros::delay(1000);
+    std::vector<double> distances(path.size() - 1);
+
+    double sum_of_dists = 0.0;
+    int times_ran = 0;
+
+    // loop through path in reverse order and append to distances in reverse order. Each loop add new dist to sum_of_dists then put that in distances
+    // this will run thorugh the domain [initial i - 1, 0] (inclusive)
+    for (size_t i = path.size() - 1; i-- > 0; ) {
+        times_ran++;
+        pros::lcd::set_text(3, "i: " + std::to_string(i) + "  sum: " + std::to_string(sum_of_dists));
+        sum_of_dists += calculate_distance_two_points(path.at(i), path.at(i + 1));
+        // distances.insert(distances.begin(), sum_of_dists);
+        distances[i] = sum_of_dists;
+        pros::lcd::set_text(4, "distances[i]: " + std::to_string(distances.at(i)) + " TR: " + std::to_string(times_ran));
+        pros::delay(500);
+    }
+
+    return distances;
+
+    /*
+    std::vector<double> distances(path.size() + 2);
+    for (size_t i = 0; i < distances.size(); i++) {
+        distances[i] = 1.0;
+    }
+
+    return distances;
+    */
 }
 
 void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
@@ -144,7 +185,7 @@ double calcGoalAngle(std::vector<double> vect) {
     return desiredAngle;
 }
 
-void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, double lookForwardRadius, double final_angle_tolerance_deg, double translationalRPM, double maxRPM, bool printMessages) {
+void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, bool printMessages) {    
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
@@ -168,6 +209,8 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     bool spinOnSpot = (std::abs(lastAngleDiff) > 90) || (sqrt(pow(lastSegDX, 2) + pow(lastSegDY, 2)) < ALIGN_HELPER_DIST_AWAY) || spinAtEnd;
     std::vector<double> ORIGINAL_PATH_FINAL = path[path.size() - 1];
 
+    std::vector<double> distances_to_end = calculate_remaining_dist(path); //path
+    pros::lcd::set_text(2, "Done calculating distance vector");
 
     if (!spinOnSpot) {
         if (printMessages) pros::lcd::set_text(1, "No SpinOnSpot");
@@ -303,6 +346,13 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         if (readyForSpin) break;
 
         double desiredAngle = atan2(driveTowards[0] - positionX, driveTowards[1] - positionY) * 180 / M_PI;
+
+
+        double remaining_dist = distances_to_end[currentIndex] - calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
+        pros::lcd::set_text(1, "remaining dist: " + std::to_string(remaining_dist));
+        pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
+        pros::lcd::set_text(3, "dist_to_end_size: " + std::to_string(distances_to_end.size()));
+        double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM);
 
         if (desiredAngle < 0) desiredAngle += 360;
 
