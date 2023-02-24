@@ -2,6 +2,7 @@
 
 extern double positionX;
 extern double positionY;
+extern double currentHeading;
 const double RADIAL_TRACKING_WHEEL_OFFSET = 0.1;
 
 double toMeters(double value, double wheelRadius);

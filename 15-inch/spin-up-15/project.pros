@@ -308,7 +308,8 @@
       }
     },
     "upload_options": {
-      "icon": "pros"
+      "icon": "pros",
+      "slot": 6
     }
   }
 }

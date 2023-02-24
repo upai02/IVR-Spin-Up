@@ -77,7 +77,7 @@ void SmartStop() {
     
     // pros::delay(1000);
 
-    // updatePosition(imu.get_heading());
+    // updatePosition(gps.get_heading());
     // double stopX = positionX;
     // double stopY = positionY;
 
@@ -115,21 +115,21 @@ void SmartStop() {
 
 double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p = 1.5) {
     if (reversed) {
-        return optimizeAngle(desiredAngleDeg - (reverseAngle(imu.get_heading()))) * p;
+        return optimizeAngle(desiredAngleDeg - (reverseAngle(currentHeading))) * p;
     } else {
-        return optimizeAngle(desiredAngleDeg - imu.get_heading()) * p;
+        return optimizeAngle(desiredAngleDeg - currentHeading) * p;
     }
 }
 
 void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
-    double degFromFinalAngle = desiredAngleDeg - imu.get_heading();
+    double degFromFinalAngle = desiredAngleDeg - currentHeading;
     degFromFinalAngle = optimizeAngle(degFromFinalAngle);
     while (std::abs(degFromFinalAngle) > toleranceDeg) {
         updatePosition();
-        degFromFinalAngle = optimizeAngle(desiredAngleDeg - imu.get_heading());
+        degFromFinalAngle = optimizeAngle(desiredAngleDeg - currentHeading);
         double rotRPM = degFromFinalAngle * p;
         moveMotors(rotRPM, -rotRPM);
-        if (debug) pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
+        if (debug) pros::lcd::set_text(4, "Robot angle: " + std::to_string(currentHeading));
         pros::delay(50);
     }
 }
@@ -165,6 +165,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     bool spinOnSpot = (std::abs(lastAngleDiff) > 90) || (sqrt(pow(lastSegDX, 2) + pow(lastSegDY, 2)) < ALIGN_HELPER_DIST_AWAY) || spinAtEnd;
     std::vector<double> ORIGINAL_PATH_FINAL = path[path.size() - 1];
 
+    std::cout << "path size = " << path.size() << std::endl;
 
     if (!spinOnSpot) {
         if (printMessages) pros::lcd::set_text(1, "No SpinOnSpot");
@@ -210,8 +211,6 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     }
 
     while (currentIndex < path.size() - 1) {
-        updatePosition();
-
         std::vector<double> driveTowards = {path[currentIndex][0], path[currentIndex][1]};
 
         for (int i = currentIndex; i < path.size() - 1; i++) {
@@ -292,7 +291,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         }
 
         if (printMessages) {
-            pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
+            pros::lcd::set_text(4, "Robot angle: " + std::to_string(currentHeading));
             pros::lcd::set_text(5, "Dist from end: " + std::to_string(sqrt(pow(positionX - ORIGINAL_PATH_FINAL[0], 2) + pow(positionY - ORIGINAL_PATH_FINAL[1], 2))));
             pros::lcd::set_text(6, "Y Position: " + std::to_string(positionY));
         }
@@ -324,6 +323,12 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
             rightRPM = translationalRPM - rotationalRPM;
         }
         if (printMessages) pros::lcd::set_text(7, std::to_string(leftRPM));
+
+        std::cout << "Left RPM: " << leftRPM << " Right RPM: " << rightRPM << std::endl;
+        std::cout << "desired angle: " << desiredAngle << "; cur heading: " << currentHeading << std::endl;
+        std::cout << "x: " << positionX << std::endl;
+        std::cout << "y: " << positionY << std::endl;
+
         if (reversed) {
             moveMotors(-rightRPM, -leftRPM);
         } else {
@@ -355,7 +360,7 @@ void turnToPoint(double pointX, double pointY) {
     double desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
     if (desiredAngle < 0) desiredAngle += 360;
 
-    while (std::abs(optimizeAngle(desiredAngle - imu.get_heading())) > FINAL_ANGLE_TOLERANCE) {
+    while (std::abs(optimizeAngle(desiredAngle - currentHeading)) > FINAL_ANGLE_TOLERANCE) {
         updatePosition();
         desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
         if (desiredAngle < 0) desiredAngle += 360;

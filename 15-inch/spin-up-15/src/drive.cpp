@@ -50,15 +50,23 @@ void arcade_drive() {
 void hybrid_drive() {
   double forward = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
   double turn = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
-  left_side.move_voltage((forward + turn) * 12000);
-  right_side.move_voltage((forward - turn) * 12000);
+  left_side.move_voltage((forward - turn) * 12000);
+  right_side.move_voltage((forward + turn) * 12000);
 }
 // Dylan's Drive
 void dylan_drive() {
   double left = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
   double right = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
-  left_side.move_voltage(left * 12000);
-  right_side.move_voltage(right * 12000);
+  // slow turn adjustments
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    double turn = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)));
+    left_side.move_voltage(turn * 4000);
+    right_side.move_voltage(-turn * 4000);
+  } else {
+    // normal usage
+    left_side.move_voltage(left * 12000);
+    right_side.move_voltage(right * 12000);
+  }
 }
 
 

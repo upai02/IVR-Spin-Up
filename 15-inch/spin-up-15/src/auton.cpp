@@ -3,6 +3,7 @@
 #include "shooter.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
+#include "movement.h"
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -52,10 +53,10 @@ void turnPID(double degrees) {
     double derivative = 0;
     double prev_error = 0;
     double speed = 0;
-    double kp = 1;
+    double kp = 0.5;
     double kd = 0;
     while (std::abs(error) > 10) {
-        error = target - imu.get_rotation();
+        error = target - imu.get_rotation();    
         derivative = error - prev_error;
         speed = error * kp + derivative * kd;
         prev_error = error;
@@ -80,41 +81,67 @@ void shootPF(double rpm) {
 }
 
 void auton() {
-    double init_heading = 90;
-    gps.initialize_full(0, 0, 90, 0, 0);
-    pros::delay(5000);
-    gps.set_rotation(-init_heading);
-
-    while (1) {
-        updatePosition();
-        pros::delay(10);
-    }
-
-    set_flywheel_rpm(500);
-    flywheel_task.resume();
-    intake_mtr.move_voltage(12000);
-    rai_mtr.move_voltage(6000);
-    discs_in_mag = 2;
-    flywheel_task.resume();
-    intake_mtr.move_voltage(12000);
-    rai_mtr.move_voltage(6000);
-    drivePID(48);
-    pros::delay(1500);
-    intake_mtr.move_voltage(0);
-    rai_mtr.move_voltage(0);
-    pros::delay(750);
-    left_side.move_relative(200, 100);
-    right_side.move_relative(-200, -100);
-    pros::delay(500);
-    left_side.move_velocity(0);
-    right_side.move_velocity(0);
-    toggle_mag_piston();
+    gps.initialize_full(0, 0, 0, 0, 0);
     pros::delay(3000);
-    rai_mtr.move_voltage(-9000);
-    pros::delay(6000);
-    rai_mtr.move_voltage(0);
-    pros::delay(1000);
-    rai_mtr.move_velocity(0);
-    flywheel_task.suspend();
-    flywheel_mtr.brake();
+    // gps.set_rotation(-init_heading);
+    std::cout << "start turn pid" << std::endl;
+    turnPID(90);
+    std::cout << "end turn pid" << std::endl;
+
+    std::vector<std::vector<double>> initialPath = {{1.8, 0.15}, {1.8, 1.22}};
+
+    std::vector<std::vector<double>> path = {};
+    for (int i = 0; i < 10; i++) {
+        path.push_back({1.8, i + 0.15});
+    }    
+
+    initTracker(initialPath[0][0], initialPath[0][1]);
+
+    pros::Task odom(updatePosition);
+    std::cout << "follow Path now" << std::endl;
+    followPath(initialPath, 0, false);
+    
+    // start auto with 2 discs
+    discs_in_mag = 2;
+
+    // set_flywheel_rpm(500);
+    // flywheel_task.resume();
+    // intake_mtr.move_voltage(12000);
+    // rai_mtr.move_voltage(6000);
+    // discs_in_mag = 2;
+    // intake();
+    // flywheel_task.resume();
+    // intake_mtr.move_voltage(12000);
+    // rai_mtr.move_voltage(6000);
+
+    // moveMotors(30, 30);
+    // pros::delay(100000);
+
+    // followPath(initialPath, 90, false);
+    turnPID(180);
+
+    // drivePID(48);
+    // pros::delay(2000);
+    // intake_mtr.move_voltage(0);
+    // rai_mtr.move_voltage(0);
+    // pros::delay(1000);
+
+    // toggle_mag_piston();
+    // release_discs();
+    // pros::delay(7000);
+
+    // left_side.move_relative(200, 100);
+    // right_side.move_relative(-200, -100);
+    // pros::delay(500);
+    // left_side.move_velocity(0);
+    // right_side.move_velocity(0);
+    // toggle_mag_piston();
+    // pros::delay(3000);
+    // rai_mtr.move_voltage(-9000);
+    // pros::delay(6000);
+    // rai_mtr.move_voltage(0);
+    // pros::delay(1000);
+    // rai_mtr.move_velocity(0);
+    // flywheel_task.suspend();
+    // flywheel_mtr.brake();
 }
