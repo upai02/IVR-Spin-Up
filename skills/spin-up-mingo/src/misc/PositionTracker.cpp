@@ -19,6 +19,7 @@ double lastRadialValue;
 // double last_y_tracking_offset;
 double positionX = 0;
 double positionY = 0;
+bool tracker_initialized = false;
 
 double toMeters(double value, double wheelRadius) {
     return (value / ticks_per_rot) * 2 * M_PI * wheelRadius;
@@ -31,6 +32,11 @@ void initTracker(double initial_X, double initial_Y) {
     // last_y_tracking_offset = RADIAL_TRACKING_WHEEL_OFFSET * sin(imu.get_heading() * M_PI / 180.0);
     positionX = initial_X;
     positionY = initial_Y;
+    tracker_initialized = true;
+}
+
+bool trackerInitialized() {
+    return tracker_initialized;
 }
 
 void update_position() {

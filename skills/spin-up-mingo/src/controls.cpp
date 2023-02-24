@@ -1,13 +1,22 @@
 #include "controls.h"
+#include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "robot.h"
 #include "misc/PositionTracker.h"
+#include "movement.h"
+#include <cmath>
+#include <string>
 
 using namespace pros;
 
 int mode = 2;
 double p = 1.0;
+const double ROLLER_VELOCITY = 40;
+const double CATAPULT_VELOCITY = 75;
+const double VOLTAGE_SCALE = 11000;
+const double INPUT_SCALE_POWER = 1.5;
+const double VOLTAGE_DEADZONE = 400;
 
 double normalize_joystick(double input) {
   return input / 127.0;
@@ -18,30 +27,37 @@ double sin_scale(double input) {
   return copysign(pow(sin((M_PI/2) * fabs(input)), sin_scale_factor), input);
 }
 
-double square_scale(double input) {
-  return copysign(pow(input, 2), input);
+double power_inputs(double input, double power) {
+  return copysign(pow(input, power), input);
+}
+
+double voltage_deadzone(double input) {
+    if (std::abs(input) < 400) {
+        input = 0.0;
+    }
+    return input;
 }
 
 // Regular tank drive with square scaling
 void tank_drive() {
-  double left = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
-  double right = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
-  left_side.move_voltage(left * 12000);
-  right_side.move_voltage(right * 12000);
+  double left = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), INPUT_SCALE_POWER);
+  double right = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)), INPUT_SCALE_POWER);
+  left_side.move_voltage(voltage_deadzone(left * VOLTAGE_SCALE));
+  right_side.move_voltage(voltage_deadzone(right * VOLTAGE_SCALE));
 }
 // Regular arcade drive with square scaling
 void arcade_drive() {
-  double forward = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
-  double turn = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)));
-  left_side.move_voltage((forward + turn) * 12000);
-  right_side.move_voltage((forward - turn) * 12000);
+  double forward = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), INPUT_SCALE_POWER);
+  double turn = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)), INPUT_SCALE_POWER);
+  left_side.move_voltage(voltage_deadzone((forward + turn) * VOLTAGE_SCALE));
+  right_side.move_voltage(voltage_deadzone((forward - turn) * VOLTAGE_SCALE));
 }
 // Hybrid arcade drive with square scaling
 void hybrid_drive() {
-  double forward = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
-  double turn = square_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
-  left_side.move_voltage((forward + turn) * 12000);
-  right_side.move_voltage((forward - turn) * 12000);
+  double forward = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
+  double turn = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
+  left_side.move_voltage((forward + turn) * VOLTAGE_SCALE);
+  right_side.move_voltage((forward - turn) * VOLTAGE_SCALE);
 }
 // Mecanum drive with square scaling
 // void mecanum() {
@@ -124,15 +140,28 @@ void wannabeSwerve() {
     right_back_mtr.move(-power + desiredTranslation);
 }
 
-void shoot() {
-    while (cata_limit.get_value() == 0) {
-        catapult.move_relative(200, 100);
+bool shooterLoop(bool shoot_active) {
+    if (shoot_active) {
+        if (cata_limit.get_value() == 0) {
+            shoot_active = false;
+        } else {
+            catapult.move_velocity(CATAPULT_VELOCITY);
+        }
+    } else {
+        if (cata_limit.get_value() == 0) {
+            catapult.move_velocity(CATAPULT_VELOCITY);
+        } else {
+            catapult.brake();
+        }
     }
-    catapult.move_relative(200, 100);
+    return shoot_active;
 }
 
 void controls() {
-	initTracker();
+    bool shoot_active = false;
+    if (!trackerInitialized()) {
+        initTracker();
+    }
 
     left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -144,7 +173,10 @@ void controls() {
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     while(1) {
-        tank_drive();
+        arcade_drive();
+        
+        pros::lcd::set_text(2, "cata motor: " + std::to_string(catapult.get_position()));
+        pros::lcd::set_text(3, "cata limit: " + std::to_string(cata_limit.get_value()));
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             intake.move_voltage(12000);
@@ -155,17 +187,22 @@ void controls() {
         }
 
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
-            shoot();
-        } else {
-            catapult.brake();
+            shoot_active = true;
+        }
+        shoot_active = shooterLoop(shoot_active);
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+            turnToPoint();
         }
 
-        // update_position();
-        // pros::lcd::set_text(3, "X position: " + std::to_string(positionX));
-        // pros::lcd::set_text(4, "Y position: " + std::to_string(positionY));
-        pros::lcd::set_text(3, "X position: " + std::to_string(transverseEncoder.get_value()));
-        pros::lcd::set_text(4, "Y position: " + std::to_string(radialEncoder.get_value()));
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+            roller.move_velocity(-ROLLER_VELOCITY);
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            roller.move_velocity(ROLLER_VELOCITY);
+        } else {
+            roller.move_velocity(0);
+        }
 
-        pros::delay(20);
+        pros::delay(50);
     }
 }

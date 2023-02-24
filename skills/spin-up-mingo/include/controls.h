@@ -5,7 +5,7 @@
 
 double normalize_joysticks(double input);
 double sin_scale(double input);
-double square_scale(double input);
+double power_inputs(double input, double power = 2.0);
 void tank_drive();
 void arcade_drive();
 void hybrid_drive();

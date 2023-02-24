@@ -116,7 +116,7 @@ void SmartStop() {
     }
 }
 
-double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p = 1.5) {
+double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p = 2.0) {
     if (reversed) {
         return optimizeAngle(desiredAngleDeg - (reverseAngle(imu.get_heading()))) * p;
     } else {
@@ -364,6 +364,10 @@ void turnToPoint(double pointX, double pointY) {
         if (desiredAngle < 0) desiredAngle += 360;
         double rotationalRPM = getRotationalRPM(desiredAngle, false);
         moveMotors(rotationalRPM, -rotationalRPM);
+
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+            break;
+        }
 
         pros::delay(50);
     }
