@@ -20,3 +20,4 @@ extern pros::ADIEncoder radialEncoder;
 extern pros::ADIDigitalIn cata_limit;
 extern pros::ADIPotentiometer catpot;
 extern pros::Motor roller;
+extern pros::ADIDigitalOut endgame_release;

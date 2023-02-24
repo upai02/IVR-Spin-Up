@@ -2,6 +2,7 @@
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "misc/PositionTracker.h"
 #include "movement.h"
@@ -157,11 +158,14 @@ bool shooterLoop(bool shoot_active) {
     return shoot_active;
 }
 
+void release_endgame_spools() {
+    endgame_release.set_value(4000);
+    pros::delay(1500);
+    endgame_release.set_value(0);
+}
+
 void controls() {
     bool shoot_active = false;
-    if (!trackerInitialized()) {
-        initTracker();
-    }
 
     left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -195,12 +199,14 @@ void controls() {
             turnToPoint();
         }
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-            roller.move_velocity(-ROLLER_VELOCITY);
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             roller.move_velocity(ROLLER_VELOCITY);
         } else {
-            roller.move_velocity(0);
+            roller.brake();
+        }
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+            release_endgame_spools();
         }
 
         pros::delay(50);
