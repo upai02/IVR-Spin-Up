@@ -81,44 +81,44 @@ void shootPF(double rpm) {
 }
 
 void auton() {
-    gps.initialize_full(0, 0, 0, 0, 0);
-    pros::delay(3000);
-    // gps.set_rotation(-init_heading);
-    std::cout << "start turn pid" << std::endl;
-    turnPID(90);
-    std::cout << "end turn pid" << std::endl;
+    // gps.initialize_full(0, 0, 0, 0, 0);
+    // pros::delay(3000);
+    // // gps.set_rotation(-init_heading);
+    // std::cout << "start turn pid" << std::endl;
+    // turnPID(90);
+    // std::cout << "end turn pid" << std::endl;
 
-    std::vector<std::vector<double>> initialPath = {{1.8, 0.15}, {1.8, 1.22}};
+    // std::vector<std::vector<double>> initialPath = {{1.8, 0.15}, {1.8, 1.22}};
 
-    std::vector<std::vector<double>> path = {};
-    for (int i = 0; i < 10; i++) {
-        path.push_back({1.8, i + 0.15});
-    }    
+    // std::vector<std::vector<double>> path = {};
+    // for (int i = 0; i < 10; i++) {
+    //     path.push_back({1.8, i + 0.15});
+    // }    
 
-    initTracker(initialPath[0][0], initialPath[0][1]);
+    // initTracker(initialPath[0][0], initialPath[0][1]);
 
-    pros::Task odom(updatePosition);
-    std::cout << "follow Path now" << std::endl;
-    followPath(initialPath, 0, false);
+    // pros::Task odom(updatePosition);
+    // std::cout << "follow Path now" << std::endl;
+    // followPath(initialPath, 0, false);
     
-    // start auto with 2 discs
-    discs_in_mag = 2;
-
-    // set_flywheel_rpm(500);
-    // flywheel_task.resume();
-    // intake_mtr.move_voltage(12000);
-    // rai_mtr.move_voltage(6000);
+    // // start auto with 2 discs
     // discs_in_mag = 2;
-    // intake();
-    // flywheel_task.resume();
-    // intake_mtr.move_voltage(12000);
-    // rai_mtr.move_voltage(6000);
 
-    // moveMotors(30, 30);
-    // pros::delay(100000);
+    // // set_flywheel_rpm(500);
+    // // flywheel_task.resume();
+    // // intake_mtr.move_voltage(12000);
+    // // rai_mtr.move_voltage(6000);
+    // // discs_in_mag = 2;
+    // // intake();
+    // // flywheel_task.resume();
+    // // intake_mtr.move_voltage(12000);
+    // // rai_mtr.move_voltage(6000);
 
-    // followPath(initialPath, 90, false);
-    turnPID(180);
+    // // moveMotors(30, 30);
+    // // pros::delay(100000);
+
+    // // followPath(initialPath, 90, false);
+    // turnPID(180);
 
     // drivePID(48);
     // pros::delay(2000);
