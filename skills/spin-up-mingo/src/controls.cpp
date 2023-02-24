@@ -140,6 +140,16 @@ void wannabeSwerve() {
     right_back_mtr.move(-power + desiredTranslation);
 }
 
+void shootAndWait() {
+    while (cata_limit.get_value() == 1) {
+        catapult.move_velocity(CATAPULT_VELOCITY);
+    }
+    while (cata_limit.get_value() == 0) {
+        catapult.move_velocity(CATAPULT_VELOCITY);
+    } 
+    catapult.brake();
+}
+
 bool shooterLoop(bool shoot_active) {
     if (shoot_active) {
         if (cata_limit.get_value() == 0) {
