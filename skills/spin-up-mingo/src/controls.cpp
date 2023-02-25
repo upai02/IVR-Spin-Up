@@ -13,7 +13,7 @@ using namespace pros;
 
 int mode = 2;
 double p = 1.0;
-const double ROLLER_VELOCITY = 40;
+const double ROLLER_VELOCITY = -70;
 const double CATAPULT_VELOCITY = 65;
 const double VOLTAGE_SCALE = 11000;
 const double INPUT_SCALE_POWER = 1.5;

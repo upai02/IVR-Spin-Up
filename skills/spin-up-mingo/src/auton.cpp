@@ -80,13 +80,13 @@ void followXYPath(FollowXYPath& xyPath) {
 void rollerAuto() {
     // robot center: 35in x, 16in y
 
-    const double SPIN_TICKS_FIRST = -600;
-    const double SPIN_TICKS_SECOND = -700;
-    const double ROLLER_MOVE_VEL = -25;
-    const double WALL_WAIT_MILLISECONDS = 2500;
+    const double SPIN_TICKS_FIRST = -800;
+    const double SPIN_TICKS_SECOND = -900;
+    const double ROLLER_MOVE_VEL = -30;
+    const double WALL_WAIT_MILLISECONDS = 5000;
     // -2900 per spin in correct direction
     // drive up to roller:
-    moveMotors(-60, -60);
+    moveMotors(-30, -30);
     pros::delay(WALL_WAIT_MILLISECONDS);
     moveMotors(0, 0);
 
@@ -103,7 +103,7 @@ void rollerAuto() {
     std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.5}, {2.4, 0.25}, {3.4, 0.3}, {3.2, 2.7}};
     
     followPath(path_to_other_roller, 270, false, true);
-    moveMotors(-60, -60);
+    moveMotors(-30, -30);
     pros::delay(WALL_WAIT_MILLISECONDS);
     stopMotors();
 
