@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include "movement.h"
-#include "/misc/PositionTracker.h"
+#include "misc/PositionTracker.h"
 
 void drivePID(double inches) {
     left_side.tare_position();
