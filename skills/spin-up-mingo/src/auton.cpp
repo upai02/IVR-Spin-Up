@@ -239,5 +239,8 @@ void boltEndgameAuto() {
     followPath(line_seg_one, 0, false);
     turnToAngle(90, 5);
     followPath(line_seg_two, 45, true, true);
+
+    pros::delay(40000);
+
     release_endgame_spools();
 }
