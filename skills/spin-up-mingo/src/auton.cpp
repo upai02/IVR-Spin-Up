@@ -212,11 +212,11 @@ void boltEndgameAuto() {
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
     std::vector<double> endingPoint = {0.4, 0.4};
 
-    std::vector<std::vector<double>> path = {starting_position, {0.6, 0.6}, endingPoint};
+    std::vector<std::vector<double>> path = {starting_position, {1.2, 1.2}, {0.6, 1.0}, endingPoint};
 
     pros::Task position_updater(update_position);
 
-    const double SPIN_TICKS_FIRST = -800;
+    const double SPIN_TICKS_FIRST = -1300;
     const double SPIN_TICKS_SECOND = -800;
     const double ROLLER_MOVE_VEL = -30;
     const double WALL_WAIT_MILLISECONDS = 4000;
