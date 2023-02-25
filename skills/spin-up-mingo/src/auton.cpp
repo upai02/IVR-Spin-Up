@@ -89,17 +89,20 @@ void rollerAuto() {
     // -2900 per spin in correct direction
     // drive up to roller:
     moveMotors(-60, -60);
+    pros::lcd::set_text(4, "1");
     pros::delay(WALL_WAIT_MILLISECONDS);
     moveMotors(0, 0);
 
     std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+    pros::lcd::set_text(4, "2");
     const double ROLLER_START_POSITION = roller.get_position();
 
     while (std::abs(SPIN_TICKS_FIRST) > std::abs(roller.get_position() - ROLLER_START_POSITION)) {
         roller.move_velocity(ROLLER_MOVE_VEL);
         pros::delay(50);
     }
+    pros::lcd::set_text(4, "3");
     roller.move_velocity(0);
 
     std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.5}, {2.4, 0.25}, {3.4, 0.3}, {3.2, 2.7}};

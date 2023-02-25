@@ -79,7 +79,7 @@ void autonomous() {
 
 
 	// SKILLS AUTO
-	boltSkillsAuto();
+	boltEndgameAuto();
 }
 
 /**

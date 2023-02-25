@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "spin-up-bolt-comp",
+    "project_name": "spin-up-bolt-SKILLS",
     "target": "v5",
     "templates": {
       "kernel": {
