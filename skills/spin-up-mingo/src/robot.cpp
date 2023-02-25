@@ -20,4 +20,5 @@ pros::ADIEncoder transverseEncoder(1, 2, true);
 pros::ADIEncoder radialEncoder(3, 4, true);
 pros::ADIDigitalIn cata_limit(5);
 pros::Motor roller(18, pros::E_MOTOR_GEARSET_36, false);
+pros::ADIDigitalOut endgame_release(8);
 // pros::ADIPotentiometer catpot(8, pros::E_ADI_POT_V2);

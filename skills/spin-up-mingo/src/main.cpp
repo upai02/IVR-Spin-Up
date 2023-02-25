@@ -31,11 +31,17 @@ void initialize() {
 	transverseEncoder.reset();
 	radialEncoder.reset();
 
+	// ROLLER AUTO
+	std::vector<double> starting_position = {0.89, 0.4}; // 35in, 16in
+	// Edges to walls: 7.5in Y, 29in X
+	// initTracker(starting_position[0], starting_position[1]);
+
+	// SKILLS
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
+	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
 
 	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
-	initTracker();
 	pros::Task position_updater(update_position);
 	pros::delay(5000);
 }
@@ -70,12 +76,19 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	// ROLLER AUTO
+	rollerAuto();
+
+
+	// SKILLS AUTO
+
+	// left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	// right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
 
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
@@ -161,5 +174,5 @@ void opcontrol() {
 	// imu.reset();
 	// pros::delay(5000);
 
-	// controls();
+	controls();
 }
