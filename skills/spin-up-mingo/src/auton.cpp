@@ -83,12 +83,12 @@ void rollerAuto() {
     const double SPIN_TICKS_FIRST = -800;
     const double SPIN_TICKS_SECOND = -900;
     const double ROLLER_MOVE_VEL = -30;
-    const double WALL_WAIT_MILLISECONDS = 5000;
+    const double WALL_WAIT_MILLISECONDS = 4000;
     // -2900 per spin in correct direction
     // drive up to roller:
-    moveMotors(-30, -30);
-    pros::delay(WALL_WAIT_MILLISECONDS);
-    moveMotors(0, 0);
+    // catapult.brake();
+    moveMotors(-60, -60);
+    pros::delay(WALL_WAIT_MILLISECONDS / 2);
 
     std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
@@ -98,21 +98,25 @@ void rollerAuto() {
         roller.move_velocity(ROLLER_MOVE_VEL);
         pros::delay(50);
     }
+    moveMotors(0, 0);
     roller.move_velocity(0);
 
-    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.5}, {2.4, 0.25}, {3.4, 0.3}, {3.2, 2.7}};
+    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.4, 0.3}, {3.2, 2.53}};
     
     followPath(path_to_other_roller, 270, false, true);
     moveMotors(-30, -30);
     pros::delay(WALL_WAIT_MILLISECONDS);
-    stopMotors();
 
     double roller_second_start_pos = roller.get_position();
     while (std::abs(SPIN_TICKS_SECOND) > std::abs(roller.get_position() - roller_second_start_pos)) {
         roller.move_velocity(ROLLER_MOVE_VEL);
         pros::delay(50);
     }
+    moveMotors(30, 30);
     roller.move_velocity(0);
+    pros::delay(2000);
+    stopMotors();
+
     // done!
     pros::lcd::set_text(3, "Done!");
 }
