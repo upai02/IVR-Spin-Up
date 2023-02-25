@@ -81,6 +81,17 @@ void shootPF(double rpm) {
 }
 
 void auton() {
+
+    imu.reset();
+	pros::delay(5000);
+
+	// while (1) {
+	// 	std::cout << imu.get_heading() << std::endl;
+	// 	pros::delay(20);
+	// }
+	initTracker(0, 0);
+	pros::Task odom(updatePosition);
+    
     // gps.initialize_full(0, 0, 0, 0, 0);
     // pros::delay(3000);
     // // gps.set_rotation(-init_heading);

@@ -29,6 +29,12 @@ void initialize() {
 	set_intake_piston(true);
 	endgame_released = false;
 	flywheel_task.suspend();
+
+	imu.reset();
+	pros::delay(5000);
+
+	initTracker(0, 0);
+	pros::Task odom(updatePosition);
 }
 
 /**
@@ -80,15 +86,5 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	// controls();
-	imu.reset();
-	pros::delay(5000);
-
-	// while (1) {
-	// 	std::cout << imu.get_heading() << std::endl;
-	// 	pros::delay(20);
-	// }
-
-	initTracker(0, 0);
-	pros::Task odom(updatePosition);
+	controls();
 }

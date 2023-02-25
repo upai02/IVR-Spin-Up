@@ -94,6 +94,8 @@ void updatePosition() {
         std::cout << "cur heading: " << currentHeading << std::endl;
         std::cout << "x: " << positionX << std::endl;
         std::cout << "y: " << positionY << std::endl;
+        std::cout << "ht_get_value: " << horizontal_track.get_value() << std::endl;
+        std::cout << "vt_get_value: " << vertical_track.get_value() << std::endl;
 
         pros::delay(10);
     }
