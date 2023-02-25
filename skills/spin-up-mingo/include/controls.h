@@ -14,3 +14,4 @@ void group_stop(pros::motor_brake_mode_e b);
 void move_with_assigned_speed (double xVel, double yVel, double turnVel);
 void wannabeSwerve();
 void shootAndWait();
+void release_endgame_spools();

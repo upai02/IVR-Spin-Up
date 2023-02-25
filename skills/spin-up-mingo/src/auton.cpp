@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include "movement.h"
+#include "/misc/PositionTracker.h"
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -199,4 +200,38 @@ void boltSkillsAuto() {
 	// SmartStop();
 	intake.move_voltage(0);
 	stopMotors();
+}
+
+void boltEndgameAuto() {
+    std::vector<double> startingPoint = {0.89, 0.4};
+
+    std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
+    // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+    std::vector<double> endingPoint = {0.4, 0.4};
+
+    std::vector<std::vector<double>> path = {starting_position, {0.6, 0.6}, endingPoint};
+
+    pros::Task position_updater(update_position);
+
+    const double SPIN_TICKS_FIRST = -800;
+    const double SPIN_TICKS_SECOND = -800;
+    const double ROLLER_MOVE_VEL = -30;
+    const double WALL_WAIT_MILLISECONDS = 4000;
+    // -2900 per spin in correct direction
+    // drive up to roller:
+    // catapult.brake();
+    moveMotors(-60, -60);
+    pros::delay(WALL_WAIT_MILLISECONDS / 2);
+
+    const double ROLLER_START_POSITION = roller.get_position();
+
+    while (std::abs(SPIN_TICKS_FIRST) > std::abs(roller.get_position() - ROLLER_START_POSITION)) {
+        roller.move_velocity(ROLLER_MOVE_VEL);
+        pros::delay(50);
+    }
+    moveMotors(0, 0);
+    roller.move_velocity(0);
+
+    followPath(path, 45, false, true);
+    // release_endgame_spools();
 }

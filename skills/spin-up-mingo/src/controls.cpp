@@ -167,6 +167,12 @@ bool shooterLoop(bool shoot_active) {
     return shoot_active;
 }
 
+void release_endgame_spools() {
+    endgame_release.set_value(1);
+    pros::delay(1000);
+    endgame_release.set_value(0);
+}
+
 void controls() {
     bool shoot_active = false;
     if (!trackerInitialized()) {
