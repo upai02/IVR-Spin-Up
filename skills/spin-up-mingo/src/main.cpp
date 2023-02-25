@@ -27,16 +27,16 @@ void initialize() {
 	transverseEncoder.reset();
 	radialEncoder.reset();
 
-	// // ROLLER AUTO
-	// std::vector<double> starting_position = {0.89, 0.4}; // 35in, 16in
-	// // Edges to walls: 7.5in Y, 29in X
-	// initTracker(starting_position[0], starting_position[1]);
+	// ROLLER AUTO
+	std::vector<double> starting_position = {0.89, 0.4}; // 35in, 16in
+	// Edges to walls: 7.5in Y, 29in X
+	initTracker(starting_position[0], starting_position[1]);
 
 
-	// SKILLS
-	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
-	// starting x is with front of robot on opponent low goal plane, y is against wall.
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	// // SKILLS
+	// std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
+	// // starting x is with front of robot on opponent low goal plane, y is against wall.
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
 
 
 	// BOTH

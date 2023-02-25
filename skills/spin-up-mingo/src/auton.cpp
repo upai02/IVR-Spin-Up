@@ -210,9 +210,10 @@ void boltEndgameAuto() {
 
     std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
-    std::vector<double> endingPoint = {0.4, 0.4};
+    std::vector<double> endingPoint = {0.6, 0.6};
 
-    std::vector<std::vector<double>> path = {starting_position, {1.2, 1.2}, {0.6, 1.0}, endingPoint};
+    std::vector<std::vector<double>> line_seg_one = {starting_position, {0.9, 0.6}};
+    std::vector<std::vector<double>> line_seg_two = {line_seg_one.back(), {endingPoint}};
 
     pros::Task position_updater(update_position);
 
@@ -235,6 +236,8 @@ void boltEndgameAuto() {
     moveMotors(0, 0);
     roller.move_velocity(0);
 
-    followPath(path, 45, false, true);
-    // release_endgame_spools();
+    followPath(line_seg_one, 0, false);
+    turnToAngle(90, 5);
+    followPath(line_seg_two, 45, true, true);
+    release_endgame_spools();
 }
