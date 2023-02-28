@@ -15,13 +15,15 @@ void set_flywheel_rpm(int rpm) {
   flywheel_rpm = rpm;
 }
 
+// bool start_flywheel_task = false;
+
 pros::Task flywheel_task(shoot_thread);
 
 void shoot_thread() {
-  while (true) {
-    shootPF(flywheel_rpm);
-    pros::delay(20);
-  }
+    while (true) {
+      shootPF(flywheel_rpm);
+      pros::delay(20);
+    }
 }
 
 
@@ -65,3 +67,22 @@ void release_discs() {
   reset_discs_in_mag();
 }
 
+void release_sequence() {
+  rai_mtr.move_voltage(-12000);
+  pros::delay(300);
+  rai_mtr.move_voltage(1000);
+
+  pros::delay(3000);
+  discs_in_mag = std::max(0, discs_in_mag - 1);
+
+  rai_mtr.move_voltage(-11000);
+  pros::delay(300);
+  rai_mtr.move_voltage(1000);
+
+  pros::delay(3000);
+  discs_in_mag = std::max(0, discs_in_mag - 1);
+
+  rai_mtr.move_voltage(-11000);
+  pros::delay(500);
+  rai_mtr.move_voltage(1000);
+}

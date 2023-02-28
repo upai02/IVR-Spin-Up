@@ -4,6 +4,7 @@
 #include "misc/PositionTracker.h"
 #include "intake.h"
 #include "movement.h"
+#include "roller.h"
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -46,25 +47,89 @@ void drivePID(double inches) {
     right_side.brake();
 }
 
+// void drivePIDodom(double meters) {
+//     // left_side.tare_position();
+//     // right_side.tare_position();
+//     double 
+//     double left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
+//     double right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
+//     double left_derivative = 0;
+//     double right_derivative = 0;
+//     double left_prev_error = 0;
+//     double right_prev_error = 0;
+//     double left_integral = 0;
+//     double right_integral = 0;
+//     double left_speed = 0;
+//     double right_speed = 0;
+//     double left_kp = 0.25;
+//     double right_kp = 0.25;
+//     double left_ki = 0.0033;
+//     double right_ki = 0.0033;
+//     double left_kd = 0.01;
+//     double right_kd = 0.01;
+//     while (std::abs(left_error) > 25 || std::abs(right_error) > 25) {
+//         left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
+//         right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + right_side.get_positions()[2]) / 3);
+//         left_derivative = left_error - left_prev_error;
+//         right_derivative = right_error - right_prev_error;
+//         left_integral += left_error;
+//         right_integral += right_error;
+//         left_prev_error = left_error;
+//         right_prev_error = right_error;
+//         left_speed = left_error * left_kp + left_integral * left_ki + left_derivative * left_kd;
+//         right_speed = right_error * right_kp + right_integral * right_ki + right_derivative * right_kd;
+//         left_speed = std::abs(left_speed) > 400 ? 400 * (left_speed / std::abs(left_speed)) : left_speed;
+//         right_speed = std::abs(right_speed) > 400 ? 400 * (right_speed / std::abs(right_speed)) : right_speed;
+//         left_side.move_velocity(left_speed);
+//         right_side.move_velocity(right_speed);
+//         pros::delay(20);
+//     }
+//     left_side.brake();
+//     right_side.brake();
+// }
+
+// could change currentHeading with imu.get_heading()
 void turnPID(double degrees) {
-    imu.reset();
+    // imu.reset();
+    // std::cout << "turn PID current Heading: " << currentHeading << std::endl;
     double target = degrees;
-    double error = target - imu.get_rotation();
+    // double error = target - currentHeading;
+    double error = getAngleError(target, currentHeading);
     double derivative = 0;
+    double integral = 0;
     double prev_error = 0;
     double speed = 0;
-    double kp = 0.5;
-    double kd = 0;
-    while (std::abs(error) > 10) {
-        error = target - imu.get_rotation();    
+    const double kp = 0.7; // 1.2
+    const double ki = 0.0069;
+    const double kd = 0.04;
+    while (std::abs(error) > 5) {
+        // error = target - currentHeading;
+        error = getAngleError(target, currentHeading);
+
+        pros::lcd::print(6, "turn PID error: %f", error);
+
+        std::cout << "turn PID error: " << error << std::endl;
         derivative = error - prev_error;
-        speed = error * kp + derivative * kd;
+        integral += error;
+        speed = error * kp + integral * ki + derivative * kd;
         prev_error = error;
         // speed = std::abs(speed) > 100 ? 100 * (speed / std::abs(speed)) : speed;
-        left_side.move(-speed);
-        right_side.move(speed);
+        left_side.move(speed);
+        right_side.move(-speed);
         pros::delay(20);
     }
+    left_side.brake();
+    right_side.brake();
+}
+
+double getAngleError(double target, double currHeading) {
+    double error = target - currHeading;
+    if (error > 180) {
+        error -= 360;
+    } else if (error < -180) {
+        error += 360;
+    }
+    return error;
 }
 
 void shootPF(double rpm) {
@@ -82,16 +147,93 @@ void shootPF(double rpm) {
 
 void auton() {
 
-    imu.reset();
-	pros::delay(5000);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
+    // pros::delay(1000);
+    // imu.reset();
 
-	// while (1) {
-	// 	std::cout << imu.get_heading() << std::endl;
-	// 	pros::delay(20);
-	// }
-	initTracker(0, 0);
-	pros::Task odom(updatePosition);
+    // HERERERERERERERERERERE
+    // start_flywheel_task = true;
+
+    discs_in_mag = 2;
+
+    set_flywheel_rpm(510);
+    flywheel_task.resume();
+    intake();
     
+	pros::delay(500);
+
+    drivePID(30);
+    pros::delay(2000);
+    spin_roller();
+    pros::delay(1000);
+    intake_mtr.move_voltage(0);
+    rai_mtr.move_voltage(0);
+    toggle_mag_piston();
+
+    turnPID(121);
+    pros::delay(500);
+
+    drivePID(6);
+    pros::delay(500);
+
+    release_sequence();
+    pros::delay(800);
+
+    set_flywheel_rpm(505);
+    // more pathing
+    intake();
+    intake_mtr.move_voltage(12000);
+    rai_mtr.move_voltage(4000);
+    turnPID(135);
+    pros::delay(600);
+    drivePID(4.9);
+    pros::delay(600);
+
+    drivePID(-15);
+    pros::delay(600);
+    turnPID(45);
+    pros::delay(600);
+    drivePID(20);
+    pros::delay(600);
+
+
+    turnPID(130);
+    pros::delay(600);
+
+
+    drivePID(10.6);
+    pros::delay(1000);
+
+    intake_mtr.move_voltage(0);
+    rai_mtr.move_voltage(0);
+
+    toggle_mag_piston();
+    pros::delay(800);
+
+    release_sequence();
+    pros::delay(600);
+
+
+    flywheel_task.suspend();
+    flywheel_mtr.move_voltage(0);
+
+
+    // HEREREREREREREREREREREERERERERERERERERERERERERER
+
+
+
+    // pros::delay(2000);
+    // std::cout << "GOT HEREERE __________" << std::endl;
+    // std::vector<std::vector<double>> initialPath = {{0.0, 0.0}, {0.0, 0.1}};
+    // followPath(initialPath, 180, false);
+    // pros::lcd::print(0, "DONE __________");
+    // std::cout << "got hGOTE REHREHER ER  ere 2"  << std::endl;
+    // pros::delay(3000);
+    // left_side.move_voltage(0);
+    // right_side.move_voltage(0);
+    
+
     // gps.initialize_full(0, 0, 0, 0, 0);
     // pros::delay(3000);
     // // gps.set_rotation(-init_heading);

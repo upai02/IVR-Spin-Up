@@ -6,6 +6,8 @@
 #include "roller.h"
 #include "endgame.h"
 #include "shooter.h"
+#include "auton.h"
+#include "movement.h"
 
 using namespace pros;
 using namespace pros::c;
@@ -62,9 +64,16 @@ void controls()
     }
 
     // endgame!
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) && master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       activate_endgame();
     }
+  
+    // turn pid test
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   turnPID(180);
+    //   // turnToAngle(170, 10, false, 900);
+    // }
+
 
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
     //   flywheel_rpm += 10;
@@ -76,18 +85,18 @@ void controls()
     // auto gps_data = gps.get_status();
 
     // pros terminal printing ------------
-    std::cout << "target rpm: " << flywheel_rpm << "----- actual: " << flywheel_mtr.get_actual_velocity() << "------ error: " << flywheel_rpm - flywheel_mtr.get_actual_velocity() << std::endl;
-    std::cout << "actual flywheel speed rpm: " << flywheel_mtr.get_actual_velocity() << std::endl;
-    std::cout << "error rpm: " << flywheel_rpm - flywheel_mtr.get_actual_velocity() << std::endl;
+    // std::cout << "target rpm: " << flywheel_rpm << "----- actual: " << flywheel_mtr.get_actual_velocity() << "------ error: " << flywheel_rpm - flywheel_mtr.get_actual_velocity() << std::endl;
+    // std::cout << "actual flywheel speed rpm: " << flywheel_mtr.get_actual_velocity() << std::endl;
+    // std::cout << "error rpm: " << flywheel_rpm - flywheel_mtr.get_actual_velocity() << std::endl;
     // std::cout << "GPS: " << "x: " << gps_data.x << " y: " << gps_data.y << std::endl;
     // print to screen ------------
-    pros::lcd::print(0, "Drive Mode: %s", get_drive_name().c_str());
-    pros::lcd::print(1, "Wheel Value: %d", left_front_mtr.get_position());
-    // pros::lcd::print(2, "disc_dist: %lf", disc_dist.get());
-    pros::lcd::print(3, "target flywheel rpm: %d", flywheel_rpm);
-    pros::lcd::print(4, "actual flywheel rpm: %lf", flywheel_mtr.get_actual_velocity());
-    pros::lcd::print(5, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
-    pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
+    // pros::lcd::print(0, "Drive Mode: %s", get_drive_name().c_str());
+    // pros::lcd::print(1, "Wheel Value: %d", left_front_mtr.get_position());
+    // // pros::lcd::print(2, "disc_dist: %lf", disc_dist.get());
+    // pros::lcd::print(3, "target flywheel rpm: %d", flywheel_rpm);
+    // pros::lcd::print(4, "actual flywheel rpm: %lf", flywheel_mtr.get_actual_velocity());
+    // pros::lcd::print(5, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
+    // pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
     // pros::lcd::print(7, "GPS -> x: %lf y: %lf", gps_data.x, gps_data.y);
     // print to controller ------------
     master.print(0, 0, "d_m: %s", get_drive_name().c_str());

@@ -15,6 +15,9 @@ void initialize() {
 	pros::lcd::initialize();
 	horizontal_track.reset();
 	vertical_track.reset();
+	// flywheel_task.suspend();
+	pros::delay(1500);
+	flywheel_task.suspend();
 	// imu.reset(true);
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -25,16 +28,18 @@ void initialize() {
 	flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	set_mag_piston(false);
+	set_mag_piston(true);
 	set_intake_piston(true);
-	endgame_released = false;
-	flywheel_task.suspend();
+	init_endgame(false);
+	// flywheel_task.suspend();
 
 	imu.reset();
-	pros::delay(5000);
-
 	initTracker(0, 0);
 	pros::Task odom(updatePosition);
+
+	pros::delay(2000);
+
+	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
 
 /**

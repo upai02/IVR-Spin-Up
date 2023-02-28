@@ -15,7 +15,7 @@ pros::Motor_Group right_side({right_front_mtr, right_back_top_mtr, right_back_bo
 
 // Intake
 pros::Motor intake_mtr(17, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor rai_mtr(16, pros::E_MOTOR_GEARSET_06, true); // indexer + roller mech 
+pros::Motor rai_mtr(10, pros::E_MOTOR_GEARSET_06, true); // indexer + roller mech 
 pros::ADIDigitalOut mag_piston('h', true); // mag piston
 pros::ADIDigitalOut intake_piston('g', false); // intake piston
 // Shooter
