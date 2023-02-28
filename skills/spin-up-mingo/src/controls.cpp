@@ -184,15 +184,15 @@ void controls() {
 
         pros::lcd::set_text(2, "cata_limit: " + std::to_string(cata_limit.get_value()));
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move_voltage(12000);
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             intake.move_voltage(-12000);
         } else {
             intake.brake();
         }
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
             shoot_active = true;
         }
         shoot_active = shooterLoop(shoot_active);
@@ -203,13 +203,13 @@ void controls() {
         }
         */
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
             roller.move_velocity(ROLLER_VELOCITY);
         } else {
             roller.brake();
         }
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
             release_endgame_spools();
         }
 
@@ -217,3 +217,14 @@ void controls() {
         pros::delay(50);
     }
 }
+
+/*
+Harith desired controls:
+
+ - intake in: R1
+ - intake out: R2
+ - shoot: L1
+ - endgame (two buttons required): as is if we can get a scuff, down and left arrows if we can't get a scuff
+ - roller: L2
+
+*/
