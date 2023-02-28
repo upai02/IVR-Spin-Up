@@ -9,3 +9,4 @@ void shootPID(double angle);
 void followXYPath(FollowXYPath& xyPath);
 void rollerAuto();
 void boltSkillsAuto();
+void StraightPathTest();

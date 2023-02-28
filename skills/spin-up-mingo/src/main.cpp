@@ -39,7 +39,10 @@ void initialize() {
 	// SKILLS
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+
+	// STRAIGHT PATH TEST
+	initTracker();
 }
 
 /**
@@ -76,7 +79,10 @@ void autonomous() {
 	// rollerAuto();
 
 	// SKILLS AUTO
-	boltSkillsAuto();
+	// boltSkillsAuto();
+
+	// STRAIGHT PATH TEST
+	StraightPathTest();
 }
 
 /**
@@ -93,7 +99,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	autonomous();
+	// autonomous();
 
 	// imu.reset();
 	// pros::delay(5000);

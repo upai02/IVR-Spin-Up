@@ -110,7 +110,7 @@ void SmartStop() {
         // pros::lcd::set_text(6, "Left front brake mode: " + std::to_string(left_front_mtr.get_brake_mode()));
         // pros::lcd::set_text(7, "Back left brake mode: " + std::to_string(left_back_mtr.get_brake_mode()));
 
-        moveMotors(20, 20);
+        // moveMotors(20, 20);
 
         pros::delay(50);
     }
@@ -133,7 +133,7 @@ double calculate_distance_two_points(std::vector<double> point_one, std::vector<
     return std::sqrt(std::pow(point_one.at(1) - point_two.at(1), 2) + std::pow(point_one.at(0) - point_two.at(0), 2));
 }
 
-std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path) { // std::vector<std::vector<double>> path
+std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path, bool ignore_last_point = true) { // std::vector<std::vector<double>> path
     pros::lcd::set_text(3, "HI");
     pros::delay(1000);
     std::vector<double> distances(path.size()); //path.size() - 1
@@ -146,7 +146,7 @@ std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& p
 
     // loop through path in reverse order and append to distances in reverse order. Each loop add new dist to sum_of_dists then put that in distances
     // this will run thorugh the domain [initial i - 1, 0] (inclusive)
-    for (size_t i = path.size() - 1; i-- > 0; ) {
+    for (size_t i = path.size() - ((ignore_last_point) ? 2 : 1); i-- > 0; ) {
         times_ran++;
         pros::lcd::set_text(3, "i: " + std::to_string(i) + "  sum: " + std::to_string(sum_of_dists));
         sum_of_dists += calculate_distance_two_points(path.at(i), path.at(i + 1));
@@ -358,7 +358,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         double distance_to_index = calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
         // check if behind mode needs to be left
         // second part of && conditional is to prevent edge case
-        if (distance_to_index > last_calculated_distance && std::abs(distance_to_index - last_calculated_distance) < (lookForwardRadius / 2.0)) { 
+        if (distance_to_index > last_calculated_distance && std::abs(distance_to_index - last_calculated_distance) < 0.05) { 
             // switch to normal ahead mode
             last_current_index = currentIndex;
         }
@@ -366,19 +366,20 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         if (last_current_index != currentIndex) {
             // for behind of currentIndex (bc of funny look ahead angle)
             remaining_dist = distances_to_end[currentIndex] + calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
-            pros::lcd::set_text(4, "APP behind mode");
+            pros::lcd::set_text(3, "APP behind mode");
         } else {
             // for ahead of currentIndex (normal for long path segments)
             remaining_dist = distances_to_end[currentIndex] - calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
-            pros::lcd::set_text(4, "APP ahead mode");
+            pros::lcd::set_text(3, "APP ahead mode");
         }
+
+        last_calculated_distance = distance_to_index;
         // if current index increments start adding calc_dist_two_points instead of subtracting until calculate_distance_two_points starts increasing again
 
         pros::lcd::set_text(1, "remaining dist: " + std::to_string(remaining_dist));
         pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
-        pros::lcd::set_text(3, "dist_to_end_size: " + std::to_string(distances_to_end.size()));
         double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM);
-        pros::lcd::set_text(5, "trans RPM: " + std::to_string(translationalRPM));
+        pros::lcd::set_text(4, "trans RPM: " + std::to_string(translationalRPM));
 
         if (desiredAngle < 0) desiredAngle += 360;
 

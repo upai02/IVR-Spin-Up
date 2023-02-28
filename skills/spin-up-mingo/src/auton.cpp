@@ -161,10 +161,6 @@ void boltSkillsAuto() {
 	};
 	// followPath(reverseTestPath, 89.0, true);
 
-	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.75}, {0, 1.5}, {0, 2.25}};
-	followPath(straight_path, 0, false);
-    SmartStop();
-
 	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.6, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
 	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.55, 2.42}, {1.55, 2.17}}; // reversed, end facing 315
 	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.45, 2.11}}; // end facing goal (spin on spot)
@@ -203,4 +199,15 @@ void boltSkillsAuto() {
 	// shoot
 	// SmartStop();
 	stopMotors();
+
+    position_updater.suspend();
+    shooter_reseter.suspend();
+}
+
+void StraightPathTest() {
+    pros::Task position_updater(update_position);
+	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.75}, {0, 1.5}, {0, 2.25}};
+	followPath(straight_path, 0, false, false, 0.5, 3.0, 75, 100);
+    position_updater.suspend();
+    SmartStop();
 }
