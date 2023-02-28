@@ -257,6 +257,9 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
     std::vector<double> distances_to_end = calculate_remaining_dist(path); //path
     pros::lcd::set_text(2, "Done calculating distance vector");
+    double last_calculated_distance = calculate_distance_two_points({positionX, positionY}, path[1]);
+    // last_current_index will reflect actual position of robot instead of position of lookAheadPoint
+    double last_current_index = 0;
 
     while (currentIndex < path.size() - 1) {
         // update_position();
@@ -351,11 +354,31 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         double desiredAngle = atan2(driveTowards[0] - positionX, driveTowards[1] - positionY) * 180 / M_PI;
 
 
-        double remaining_dist = distances_to_end[currentIndex] - calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
+        double remaining_dist = 0.0;
+        double distance_to_index = calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
+        // check if behind mode needs to be left
+        // second part of && conditional is to prevent edge case
+        if (distance_to_index > last_calculated_distance && std::abs(distance_to_index - last_calculated_distance) < (lookForwardRadius / 2.0)) { 
+            // switch to normal ahead mode
+            last_current_index = currentIndex;
+        }
+        // check for behind mode
+        if (last_current_index != currentIndex) {
+            // for behind of currentIndex (bc of funny look ahead angle)
+            remaining_dist = distances_to_end[currentIndex] + calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
+            pros::lcd::set_text(4, "APP behind mode");
+        } else {
+            // for ahead of currentIndex (normal for long path segments)
+            remaining_dist = distances_to_end[currentIndex] - calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
+            pros::lcd::set_text(4, "APP ahead mode");
+        }
+        // if current index increments start adding calc_dist_two_points instead of subtracting until calculate_distance_two_points starts increasing again
+
         pros::lcd::set_text(1, "remaining dist: " + std::to_string(remaining_dist));
         pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
         pros::lcd::set_text(3, "dist_to_end_size: " + std::to_string(distances_to_end.size()));
         double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM);
+        pros::lcd::set_text(5, "trans RPM: " + std::to_string(translationalRPM));
 
         if (desiredAngle < 0) desiredAngle += 360;
 

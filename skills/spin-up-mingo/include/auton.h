@@ -8,3 +8,4 @@ void drivePID(double inches);
 void shootPID(double angle);
 void followXYPath(FollowXYPath& xyPath);
 void rollerAuto();
+void boltSkillsAuto();

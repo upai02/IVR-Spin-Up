@@ -158,6 +158,21 @@ bool shooterLoop(bool shoot_active) {
     return shoot_active;
 }
 
+void ResetShooterLoop() {
+    if (cata_limit.get_value() == 0) {
+        catapult.move_velocity(CATAPULT_VELOCITY);
+    } else {
+        catapult.brake();
+    }
+}
+
+void ShootDisksBlocking() {
+    while (cata_limit.get_value() == 1) {
+        catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
+    }
+}
+
 void release_endgame_spools() {
     endgame_release.set_value(1);
     pros::delay(1000);
