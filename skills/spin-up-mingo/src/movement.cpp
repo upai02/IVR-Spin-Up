@@ -390,7 +390,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
     // Turn to face final angle. This runs regardless of spinOnSpot to guarantee we're facing
     // the desired final angle
-    turnToAngle(finalAngleDeg, final_angle_tolerance_deg, false, p);
+    turnToAngle(finalAngleDeg, final_angle_tolerance_deg, false);
     moveMotors(0.0, 0.0);
 
 

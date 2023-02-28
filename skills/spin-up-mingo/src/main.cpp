@@ -39,11 +39,7 @@ void initialize() {
 	// SKILLS
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
-
 	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
-	pros::Task position_updater(update_position);
-	pros::delay(5000);
 }
 
 /**
@@ -78,7 +74,6 @@ void competition_initialize() {}
 void autonomous() {
 	// ROLLER AUTO
 	rollerAuto();
-
 
 	// SKILLS AUTO
 

@@ -25,6 +25,13 @@ double toMeters(double value, double wheelRadius) {
     return (value / ticks_per_rot) * 2 * M_PI * wheelRadius;
 }
 
+double getX() {
+    positionX_mutex.take();
+    double temp = positionX;
+    positionX_mutex.give();
+    return temp;
+}
+
 void initTracker(double initial_X, double initial_Y) {
     lastTransverseValue = toMeters(transverseEncoder.get_value(), transverseWheelRad);
     lastRadialValue = toMeters(radialEncoder.get_value(), radialWheelRad);
@@ -41,6 +48,7 @@ bool trackerInitialized() {
 
 void update_position() {
     while (true) {
+        // positionX_mutex.take();
         double currentTransverseValue = toMeters(transverseEncoder.get_value(), transverseWheelRad);
         double currentRadialValue = toMeters(radialEncoder.get_value(), radialWheelRad);
         double heading = imu.get_heading();
@@ -66,6 +74,7 @@ void update_position() {
 
         // when pure rotating (x_tracking_offset - last_x_tracking_offset) should = deltaX
 
+
         positionX += deltaX; // - (x_tracking_offset - last_x_tracking_offset);
         positionY += deltaY; // + (y_tracking_offset - last_y_tracking_offset);
 
@@ -80,6 +89,7 @@ void update_position() {
         // pros::lcd::set_text(6, "Radial Raw Val: " + std::to_string(radialEncoder.get_value()));
         // pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));
 
+        // positionX_mutex.give();
         pros::delay(50);
     }
 }

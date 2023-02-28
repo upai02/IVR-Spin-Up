@@ -159,7 +159,7 @@ bool shooterLoop(bool shoot_active) {
 }
 
 void release_endgame_spools() {
-    endgame_release.set_value(4000);
+    endgame_release.set_value(1);
     pros::delay(1000);
     endgame_release.set_value(0);
 }
@@ -177,6 +177,7 @@ void controls() {
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     while(1) {
+        // positionX_mutex.take();
         tank_drive();
 
         pros::lcd::set_text(2, "cata_limit: " + std::to_string(cata_limit.get_value()));
@@ -194,9 +195,11 @@ void controls() {
         }
         shoot_active = shooterLoop(shoot_active);
 
+        /*
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
             turnToPoint();
         }
+        */
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             roller.move_velocity(ROLLER_VELOCITY);
@@ -208,6 +211,7 @@ void controls() {
             release_endgame_spools();
         }
 
-        pros::delay(25);
+        // positionX_mutex.give();
+        pros::delay(50);
     }
 }

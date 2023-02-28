@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "movement.h"
+#include "misc/PositionTracker.h"
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -80,8 +81,10 @@ void followXYPath(FollowXYPath& xyPath) {
 void rollerAuto() {
     // robot center: 35in x, 16in y
 
+    pros::Task position_updater(update_position);
+
     const double SPIN_TICKS_FIRST = -800;
-    const double SPIN_TICKS_SECOND = -900;
+    const double SPIN_TICKS_SECOND = -800;
     const double ROLLER_MOVE_VEL = -30;
     const double WALL_WAIT_MILLISECONDS = 4000;
     // -2900 per spin in correct direction
@@ -117,6 +120,7 @@ void rollerAuto() {
     pros::delay(2000);
     stopMotors();
 
+    position_updater.suspend();
     // done!
     pros::lcd::set_text(3, "Done!");
 }
