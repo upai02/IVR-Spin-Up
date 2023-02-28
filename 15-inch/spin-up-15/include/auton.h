@@ -5,7 +5,6 @@
 extern char auton_sel;
 
 void drivePID(double inches);
-void drivePIDodom(double meters);
 double getAngleError(double target, double currHeading);
 void turnPID(double deg);
 void shootPF(double rpm);

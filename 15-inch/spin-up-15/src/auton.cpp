@@ -49,46 +49,6 @@ void drivePID(double inches) {
     right_side.brake();
 }
 
-// void drivePIDodom(double meters) {
-//     // left_side.tare_position();
-//     // right_side.tare_position();
-//     double 
-//     double left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
-//     double right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
-//     double left_derivative = 0;
-//     double right_derivative = 0;
-//     double left_prev_error = 0;
-//     double right_prev_error = 0;
-//     double left_integral = 0;
-//     double right_integral = 0;
-//     double left_speed = 0;
-//     double right_speed = 0;
-//     double left_kp = 0.25;
-//     double right_kp = 0.25;
-//     double left_ki = 0.0033;
-//     double right_ki = 0.0033;
-//     double left_kd = 0.01;
-//     double right_kd = 0.01;
-//     while (std::abs(left_error) > 25 || std::abs(right_error) > 25) {
-//         left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
-//         right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + right_side.get_positions()[2]) / 3);
-//         left_derivative = left_error - left_prev_error;
-//         right_derivative = right_error - right_prev_error;
-//         left_integral += left_error;
-//         right_integral += right_error;
-//         left_prev_error = left_error;
-//         right_prev_error = right_error;
-//         left_speed = left_error * left_kp + left_integral * left_ki + left_derivative * left_kd;
-//         right_speed = right_error * right_kp + right_integral * right_ki + right_derivative * right_kd;
-//         left_speed = std::abs(left_speed) > 400 ? 400 * (left_speed / std::abs(left_speed)) : left_speed;
-//         right_speed = std::abs(right_speed) > 400 ? 400 * (right_speed / std::abs(right_speed)) : right_speed;
-//         left_side.move_velocity(left_speed);
-//         right_side.move_velocity(right_speed);
-//         pros::delay(20);
-//     }
-//     left_side.brake();
-//     right_side.brake();
-// }
 
 // could change currentHeading with imu.get_heading()
 void turnPID(double deg) {
@@ -159,7 +119,6 @@ void auton_thread() {
             case 'M':
                 intake_mtr.move_voltage(0);
                 rai_mtr.move_voltage(0);
-                toggle_mag_piston();
                 break;
             case 'm':
                 toggle_mag_piston();
@@ -171,6 +130,7 @@ void auton_thread() {
                 rai_mtr.move_voltage(0);
                 break;
         }
+        pros::delay(20);
     }
 }
 
@@ -178,66 +138,43 @@ pros::Task auton_task(auton_thread);
 
 void auton() {
 
-	// initTracker(0, 0);
-	// pros::Task odom(updatePosition);
-    // pros::delay(1000);
-    // imu.reset();
-
-    // HERERERERERERERERERERE
-    // start_flywheel_task = true;
-
     discs_in_mag = 2;
 
     set_flywheel_rpm(510);
     flywheel_task.resume();
-    // intake();
-    auton_sel = 'I';
+    
+    auton_sel = 'I'; // intake();
     auton_task.resume();
     
-	pros::delay(500);
+	// pros::delay(500);
 
     drivePID(30);
-    pros::delay(2000);
-    // spin_roller();
-    auton_sel = 'S';
-    pros::delay(1000);
+    
     auton_sel = 'M';
     // intake_mtr.move_voltage(0);
     // rai_mtr.move_voltage(0);
-    // toggle_mag_piston();
 
     turnPID(121);
-    pros::delay(500);
 
     drivePID(6);
-    pros::delay(500);
 
-    auton_sel = 'R';
-    // release_sequence();
-    pros::delay(800);
+    // auton_sel = 'R';
+    release_sequence();
+    pros::delay(300);
 
     set_flywheel_rpm(505);
     // more pathing
     auton_sel = 'I';
     // intake();
-    // intake_mtr.move_voltage(12000);
-    // rai_mtr.move_voltage(4000);
+
     turnPID(135);
-    pros::delay(600);
     drivePID(4.9);
-    pros::delay(600);
 
     drivePID(-15);
-    pros::delay(600);
     turnPID(45);
-    pros::delay(600);
     drivePID(20);
-    pros::delay(600);
-
 
     turnPID(130);
-    pros::delay(600);
-
 
     drivePID(10.6);
     pros::delay(1000);
@@ -245,12 +182,10 @@ void auton() {
     auton_sel = 'M';
     // intake_mtr.move_voltage(0);
     // rai_mtr.move_voltage(0);
-    // toggle_mag_piston();
-    pros::delay(800);
 
-    auton_sel = 'R';
-    // release_sequence();
-    pros::delay(600);
+    // auton_sel = 'R';
+    release_sequence();
+    pros::delay(300);
 
 
     flywheel_task.suspend();

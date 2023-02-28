@@ -11,7 +11,6 @@ extern pros::Task flywheel_task;
 extern bool flywheel_running;
 extern bool soft_spinning;
 
-// extern bool start_flywheel_task;
 
 void release_sequence();
 
