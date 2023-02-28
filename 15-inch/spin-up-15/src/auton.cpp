@@ -6,6 +6,8 @@
 #include "movement.h"
 #include "roller.h"
 
+char auton_sel = 'E';
+
 void drivePID(double inches) {
     left_side.tare_position();
     right_side.tare_position();
@@ -89,22 +91,22 @@ void drivePID(double inches) {
 // }
 
 // could change currentHeading with imu.get_heading()
-void turnPID(double degrees) {
+void turnPID(double deg) {
     // imu.reset();
     // std::cout << "turn PID current Heading: " << currentHeading << std::endl;
-    double target = degrees;
+    double target = deg;
     // double error = target - currentHeading;
-    double error = getAngleError(target, currentHeading);
+    double error = getAngleError(target, imu.get_heading());
     double derivative = 0;
     double integral = 0;
     double prev_error = 0;
     double speed = 0;
-    const double kp = 0.7; // 1.2
-    const double ki = 0.0069;
-    const double kd = 0.04;
-    while (std::abs(error) > 5) {
+    const double kp = 1; // 1.2, 0.7
+    const double ki = 0; // 0.0069
+    const double kd = 0; // 0.04
+    while (std::abs(error) > 10) {
         // error = target - currentHeading;
-        error = getAngleError(target, currentHeading);
+        error = getAngleError(target, imu.get_heading());
 
         pros::lcd::print(6, "turn PID error: %f", error);
 
@@ -113,7 +115,7 @@ void turnPID(double degrees) {
         integral += error;
         speed = error * kp + integral * ki + derivative * kd;
         prev_error = error;
-        // speed = std::abs(speed) > 100 ? 100 * (speed / std::abs(speed)) : speed;
+        speed = std::abs(speed) > 400 ? 400 * (speed / std::abs(speed)) : speed;
         left_side.move(speed);
         right_side.move(-speed);
         pros::delay(20);
@@ -145,6 +147,35 @@ void shootPF(double rpm) {
     }
 }
 
+void auton_thread() {
+    while(1) {
+        switch (auton_sel) {
+            case 'I':
+                intake();
+                break;
+            case 'S':
+                spin_roller();
+                break;
+            case 'M':
+                intake_mtr.move_voltage(0);
+                rai_mtr.move_voltage(0);
+                toggle_mag_piston();
+                break;
+            case 'm':
+                toggle_mag_piston();
+            case 'R':
+                release_sequence();
+                break;
+            default:
+                intake_mtr.move_voltage(0);
+                rai_mtr.move_voltage(0);
+                break;
+        }
+    }
+}
+
+pros::Task auton_task(auton_thread);
+
 void auton() {
 
 	// initTracker(0, 0);
@@ -159,17 +190,21 @@ void auton() {
 
     set_flywheel_rpm(510);
     flywheel_task.resume();
-    intake();
+    // intake();
+    auton_sel = 'I';
+    auton_task.resume();
     
 	pros::delay(500);
 
     drivePID(30);
     pros::delay(2000);
-    spin_roller();
+    // spin_roller();
+    auton_sel = 'S';
     pros::delay(1000);
-    intake_mtr.move_voltage(0);
-    rai_mtr.move_voltage(0);
-    toggle_mag_piston();
+    auton_sel = 'M';
+    // intake_mtr.move_voltage(0);
+    // rai_mtr.move_voltage(0);
+    // toggle_mag_piston();
 
     turnPID(121);
     pros::delay(500);
@@ -177,14 +212,16 @@ void auton() {
     drivePID(6);
     pros::delay(500);
 
-    release_sequence();
+    auton_sel = 'R';
+    // release_sequence();
     pros::delay(800);
 
     set_flywheel_rpm(505);
     // more pathing
-    intake();
-    intake_mtr.move_voltage(12000);
-    rai_mtr.move_voltage(4000);
+    auton_sel = 'I';
+    // intake();
+    // intake_mtr.move_voltage(12000);
+    // rai_mtr.move_voltage(4000);
     turnPID(135);
     pros::delay(600);
     drivePID(4.9);
@@ -205,17 +242,22 @@ void auton() {
     drivePID(10.6);
     pros::delay(1000);
 
-    intake_mtr.move_voltage(0);
-    rai_mtr.move_voltage(0);
-
-    toggle_mag_piston();
+    auton_sel = 'M';
+    // intake_mtr.move_voltage(0);
+    // rai_mtr.move_voltage(0);
+    // toggle_mag_piston();
     pros::delay(800);
 
-    release_sequence();
+    auton_sel = 'R';
+    // release_sequence();
     pros::delay(600);
 
 
     flywheel_task.suspend();
+    auton_task.suspend();
+    auton_sel = 'E';
+    intake_mtr.move_voltage(0);
+    rai_mtr.move_voltage(0);
     flywheel_mtr.move_voltage(0);
 
 

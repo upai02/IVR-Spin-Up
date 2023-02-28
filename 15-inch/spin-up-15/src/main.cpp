@@ -15,9 +15,11 @@ void initialize() {
 	pros::lcd::initialize();
 	horizontal_track.reset();
 	vertical_track.reset();
+	char auton_sel = 'E'; 
 	// flywheel_task.suspend();
 	pros::delay(1500);
 	flywheel_task.suspend();
+	auton_task.suspend();
 	// imu.reset(true);
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -34,8 +36,8 @@ void initialize() {
 	// flywheel_task.suspend();
 
 	imu.reset();
-	initTracker(0, 0);
-	pros::Task odom(updatePosition);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
 
 	pros::delay(2000);
 
