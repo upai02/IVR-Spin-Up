@@ -136,10 +136,13 @@ double calculate_distance_two_points(std::vector<double> point_one, std::vector<
 std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path) { // std::vector<std::vector<double>> path
     pros::lcd::set_text(3, "HI");
     pros::delay(1000);
-    std::vector<double> distances(path.size() - 1);
+    std::vector<double> distances(path.size()); //path.size() - 1
 
     double sum_of_dists = 0.0;
     int times_ran = 0;
+
+    // worried about segmentation fault in final loop run so I'm adding this here
+    distances[distances.size() - 1] = 0.0;
 
     // loop through path in reverse order and append to distances in reverse order. Each loop add new dist to sum_of_dists then put that in distances
     // this will run thorugh the domain [initial i - 1, 0] (inclusive)
@@ -209,9 +212,6 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     bool spinOnSpot = (std::abs(lastAngleDiff) > 90) || (sqrt(pow(lastSegDX, 2) + pow(lastSegDY, 2)) < ALIGN_HELPER_DIST_AWAY) || spinAtEnd;
     std::vector<double> ORIGINAL_PATH_FINAL = path[path.size() - 1];
 
-    std::vector<double> distances_to_end = calculate_remaining_dist(path); //path
-    pros::lcd::set_text(2, "Done calculating distance vector");
-
     if (!spinOnSpot) {
         if (printMessages) pros::lcd::set_text(1, "No SpinOnSpot");
         // Calculate and add new 2nd to last point that will let the robot drive towards the original final point
@@ -254,6 +254,9 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         std::vector<double> pathNewLast = {ORIGINAL_PATH_FINAL[0] + dx, ORIGINAL_PATH_FINAL[1] + dy};
         path.push_back(pathNewLast);
     }
+
+    std::vector<double> distances_to_end = calculate_remaining_dist(path); //path
+    pros::lcd::set_text(2, "Done calculating distance vector");
 
     while (currentIndex < path.size() - 1) {
         // update_position();
