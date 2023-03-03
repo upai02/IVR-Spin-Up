@@ -229,7 +229,7 @@ void controls() {
 }
 
 /*
-Harith desired controls:
+Harith's desired controls:
 
  - intake in: R1
  - intake out: R2
