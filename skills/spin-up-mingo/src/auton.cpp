@@ -205,9 +205,18 @@ void boltSkillsAuto() {
 }
 
 void StraightPathTest() {
+    left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
     pros::Task position_updater(update_position);
-	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.75}, {0, 1.5}, {0, 2.25}};
-	followPath(straight_path, 0, false, false, 0.5, 3.0, 75, 100);
+	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.1}, {0, 0.735}, {0, 0.79}, {0, 0.85}, {0, 2.25}};
+    std::vector<std::vector<double>> diag_path = {{0, 0}, {0.5, 0.5}, {0.5, 1}, {0, 1.5}, {0, 2}};
+	// followPath(diag_path, 0, false, false, 0.2, 3.0, 37.5, 50);
+    followPath(diag_path, 0, false, false, 0.5, 3.0, 350, 450);
     position_updater.suspend();
     SmartStop();
 }

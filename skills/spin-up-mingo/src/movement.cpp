@@ -124,9 +124,9 @@ double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p 
     }
 }
 
-double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double p = 1.0) {
-    double MIN_RPM = 20.0;
-    return std::min(std::max(max_translational_rpm * dist_to_goal_meters * p, MIN_RPM), max_translational_rpm);
+double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double rpm_per_meter = 540.0) {
+    double MIN_RPM = 40.0;
+    return std::min(std::max(dist_to_goal_meters * rpm_per_meter, MIN_RPM), max_translational_rpm);
 }
 
 double calculate_distance_two_points(std::vector<double> point_one, std::vector<double> point_two) {
