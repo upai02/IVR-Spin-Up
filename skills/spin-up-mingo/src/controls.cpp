@@ -47,11 +47,13 @@ void tank_drive() {
   right_side.move_voltage(voltage_deadzone(right * VOLTAGE_SCALE));
 }
 // Regular arcade drive with square scaling
-void arcade_drive() {
+void arcade_drive(bool shooterForward) {
   double forward = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), INPUT_SCALE_POWER);
   double turn = power_inputs(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)), INPUT_SCALE_POWER);
-  left_side.move_voltage(voltage_deadzone((forward + turn) * VOLTAGE_SCALE));
-  right_side.move_voltage(voltage_deadzone((forward - turn) * VOLTAGE_SCALE));
+  double leftInput = (shooterForward) ? voltage_deadzone((forward + turn) * VOLTAGE_SCALE) : -voltage_deadzone((forward - turn) * VOLTAGE_SCALE);
+  double rightInput = (shooterForward) ? voltage_deadzone((forward - turn) * VOLTAGE_SCALE) : -voltage_deadzone((forward + turn) * VOLTAGE_SCALE);
+  left_side.move_voltage(leftInput);
+  right_side.move_voltage(rightInput);
 }
 // Hybrid arcade drive with square scaling
 void hybrid_drive() {
@@ -188,19 +190,19 @@ void controls() {
 
     while(1) {
         // positionX_mutex.take();
-        tank_drive();
+        arcade_drive(false);
 
         pros::lcd::set_text(2, "cata_limit: " + std::to_string(cata_limit.get_value()));
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move_voltage(12000);
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             intake.move_voltage(-12000);
         } else {
             intake.brake();
         }
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
             shoot_active = true;
         }
         shoot_active = shooterLoop(shoot_active);
@@ -211,13 +213,13 @@ void controls() {
         }
         */
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
             roller.move_velocity(ROLLER_VELOCITY);
         } else {
             roller.brake();
         }
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
             release_endgame_spools();
         }
 
@@ -225,3 +227,14 @@ void controls() {
         pros::delay(50);
     }
 }
+
+/*
+Harith desired controls:
+
+ - intake in: R1
+ - intake out: R2
+ - shoot: L1
+ - endgame (two buttons required): as is if we can get a scuff, down and left arrows if we can't get a scuff
+ - roller: L2
+
+*/
