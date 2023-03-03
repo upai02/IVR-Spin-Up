@@ -128,13 +128,15 @@ void rollerAuto() {
 }
 
 void boltSkillsAuto() {
-    left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	// right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    // right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
+    pros::Task position_updater(update_position);
+    pros::Task shooter_reseter(ResetShooterLoop);
 
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
@@ -152,12 +154,15 @@ void boltSkillsAuto() {
 		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
 	};
 	// followPath(appPath, 0.5, 150.0, 200, 270, false, true);
+	std::vector<std::vector<double>> app_path_condensed = {
+		{0, 0}, {-1, 0.75}, {0, 1.5}, {1, 2.25}, {0, 3}, {-1, 2.25}, {0, 1.5}, {1, 0.75}, {0, 0}
+	};
+	// followPath(app_path_condensed, 270, false);
 
 	std::vector<std::vector<double>> reverseTestPath {
 		{0, 0}, {1, 0}, {2, 1}, {2, 0}, {1, 0}, {0, 0}
 	};
 	// followPath(reverseTestPath, 89.0, true);
-
 
 	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.6, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
 	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.55, 2.42}, {1.55, 2.17}}; // reversed, end facing 315
@@ -171,8 +176,6 @@ void boltSkillsAuto() {
 	std::vector<std::vector<double>> skillsPathSeg9 = {{skillsPathSeg8.back()}, {1.9, 2.9}}; // shoot 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
 	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
-
-
 
 	// intake on
 	intake.move_velocity(12000);
@@ -206,8 +209,12 @@ void boltSkillsAuto() {
     // shoot
 	*/
 	// SmartStop();
+
 	intake.move_voltage(0);
 	stopMotors();
+
+    position_updater.suspend();
+    shooter_reseter.suspend();
 }
 
 void boltEndgameAuto() {
@@ -221,6 +228,7 @@ void boltEndgameAuto() {
     std::vector<std::vector<double>> line_seg_two = {line_seg_one.back(), {endingPoint}};
 
     pros::Task position_updater(update_position);
+    pros::Task shooter_reseter(ResetShooterLoop);
 
     const double SPIN_TICKS_FIRST = -1300;
     const double SPIN_TICKS_SECOND = -800;
@@ -248,4 +256,27 @@ void boltEndgameAuto() {
     pros::delay(40000);
 
     release_endgame_spools();
+	// shoot
+	// SmartStop();
+	stopMotors();
+
+    position_updater.suspend();
+    shooter_reseter.suspend();
+}
+
+void StraightPathTest() {
+    left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+    pros::Task position_updater(update_position);
+	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.1}, {0, 0.735}, {0, 0.79}, {0, 0.85}, {0, 2.25}};
+    std::vector<std::vector<double>> diag_path = {{0, 0}, {0.5, 0.5}, {0.5, 1}, {0, 1.5}, {0, 2}};
+	// followPath(diag_path, 0, false, false, 0.2, 3.0, 37.5, 50);
+    followPath(diag_path, 0, false, false, 0.5, 3.0, 350, 450);
+    position_updater.suspend();
+    SmartStop();
 }

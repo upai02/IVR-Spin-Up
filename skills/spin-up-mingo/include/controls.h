@@ -15,3 +15,5 @@ void move_with_assigned_speed (double xVel, double yVel, double turnVel);
 void wannabeSwerve();
 void shootAndWait();
 void release_endgame_spools();
+void ResetShooterLoop();
+void ShootDisksBlocking();

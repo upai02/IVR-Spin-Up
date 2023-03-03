@@ -10,3 +10,4 @@ void followXYPath(FollowXYPath& xyPath);
 void rollerAuto();
 void boltSkillsAuto();
 void boltEndgameAuto();
+void StraightPathTest();
