@@ -133,10 +133,8 @@ double calculate_distance_two_points(std::vector<double> point_one, std::vector<
     return std::sqrt(std::pow(point_one.at(1) - point_two.at(1), 2) + std::pow(point_one.at(0) - point_two.at(0), 2));
 }
 
-std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path, bool ignore_last_point = true) { // std::vector<std::vector<double>> path
-    pros::lcd::set_text(3, "HI");
-    pros::delay(1000);
-    std::vector<double> distances(path.size()); //path.size() - 1
+std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& path, bool ignore_last_point = true) {
+    std::vector<double> distances(path.size());
 
     double sum_of_dists = 0.0;
     int times_ran = 0;
@@ -148,24 +146,13 @@ std::vector<double> calculate_remaining_dist(std::vector<std::vector<double>>& p
     // this will run thorugh the domain [initial i - 1, 0] (inclusive)
     for (size_t i = path.size() - ((ignore_last_point) ? 2 : 1); i-- > 0; ) {
         times_ran++;
-        pros::lcd::set_text(3, "i: " + std::to_string(i) + "  sum: " + std::to_string(sum_of_dists));
+        // pros::lcd::set_text(3, "i: " + std::to_string(i) + "  sum: " + std::to_string(sum_of_dists));
         sum_of_dists += calculate_distance_two_points(path.at(i), path.at(i + 1));
-        // distances.insert(distances.begin(), sum_of_dists);
         distances[i] = sum_of_dists;
-        pros::lcd::set_text(4, "distances[i]: " + std::to_string(distances.at(i)) + " TR: " + std::to_string(times_ran));
-        pros::delay(500);
+        // pros::lcd::set_text(4, "distances[i]: " + std::to_string(distances.at(i)) + " TR: " + std::to_string(times_ran));
     }
 
     return distances;
-
-    /*
-    std::vector<double> distances(path.size() + 2);
-    for (size_t i = 0; i < distances.size(); i++) {
-        distances[i] = 1.0;
-    }
-
-    return distances;
-    */
 }
 
 void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
@@ -192,7 +179,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
-    double p = 1.5;
+    double rot_p = 2.0;
     double SMALL_NUM = 0.000001;
     // A bonus would be able to calculate ALIGNMENT_HELPER_MULTIPLIER based on robot velocity
     double ALIGNMENT_HELPER_MULTIPLIER = 1.5;
@@ -256,7 +243,6 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
     }
 
     std::vector<double> distances_to_end = calculate_remaining_dist(path); //path
-    pros::lcd::set_text(2, "Done calculating distance vector");
     double last_calculated_distance = calculate_distance_two_points({positionX, positionY}, path[1]);
     // last_current_index will reflect actual position of robot instead of position of lookAheadPoint
     double last_current_index = 0;
@@ -383,7 +369,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         pros::lcd::set_text(1, "remaining dist: " + std::to_string(remaining_dist));
         pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
         double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM);
-        pros::lcd::set_text(4, "trans RPM: " + std::to_string(translationalRPM));
+        pros::lcd::set_text(3, "trans RPM: " + std::to_string(translationalRPM));
 
         if (desiredAngle < 0) desiredAngle += 360;
 

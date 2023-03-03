@@ -96,7 +96,6 @@ void rollerAuto() {
 
     std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
-    pros::lcd::set_text(4, "2");
     const double ROLLER_START_POSITION = roller.get_position();
 
     while (std::abs(SPIN_TICKS_FIRST) > std::abs(roller.get_position() - ROLLER_START_POSITION)) {
@@ -106,9 +105,9 @@ void rollerAuto() {
     moveMotors(0, 0);
     roller.move_velocity(0);
 
-    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.4, 0.3}, {3.2, 2.53}};
+    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.0, 0.6}, {3.2, 1.2}, {3.0, 1.6}, {3.1, 2.6}};
     
-    followPath(path_to_other_roller, 270, false, true);
+    followPath(path_to_other_roller, 270, false, true, 0.5, 3.0); //200, 275
     moveMotors(-30, -30);
     pros::delay(WALL_WAIT_MILLISECONDS);
 
@@ -135,14 +134,15 @@ void boltSkillsAuto() {
     // right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     // right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
+    imu.set_heading(270);
+
+    pros::delay(100);
+
     pros::Task position_updater(update_position);
     pros::Task shooter_reseter(ResetShooterLoop);
 
-	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
+	std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
-
-	imu.set_heading(270);
-
 	// initTracker(0.0, 0.0);
 	// pros::delay(1000);	
 	// SmartStop();
@@ -164,8 +164,8 @@ void boltSkillsAuto() {
 	};
 	// followPath(reverseTestPath, 89.0, true);
 
-	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.6, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
-	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.55, 2.42}, {1.55, 2.17}}; // reversed, end facing 315
+	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.45, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
+	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.4, 2.42}, {1.4, 2.17}}; // reversed, end facing 315
 	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.45, 2.11}}; // end facing goal (spin on spot)
 	std::vector<std::vector<double>> skillsPathSeg5 = {{skillsPathSeg4.back()}, {1.46, 2.26}}; // pick up 3 and drive back to center shooting spot again
 	// std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {1.9, 2.7}}; // go get first set of 3
@@ -218,17 +218,16 @@ void boltSkillsAuto() {
 }
 
 void boltEndgameAuto() {
-    std::vector<double> startingPoint = {0.89, 0.4};
-
-    std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
+    std::vector<double> start_position = {0.89, 0.4}; // 7 inches (0.18 meters) off wall
     // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+
+    std::vector<double> post_roller_pos = {0.9, 0.21}; // where the robot will be after doing the roller
     std::vector<double> endingPoint = {0.6, 0.6};
 
-    std::vector<std::vector<double>> line_seg_one = {starting_position, {0.9, 0.6}};
+    std::vector<std::vector<double>> line_seg_one = {post_roller_pos, {0.9, 0.6}};
     std::vector<std::vector<double>> line_seg_two = {line_seg_one.back(), {endingPoint}};
 
     pros::Task position_updater(update_position);
-    pros::Task shooter_reseter(ResetShooterLoop);
 
     const double SPIN_TICKS_FIRST = -1300;
     const double SPIN_TICKS_SECOND = -800;
@@ -236,7 +235,6 @@ void boltEndgameAuto() {
     const double WALL_WAIT_MILLISECONDS = 4000;
     // -2900 per spin in correct direction
     // drive up to roller:
-    // catapult.brake();
     moveMotors(-60, -60);
     pros::delay(WALL_WAIT_MILLISECONDS / 2);
 
@@ -254,14 +252,9 @@ void boltEndgameAuto() {
     followPath(line_seg_two, 45, true, true);
 
     pros::delay(40000);
-
     release_endgame_spools();
-	// shoot
-	// SmartStop();
-	stopMotors();
 
     position_updater.suspend();
-    shooter_reseter.suspend();
 }
 
 void StraightPathTest() {

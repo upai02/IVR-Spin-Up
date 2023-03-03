@@ -28,23 +28,24 @@ void initialize() {
 	radialEncoder.reset();
 
 	// ROLLER AUTO
-	std::vector<double> starting_position = {0.89, 0.4}; // 35in, 16in
-	// Edges to walls: 7.5in Y, 29in X
+	// std::vector<double> starting_position = {0.9, 0.41}; // 35in, 16in
+	// // Edges to walls: 7.5in Y, 29in X
 	// initTracker(starting_position[0], starting_position[1]);
 
 
 	// // SKILLS
-	// std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
+	std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
 	// // starting x is with front of robot on opponent low goal plane, y is against wall.
-	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+
+	// ENDGAME SKILLS AUTO
+    // std::vector<double> start_position = {0.89, 0.4}; // 7 inches (0.18 meters) off wall
+    // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+	// initTracker(start_position[0], start_position[1]);
 
 
 	// STRAIGHT PATH TEST
 	// initTracker();
-
-	// BOTH
-	pros::Task position_updater(update_position);
-	pros::delay(5000);
 }
 
 /**
@@ -82,10 +83,10 @@ void autonomous() {
 
 	// SKILLS AUTO
 	// boltEndgameAuto();
-	// boltSkillsAuto();
+	boltSkillsAuto();
 
 	// STRAIGHT PATH TEST
-	StraightPathTest();
+	// StraightPathTest();
 }
 
 /**

@@ -172,7 +172,7 @@ bool shooterLoop(bool shoot_active) {
 
 void ResetShooterLoop() {
     if (cata_limit.get_value() == 0) {
-        catapult.move_velocity(CATAPULT_VELOCITY);
+        catapult.move_velocity(CATAPULT_VELOCITY - 25);
     } else {
         catapult.brake();
     }
