@@ -2,6 +2,7 @@
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "misc/PositionTracker.h"
 #include "movement.h"
@@ -12,8 +13,8 @@ using namespace pros;
 
 int mode = 2;
 double p = 1.0;
-const double ROLLER_VELOCITY = 40;
-const double CATAPULT_VELOCITY = 75;
+const double ROLLER_VELOCITY = -70;
+const double CATAPULT_VELOCITY = 65;
 const double VOLTAGE_SCALE = 11000;
 const double INPUT_SCALE_POWER = 1.5;
 const double VOLTAGE_DEADZONE = 400;
@@ -28,7 +29,7 @@ double sin_scale(double input) {
 }
 
 double power_inputs(double input, double power) {
-  return copysign(pow(input, power), input);
+  return copysign(pow(std::abs(input), power), input);
 }
 
 double voltage_deadzone(double input) {
@@ -152,7 +153,7 @@ void shootAndWait() {
 
 bool shooterLoop(bool shoot_active) {
     if (shoot_active) {
-        if (cata_limit.get_value() == 0) {
+        if (cata_limit.get_value() != 1) {
             shoot_active = false;
         } else {
             catapult.move_velocity(CATAPULT_VELOCITY);
@@ -175,9 +176,6 @@ void release_endgame_spools() {
 
 void controls() {
     bool shoot_active = false;
-    if (!trackerInitialized()) {
-        initTracker();
-    }
 
     left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -189,10 +187,10 @@ void controls() {
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     while(1) {
-        arcade_drive();
-        
-        pros::lcd::set_text(2, "cata motor: " + std::to_string(catapult.get_position()));
-        pros::lcd::set_text(3, "cata limit: " + std::to_string(cata_limit.get_value()));
+        // positionX_mutex.take();
+        tank_drive();
+
+        pros::lcd::set_text(2, "cata_limit: " + std::to_string(cata_limit.get_value()));
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             intake.move_voltage(12000);
@@ -207,18 +205,23 @@ void controls() {
         }
         shoot_active = shooterLoop(shoot_active);
 
+        /*
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
             turnToPoint();
         }
+        */
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-            roller.move_velocity(-ROLLER_VELOCITY);
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             roller.move_velocity(ROLLER_VELOCITY);
         } else {
-            roller.move_velocity(0);
+            roller.brake();
         }
 
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+            release_endgame_spools();
+        }
+
+        // positionX_mutex.give();
         pros::delay(50);
     }
 }
