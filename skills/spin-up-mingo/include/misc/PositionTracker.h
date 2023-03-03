@@ -11,7 +11,6 @@ bool trackerInitialized();
 void initTracker(double initial_X = 0.0, double initial_Y = 0.0);
 void update_position();
 
-double getX();
-double getY();
+double getPosMutex();
 
 // extern pros::Task position_updater;

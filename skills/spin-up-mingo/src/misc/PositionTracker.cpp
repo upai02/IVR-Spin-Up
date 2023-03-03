@@ -25,12 +25,13 @@ double toMeters(double value, double wheelRadius) {
     return (value / ticks_per_rot) * 2 * M_PI * wheelRadius;
 }
 
-double getX() {
-    positionX_mutex.take();
-    double temp = positionX;
-    positionX_mutex.give();
-    return temp;
-}
+// model code on how we could use a mutex if we have issues with either of the positon variables.
+// double getPosMutex() {
+//     positionX_mutex.take();
+//     double temp = positionX;
+//     positionX_mutex.give();
+//     return temp;
+// }
 
 void initTracker(double initial_X, double initial_Y) {
     lastTransverseValue = toMeters(transverseEncoder.get_value(), transverseWheelRad);
