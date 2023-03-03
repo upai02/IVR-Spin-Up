@@ -354,6 +354,10 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
         double desiredAngle = atan2(driveTowards[0] - positionX, driveTowards[1] - positionY) * 180 / M_PI;
 
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // IMPORTANT NOTE: If there is a path segment less than 0.05 meters in length this code segment will not work,
+        //                 try to avoid defining a path of that distance or less.
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         double remaining_dist = 0.0;
         double distance_to_index = calculate_distance_two_points({positionX, positionY}, path[currentIndex]);
         // check if behind mode needs to be left
