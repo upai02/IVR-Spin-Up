@@ -28,15 +28,15 @@ void initialize() {
 	radialEncoder.reset();
 
 	// ROLLER AUTO
-	// std::vector<double> starting_position = {0.9, 0.41}; // 35in, 16in
+	std::vector<double> starting_position = {0.9, 0.41}; // 35in, 16in
 	// // Edges to walls: 7.5in Y, 29in X
-	// initTracker(starting_position[0], starting_position[1]);
+	initTracker(starting_position[0], starting_position[1]);
 
 
 	// // SKILLS
-	std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
+	// std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
 	// // starting x is with front of robot on opponent low goal plane, y is against wall.
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
 
 	// ENDGAME SKILLS AUTO
     // std::vector<double> start_position = {0.89, 0.4}; // 7 inches (0.18 meters) off wall
@@ -79,11 +79,11 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// ROLLER AUTO
-	// rollerAuto();
+	rollerAuto();
 
 	// SKILLS AUTO
 	// boltEndgameAuto();
-	boltSkillsAuto();
+	// boltSkillsAuto();
 
 	// STRAIGHT PATH TEST
 	// StraightPathTest();
