@@ -105,7 +105,7 @@ void rollerAuto() {
     moveMotors(0, 0);
     roller.move_velocity(0);
 
-    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.0, 0.6}, {3.2, 1.2}, {3.0, 1.6}, {3.1, 2.7}};
+    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.0, 0.6}, {3.2, 1.2}, {3.0, 1.6}, {3.1, 2.67}};
     
     followPath(path_to_other_roller, 270, false, true, false, 0.5, 3.0); //200, 275
     moveMotors(-30, -30);
