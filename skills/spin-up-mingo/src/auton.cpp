@@ -107,7 +107,7 @@ void rollerAuto() {
 
     std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.0, 0.6}, {3.2, 1.2}, {3.0, 1.6}, {3.1, 2.6}};
     
-    followPath(path_to_other_roller, 270, false, true, 0.5, 3.0); //200, 275
+    followPath(path_to_other_roller, 270, false, true, false, 0.5, 3.0); //200, 275
     moveMotors(-30, -30);
     pros::delay(WALL_WAIT_MILLISECONDS);
 
@@ -124,6 +124,18 @@ void rollerAuto() {
     position_updater.suspend();
     // done!
     pros::lcd::set_text(3, "Done!");
+}
+
+void getOneFromStack() {
+    // assumes first disk has been gotten
+    intake.move_voltage(0);
+    moveMotors(100, 100);
+    pros::delay(800);
+    intake.move_voltage(12000);
+    moveMotors(-100, -100);
+    pros::delay(1000);
+    stopMotors();
+    pros::delay(200);
 }
 
 void boltSkillsAuto() {
@@ -164,40 +176,51 @@ void boltSkillsAuto() {
 	};
 	// followPath(reverseTestPath, 89.0, true);
 
-	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.45, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
-	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.4, 2.42}, {1.4, 2.17}}; // reversed, end facing 315
-	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.45, 2.11}}; // end facing goal (spin on spot)
-	std::vector<std::vector<double>> skillsPathSeg5 = {{skillsPathSeg4.back()}, {1.46, 2.26}}; // pick up 3 and drive back to center shooting spot again
+	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.45, 3.25}}; // forward, end facing 270. Turn to 0 after shooting.
+	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.4, 2.4}}; // reversed, end facing 315
+	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.2, 1.7}, {0.6, 1.2}, {0.35, 2.1}}; // end facing goal (spin on spot)
+	std::vector<std::vector<double>> skillsPathSeg5 = {{skillsPathSeg4.back()}, {1.1, 2.35}, {1.46, 2.35}}; // pick up 3 and drive back to center shooting spot again
 	// std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {1.9, 2.7}}; // go get first set of 3
-	std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {2.1, 2.7}}; // go get first set of 3
-    std::vector<std::vector<double>> skillsPathSeg7 = {{skillsPathSeg6.back()}, {1.55, 3.15}}; // go to shoot first set of 3
+	std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {2.1, 2.85}}; // go get first set of 3
+    std::vector<std::vector<double>> skillsPathSeg7 = {{skillsPathSeg6.back()}, {1.45, 3.15}}; // go to shoot first set of 3
 	// std::vector<std::vector<double>> skillsPathSeg7 = {{skillsPathSeg6.back()}, {1.83, 3.05}}; // go closer and shoot first set of 3
 	std::vector<std::vector<double>> skillsPathSeg8 = {{skillsPathSeg7.back()}, {2.54, 2.7}}; // go get 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg9 = {{skillsPathSeg8.back()}, {1.9, 2.9}}; // shoot 2nd set of 3
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
 	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
 
+    while (cata_limit.get_value() == 0) {
+        catapult.move_velocity(65);
+        pros::delay(20);
+    }
+    catapult.brake();
+
 	// intake on
-	intake.move_velocity(12000);
+	intake.move_voltage(12000);
 	followPath(skillsPathSeg1, 270, true);
-	followPath(skillsPathSeg2, calcGoalAngle(skillsPathSeg2.back()), false);
+	followPath(skillsPathSeg2, calcGoalAngle(skillsPathSeg2.back()), false, false, true);
+    // intake.move_velocity(12000);
 	// shoot
-	// shootAndWait();
-	turnToAngle(0.0, 2.0);
-	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true);
-	// shootAndWait();
+	shootAndWait();
+	turnToAngle(350.0, 2.0);
+	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true, false, true, 0.5, 3.0, 100, 200);
+    // shoot
+    shootAndWait();
+    // intake.move_voltage(12000);
+	followPath(skillsPathSeg4, calcGoalAngle(skillsPathSeg4.back()), true, false, true, 0.3, 3.0, 150, 200);
 	// shoot
-	followPath(skillsPathSeg4, calcGoalAngle(skillsPathSeg4.back()), true);
-    // shootAndWait();
-	// shoot
-	turnToAngle(270.0, 2.0);
-	followPath(skillsPathSeg5, calcGoalAngle(skillsPathSeg5.back()), true);
-    // shootAndWait();
-	// shoot
-	followPath(skillsPathSeg6, 60, true);
-	followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false);
-    turnToPoint();
-    // shootAndWait();
+    shootAndWait();
+    // intake.move_voltage(12000);
+	turnToAngle(265.0, 2.0);
+	followPath(skillsPathSeg5, calcGoalAngle(skillsPathSeg5.back()), true, false, true, 0.3, 3.0, 150, 200);
+	// shoot    
+    shootAndWait();
+	followPath(skillsPathSeg6, 230, true, false, false, 0.3, 20);
+
+    getOneFromStack();
+
+	followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false, false, true);
+    shootAndWait();
     // shoot
 
     /*
@@ -209,6 +232,11 @@ void boltSkillsAuto() {
     // shoot
 	*/
 	// SmartStop();
+
+    std::vector<std::vector<double>> drive_to_endgame = {skillsPathSeg7.back(), {3.0, 3.2}};
+    followPath(drive_to_endgame, 225, true, true, false, 0.5, 5.0);
+    intake.move_voltage(0);
+    release_endgame_spools();
 
 	intake.move_voltage(0);
 	stopMotors();
@@ -269,7 +297,7 @@ void StraightPathTest() {
 	std::vector<std::vector<double>> straight_path = {{0, 0}, {0, 0.1}, {0, 0.735}, {0, 0.79}, {0, 0.85}, {0, 2.25}};
     std::vector<std::vector<double>> diag_path = {{0, 0}, {0.5, 0.5}, {0.5, 1}, {0, 1.5}, {0, 2}};
 	// followPath(diag_path, 0, false, false, 0.2, 3.0, 37.5, 50);
-    followPath(diag_path, 0, false, false, 0.5, 3.0, 350, 450);
+    followPath(diag_path, 0, false, false, false, 0.5, 3.0, 350, 450);
     position_updater.suspend();
     SmartStop();
 }

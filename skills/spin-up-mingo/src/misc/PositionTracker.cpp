@@ -82,6 +82,7 @@ void update_position() {
         // last_x_tracking_offset = x_tracking_offset;
         // last_y_tracking_offset = y_tracking_offset;
 
+        pros::lcd::set_text(4, "intake current: " + std::to_string(intake.get_current_draw()));
         pros::lcd::set_text(5, "Position X: " + std::to_string(positionX));
         pros::lcd::set_text(6, "Position Y: " + std::to_string(positionY));
         pros::lcd::set_text(7, "Heading: " + std::to_string(heading));

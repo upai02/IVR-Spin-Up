@@ -144,6 +144,7 @@ void wannabeSwerve() {
 }
 
 void shootAndWait() {
+    intake.move_voltage(0);
     while (cata_limit.get_value() == 1) {
         catapult.move_velocity(CATAPULT_VELOCITY);
     }
@@ -151,6 +152,7 @@ void shootAndWait() {
         catapult.move_velocity(CATAPULT_VELOCITY);
     } 
     catapult.brake();
+    intake.move_voltage(12000);
 }
 
 bool shooterLoop(bool shoot_active) {

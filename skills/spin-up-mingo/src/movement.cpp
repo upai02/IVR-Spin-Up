@@ -124,7 +124,7 @@ double getRotationalRPM(double desiredAngleDeg, bool reversed = false, double p 
     }
 }
 
-double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double rpm_per_meter = 540.0) {
+double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double rpm_per_meter = 580.0) { // 540
     double MIN_RPM = 40.0;
     return std::min(std::max(dist_to_goal_meters * rpm_per_meter, MIN_RPM), max_translational_rpm);
 }
@@ -175,7 +175,7 @@ double calcGoalAngle(std::vector<double> vect) {
     return desiredAngle;
 }
 
-void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, bool printMessages) {    
+void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, bool goal_at_end, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, bool printMessages) {    
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
@@ -407,7 +407,11 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
     // Turn to face final angle. This runs regardless of spinOnSpot to guarantee we're facing
     // the desired final angle
-    turnToAngle(finalAngleDeg, final_angle_tolerance_deg, false);
+    if (goal_at_end) {
+        turnToPoint();
+    } else {
+        turnToAngle(finalAngleDeg, final_angle_tolerance_deg, false);   
+    }
     moveMotors(0.0, 0.0);
 
 
