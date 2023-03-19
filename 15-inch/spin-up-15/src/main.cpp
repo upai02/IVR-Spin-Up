@@ -36,6 +36,7 @@ void initialize() {
 	// flywheel_task.suspend();
 
 	imu.reset();
+	imu.set_heading(90);
 	// initTracker(0, 0);
 	// pros::Task odom(updatePosition);
 
@@ -76,6 +77,11 @@ void competition_initialize() {}
 void autonomous() {
 	// initTracker(0, 0);
 	// SmartStop();
+	// initialize();
+	imu.set_heading(90);
+	pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// pros::delay(100000);
+	// skill_auton();
 	auton();
 }
 
@@ -93,5 +99,11 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	flywheel_task.suspend();
+  auton_task.suspend();
+  auton_sel = 'E';
+  intake_mtr.move_voltage(0);
+  rai_mtr.move_voltage(0);
+  flywheel_mtr.move_voltage(0);
 	controls();
 }

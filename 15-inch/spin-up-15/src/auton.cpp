@@ -5,8 +5,19 @@
 #include "intake.h"
 #include "movement.h"
 #include "roller.h"
+#include "endgame.h"
 
 char auton_sel = 'E';
+
+template <typename T>
+int sgn (T num) {
+    if (num >= 0) {
+        return 1;
+    } 
+    else {
+        return -1;
+    }
+}
 
 void drivePID(double inches) {
     left_side.tare_position();
@@ -28,7 +39,13 @@ void drivePID(double inches) {
     double right_ki = 0.0033;
     double left_kd = 0.01;
     double right_kd = 0.01;
+    
+    double starting_speed = 200;
+    double accel = 1;
+
     while (std::abs(left_error) > 25 || std::abs(right_error) > 25) {
+        starting_speed += accel;
+
         left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
         right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + right_side.get_positions()[2]) / 3);
         left_derivative = left_error - left_prev_error;
@@ -41,6 +58,14 @@ void drivePID(double inches) {
         right_speed = right_error * right_kp + right_integral * right_ki + right_derivative * right_kd;
         left_speed = std::abs(left_speed) > 400 ? 400 * (left_speed / std::abs(left_speed)) : left_speed;
         right_speed = std::abs(right_speed) > 400 ? 400 * (right_speed / std::abs(right_speed)) : right_speed;
+
+        if (fabs(left_speed) > starting_speed) {
+            left_speed = starting_speed * sgn(left_speed);
+        }
+        if (fabs(right_speed) > starting_speed) {
+            right_speed = starting_speed * sgn(right_speed);
+        }
+
         left_side.move_velocity(left_speed);
         right_side.move_velocity(right_speed);
         pros::delay(20);
@@ -49,9 +74,21 @@ void drivePID(double inches) {
     right_side.brake();
 }
 
+void assign_min_speed (double& speed, double min_speed) {
+    if (speed < 0) {
+        if (fabs(speed) < min_speed) {
+            speed = -min_speed;
+        }
+    }
+    if (speed > 0) {
+        if (fabs(speed) < min_speed) {
+            speed = min_speed;
+        }
+    }
+}
 
 // could change currentHeading with imu.get_heading()
-void turnPID(double deg) {
+void turnPID(double deg, double kp, double ki, double kd, double max_speed, double min_speed) {
     // imu.reset();
     // std::cout << "turn PID current Heading: " << currentHeading << std::endl;
     double target = deg;
@@ -61,23 +98,42 @@ void turnPID(double deg) {
     double integral = 0;
     double prev_error = 0;
     double speed = 0;
-    const double kp = 1; // 1.2, 0.7
-    const double ki = 0; // 0.0069
-    const double kd = 0; // 0.04
-    while (std::abs(error) > 10) {
+
+    int stop_counter = 0;
+
+    while (stop_counter < 15) {
         // error = target - currentHeading;
         error = getAngleError(target, imu.get_heading());
-
-        pros::lcd::print(6, "turn PID error: %f", error);
+        
+        // pros::lcd::print(6, "heading: %f", imu.get_heading());
+        pros::lcd::print(7, "turn PID error: %f", error);
 
         std::cout << "turn PID error: " << error << std::endl;
         derivative = error - prev_error;
         integral += error;
         speed = error * kp + integral * ki + derivative * kd;
         prev_error = error;
-        speed = std::abs(speed) > 400 ? 400 * (speed / std::abs(speed)) : speed;
+
+        if (speed < 0) {
+            speed -= min_speed;
+        }
+        else {
+            speed += min_speed;
+        }
+
+        speed = std::abs(speed) > max_speed ? max_speed * (speed / std::abs(speed)) : speed;
+
+        // assign_min_speed(speed, min_speed);
+
         left_side.move(speed);
         right_side.move(-speed);
+
+        if (std::abs(error) < 7) {
+            stop_counter++;
+        } else {
+            stop_counter = 0;
+        }
+
         pros::delay(20);
     }
     left_side.brake();
@@ -118,7 +174,7 @@ void auton_thread() {
                 break;
             case 'M':
                 intake_mtr.move_voltage(0);
-                rai_mtr.move_voltage(0);
+                // rai_mtr.move_voltage(0);
                 break;
             case 'm':
                 toggle_mag_piston();
@@ -140,7 +196,7 @@ void auton() {
 
     discs_in_mag = 2;
 
-    set_flywheel_rpm(510);
+    set_flywheel_rpm(515);
     flywheel_task.resume();
     
     auton_sel = 'I'; // intake();
@@ -150,34 +206,42 @@ void auton() {
 
     drivePID(30);
     
-    auton_sel = 'M';
     // intake_mtr.move_voltage(0);
     // rai_mtr.move_voltage(0);
 
-    turnPID(121);
+    // turnPID(121);
+    turnPID(117.5, 1, 0, 0, 40, 15);
 
     drivePID(6);
 
+    pros::delay(4500);
+    auton_sel = 'M';
     // auton_sel = 'R';
     release_sequence();
     pros::delay(300);
 
-    set_flywheel_rpm(505);
+    set_flywheel_rpm(510);
     // more pathing
     auton_sel = 'I';
     // intake();
 
-    turnPID(135);
-    drivePID(4.9);
+    // turnPID(135);
+    turnPID(135, 1, 0, 0, 30, 15);
+    drivePID(6.5);
 
-    drivePID(-15);
-    turnPID(45);
-    drivePID(20);
+    drivePID(-11.5);
+    // turnPID(45);
+    turnPID(45, 1, 0, 0, 30, 15);
+    drivePID(12);
+    drivePID(12);
+    // pros::delay(1000);
 
-    turnPID(130);
+    // turnPID(130);
+    turnPID(90, 1, 0, 0, 30, 15);
+    turnPID(130, 1, 0, 0, 30, 15);
 
-    drivePID(10.6);
-    pros::delay(1000);
+    // drivePID(10.6);
+    pros::delay(2000);
 
     auton_sel = 'M';
     // intake_mtr.move_voltage(0);
@@ -185,7 +249,7 @@ void auton() {
 
     // auton_sel = 'R';
     release_sequence();
-    pros::delay(300);
+    pros::delay(500);
 
 
     flywheel_task.suspend();
@@ -194,84 +258,14 @@ void auton() {
     intake_mtr.move_voltage(0);
     rai_mtr.move_voltage(0);
     flywheel_mtr.move_voltage(0);
+}
 
+void skill_auton() {
 
-    // HEREREREREREREREREREREERERERERERERERERERERERERER
+    // turnPID(180, 1, 0, 0, 30, 15);
+    drivePID(40);
+    turnPID(125, 1, 0, 0, 30, 15);
+    pros::delay(20*1000);
+    activate_endgame();
 
-
-
-    // pros::delay(2000);
-    // std::cout << "GOT HEREERE __________" << std::endl;
-    // std::vector<std::vector<double>> initialPath = {{0.0, 0.0}, {0.0, 0.1}};
-    // followPath(initialPath, 180, false);
-    // pros::lcd::print(0, "DONE __________");
-    // std::cout << "got hGOTE REHREHER ER  ere 2"  << std::endl;
-    // pros::delay(3000);
-    // left_side.move_voltage(0);
-    // right_side.move_voltage(0);
-    
-
-    // gps.initialize_full(0, 0, 0, 0, 0);
-    // pros::delay(3000);
-    // // gps.set_rotation(-init_heading);
-    // std::cout << "start turn pid" << std::endl;
-    // turnPID(90);
-    // std::cout << "end turn pid" << std::endl;
-
-    // std::vector<std::vector<double>> initialPath = {{1.8, 0.15}, {1.8, 1.22}};
-
-    // std::vector<std::vector<double>> path = {};
-    // for (int i = 0; i < 10; i++) {
-    //     path.push_back({1.8, i + 0.15});
-    // }    
-
-    // initTracker(initialPath[0][0], initialPath[0][1]);
-
-    // pros::Task odom(updatePosition);
-    // std::cout << "follow Path now" << std::endl;
-    // followPath(initialPath, 0, false);
-    
-    // // start auto with 2 discs
-    // discs_in_mag = 2;
-
-    // // set_flywheel_rpm(500);
-    // // flywheel_task.resume();
-    // // intake_mtr.move_voltage(12000);
-    // // rai_mtr.move_voltage(6000);
-    // // discs_in_mag = 2;
-    // // intake();
-    // // flywheel_task.resume();
-    // // intake_mtr.move_voltage(12000);
-    // // rai_mtr.move_voltage(6000);
-
-    // // moveMotors(30, 30);
-    // // pros::delay(100000);
-
-    // // followPath(initialPath, 90, false);
-    // turnPID(180);
-
-    // drivePID(48);
-    // pros::delay(2000);
-    // intake_mtr.move_voltage(0);
-    // rai_mtr.move_voltage(0);
-    // pros::delay(1000);
-
-    // toggle_mag_piston();
-    // release_discs();
-    // pros::delay(7000);
-
-    // left_side.move_relative(200, 100);
-    // right_side.move_relative(-200, -100);
-    // pros::delay(500);
-    // left_side.move_velocity(0);
-    // right_side.move_velocity(0);
-    // toggle_mag_piston();
-    // pros::delay(3000);
-    // rai_mtr.move_voltage(-9000);
-    // pros::delay(6000);
-    // rai_mtr.move_voltage(0);
-    // pros::delay(1000);
-    // rai_mtr.move_velocity(0);
-    // flywheel_task.suspend();
-    // flywheel_mtr.brake();
 }

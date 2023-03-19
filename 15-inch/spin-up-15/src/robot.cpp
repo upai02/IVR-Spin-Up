@@ -24,7 +24,7 @@ pros::Motor flywheel_mtr(14, pros::E_MOTOR_GEARSET_06, false);
 pros::ADIDigitalOut endgame_piston('f', false); // endgame piston
 // Sensors
 pros::Imu imu(7);
-pros::Distance disc_dist(6);
+pros::Distance disc_dist(5);
 // pros::Optical roller_opt(6);
 pros::ADIEncoder vertical_track(3, 4, true); // tracking wheel #1
 pros::ADIEncoder horizontal_track(1, 2, true); // tracking wheel #2

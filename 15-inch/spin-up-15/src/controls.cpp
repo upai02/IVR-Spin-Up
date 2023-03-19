@@ -45,7 +45,8 @@ void controls()
       activate_close_range();
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      activate_long_range();
+      // activate_long_range();
+      activate_endgame();
     }
     // run flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
@@ -70,9 +71,9 @@ void controls()
   
     // turn pid test
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-    //   turnPID(180);
-    //   // turnToAngle(170, 10, false, 900);
+    //   turnPID(90);
     // }
+    pros::lcd::print(6, "heading: %f", imu.get_heading());
 
 
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

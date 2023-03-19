@@ -30,7 +30,7 @@ bool flywheel_running = false;
 
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel_mtr.move_voltage(5500);
+    flywheel_mtr.move_voltage(8000);
     soft_spinning = true;
   }
 }
@@ -71,20 +71,30 @@ void release_sequence() {
     toggle_mag_piston();
   }
 
+  // while (flywheel_mtr.get_actual_velocity() < 300) {
+  //   pros::delay(20);
+  // }
+
+  pros::delay(500);
+  rai_mtr.move_voltage(1200);
+  pros::delay(100);
+  rai_mtr.move_voltage(0);
+
+  pros::delay(1000);
   rai_mtr.move_voltage(-12000);
   pros::delay(300);
   discs_in_mag = std::max(0, discs_in_mag - 1);
-  rai_mtr.move_voltage(700);
-  pros::delay(3000);
+  rai_mtr.move_voltage(1200);
+  pros::delay(2000);
 
   rai_mtr.move_voltage(-12000);
   pros::delay(300);
   discs_in_mag = std::max(0, discs_in_mag - 1);
-  rai_mtr.move_voltage(700);
-  pros::delay(3000);
+  rai_mtr.move_voltage(1200);
+  pros::delay(2000);
 
   rai_mtr.move_voltage(-12000);
-  pros::delay(300);
+  pros::delay(800);
   discs_in_mag = std::max(0, discs_in_mag - 1);
   rai_mtr.move_voltage(0);
 }
