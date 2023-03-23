@@ -1,6 +1,7 @@
 #include "shooter.h"
 #include "intake.h"
 #include "auton.h"
+#include "pros/rtos.h"
 
 int flywheel_rpm = close_range_rpm;
 
@@ -17,17 +18,19 @@ void set_flywheel_rpm(int rpm) {
 pros::Task flywheel_task(shoot_thread);
 
 void shoot_thread() {
-  while (true) {
-    shootPF(flywheel_rpm);
-  }
+    while (true) {
+      shootPF(flywheel_rpm);
+      pros::delay(20);
+    }
 }
+
 
 bool soft_spinning = false;
 bool flywheel_running = false;
 
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel_mtr.move_voltage(2000);
+    flywheel_mtr.move_voltage(8000);
     soft_spinning = true;
   }
 }
@@ -40,8 +43,15 @@ void run_flywheel() {
   if (!mag_down) {
     toggle_mag_piston();
   }
+
+  // if flywheel is close to target rpm, then rumble controller
+  if (abs(flywheel_mtr.get_actual_velocity() - flywheel_rpm) < 20) {
+    master.rumble("-");
+  }
+
   flywheel_task.resume();
 }
+
 void stop_flywheel() {
   if (!soft_spinning) {
     flywheel_task.suspend();
@@ -55,3 +65,36 @@ void release_discs() {
   reset_discs_in_mag();
 }
 
+void release_sequence() {
+
+  if (!mag_down) {
+    toggle_mag_piston();
+  }
+
+  // while (flywheel_mtr.get_actual_velocity() < 300) {
+  //   pros::delay(20);
+  // }
+
+  pros::delay(500);
+  rai_mtr.move_voltage(1200);
+  pros::delay(100);
+  rai_mtr.move_voltage(0);
+
+  pros::delay(1000);
+  rai_mtr.move_voltage(-12000);
+  pros::delay(300);
+  discs_in_mag = std::max(0, discs_in_mag - 1);
+  rai_mtr.move_voltage(1200);
+  pros::delay(2000);
+
+  rai_mtr.move_voltage(-12000);
+  pros::delay(300);
+  discs_in_mag = std::max(0, discs_in_mag - 1);
+  rai_mtr.move_voltage(1200);
+  pros::delay(2000);
+
+  rai_mtr.move_voltage(-12000);
+  pros::delay(800);
+  discs_in_mag = std::max(0, discs_in_mag - 1);
+  rai_mtr.move_voltage(0);
+}

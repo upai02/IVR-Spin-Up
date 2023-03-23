@@ -2,6 +2,8 @@
 #include "auton.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
+#include "endgame.h"
+#include "shooter.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -11,8 +13,13 @@
  */
 void initialize() {
 	pros::lcd::initialize();
-	// horizontal_track.reset();
-	// vertical_track.reset();
+	horizontal_track.reset();
+	vertical_track.reset();
+	char auton_sel = 'E'; 
+	// flywheel_task.suspend();
+	pros::delay(1500);
+	flywheel_task.suspend();
+	auton_task.suspend();
 	// imu.reset(true);
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -22,10 +29,20 @@ void initialize() {
 	right_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	set_mag_piston(false);
+	intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	set_mag_piston(true);
 	set_intake_piston(true);
-	// intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-	// rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	init_endgame(false);
+	// flywheel_task.suspend();
+
+	imu.reset();
+	imu.set_heading(90);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
+
+	pros::delay(2000);
+
+	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
 
 /**
@@ -58,6 +75,13 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	// initTracker(0, 0);
+	// SmartStop();
+	// initialize();
+	imu.set_heading(90);
+	pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// pros::delay(100000);
+	// skill_auton();
 	auton();
 }
 
@@ -75,5 +99,11 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	flywheel_task.suspend();
+  auton_task.suspend();
+  auton_sel = 'E';
+  intake_mtr.move_voltage(0);
+  rai_mtr.move_voltage(0);
+  flywheel_mtr.move_voltage(0);
 	controls();
 }

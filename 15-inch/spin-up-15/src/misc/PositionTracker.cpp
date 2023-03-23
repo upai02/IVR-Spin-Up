@@ -1,41 +1,102 @@
+#include "pros/llemu.hpp"
 #include "robot.h"
+#include <algorithm>
 #include <array>
 #include <cmath>
+#include <string>
+#include "misc/PositionTracker.h"
 
-double transverseWheelRad = 2.75 * 0.0254 / 2;
-double radialWheelRad = 2.75 * 0.0254 / 2;
+double transverseWheelRad = 2 * 0.0254 / 2;
+double radialWheelRad = 2 * 0.0254 / 2;
 double lastTransverseValue;
 double lastRadialValue;
+double last_x_tracking_offset;
+double last_y_tracking_offset;
 double positionX = 0;
 double positionY = 0;
+double heading = 0;
+
+double initHeading = 90;
+double currentHeading = initHeading;
 
 double toMeters(double value, double wheelRadius) {
     return (value / 360.0) * 2 * M_PI * wheelRadius;
 }
 
-void initTracker() {
+void initTracker(double initial_X, double initial_Y) {
     lastTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad);
     lastRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
+    last_x_tracking_offset = RADIAL_TRACKING_WHEEL_OFFSET * cos(initHeading * M_PI / 180.0);
+    last_y_tracking_offset = RADIAL_TRACKING_WHEEL_OFFSET * sin(initHeading * M_PI / 180.0);
+    positionX = initial_X;
+    positionY = initial_Y;
 }
 
-void updatePosition(double imu_sensor_heading) {
-    double currentTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad);
-    double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
+double scale_factor_heading = 1.0;
+double headingCorrection (double currentRotation) {
+    double correctedHeading = fmod((currentRotation*scale_factor_heading), 360.0) + initHeading;
 
-    double cosine = cos(imu_sensor_heading * M_PI / 180.0);
-    double sine = sin(imu_sensor_heading * M_PI / 180.0);
+    if (correctedHeading > 360) {
+        correctedHeading = fmod(correctedHeading, 360);
+    }
 
-    double radialDeltaY = (currentRadialValue - lastRadialValue) * cosine;
-    double transverseDeltaY = -(currentTransverseValue - lastTransverseValue) * sine; // note the - sign
-    double deltaY = radialDeltaY + transverseDeltaY;
+    if (correctedHeading < 0) {
+        correctedHeading = 360 + correctedHeading;
+    }
 
-    double radialDeltaX = (currentRadialValue - lastRadialValue) * sine;
-    double transverseDeltaX = (currentTransverseValue - lastTransverseValue) * cosine;
-    double deltaX = radialDeltaX + transverseDeltaX;
+    return correctedHeading;
+}
 
-    lastRadialValue = currentRadialValue;
-    lastTransverseValue = currentTransverseValue;
+void updatePosition() {
+    imu.set_rotation(0);
+    while (true) {
+        double currentTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad);
+        double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
 
-    positionX += deltaX;
-    positionY += deltaY;
+        currentHeading = headingCorrection(imu.get_rotation());
+
+        std::cout << "Current Heading: " << currentHeading << std::endl;
+
+        double cosine = cos(currentHeading * M_PI / 180.0);
+        double sine = sin(currentHeading* M_PI / 180.0);
+
+        double radialDeltaY = (currentRadialValue - lastRadialValue) * cosine;
+        double transverseDeltaY = -(currentTransverseValue - lastTransverseValue) * sine; // note the - sign
+        double deltaY = radialDeltaY + transverseDeltaY;
+
+        double radialDeltaX = (currentRadialValue - lastRadialValue) * sine;
+        double transverseDeltaX = (currentTransverseValue - lastTransverseValue) * cosine;
+        double deltaX = radialDeltaX + transverseDeltaX;
+
+        lastRadialValue = currentRadialValue;
+        lastTransverseValue = currentTransverseValue;
+
+        double x_tracking_offset = RADIAL_TRACKING_WHEEL_OFFSET * cosine;
+        double y_tracking_offset = RADIAL_TRACKING_WHEEL_OFFSET * sine;
+
+        // when pure rotating (x_tracking_offset - last_x_tracking_offset) should = deltaX
+
+        positionX += deltaX;
+        positionY -= deltaY;
+        // positionX += deltaX - (x_tracking_offset - last_x_tracking_offset);
+        // positionY += deltaY + (y_tracking_offset - last_y_tracking_offset);
+
+        // last_x_tracking_offset = x_tracking_offset;
+        // last_y_tracking_offset = y_tracking_offset;
+
+        pros::lcd::set_text(2, "Position X: " + std::to_string(positionX));
+        pros::lcd::set_text(3, "Position Y: " + std::to_string(positionY));
+        pros::lcd::set_text(7, "Heading: " + std::to_string(currentHeading));
+
+        pros::lcd::set_text(4, "Transverse Val: " + std::to_string(currentTransverseValue));
+        pros::lcd::set_text(5, "Radial Val: " + std::to_string(currentRadialValue));
+
+        std::cout << "cur heading: " << currentHeading << std::endl;
+        std::cout << "x: " << positionX << std::endl;
+        std::cout << "y: " << positionY << std::endl;
+        std::cout << "ht_get_value: " << horizontal_track.get_value() << std::endl;
+        std::cout << "vt_get_value: " << vertical_track.get_value() << std::endl;
+
+        pros::delay(15);
+    }
 }

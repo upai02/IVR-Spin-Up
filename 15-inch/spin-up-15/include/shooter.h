@@ -3,13 +3,16 @@
 
 extern int flywheel_rpm;
 
-const int close_range_rpm = 500;
-const int long_range_rpm = 580;
+const int close_range_rpm = 445;
+const int long_range_rpm = 490;
 
 extern pros::Task flywheel_task;
 
 extern bool flywheel_running;
 extern bool soft_spinning;
+
+
+void release_sequence();
 
 void release_discs();
 void run_flywheel();

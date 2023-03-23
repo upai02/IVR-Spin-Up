@@ -54,8 +54,8 @@ void toggle_mag_piston() {
   mag_piston.set_value(mag_down);
 }
 void set_intake_piston(bool value) {
-  mag_down = !value;
-  mag_piston.set_value(mag_down);
+  intake_out = !value;
+  intake_piston.set_value(intake_out);
 }
 void set_mag_piston(bool value) {
   mag_down = value;
