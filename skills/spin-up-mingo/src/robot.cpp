@@ -15,8 +15,10 @@ pros::Motor_Group left_side({left_front_top_mtr, left_front_bottom_mtr, left_bac
 pros::Motor_Group right_side({right_front_top_mtr, right_front_bottom_mtr, right_back_mtr});
 pros::Motor catapult(19, pros::E_MOTOR_GEARSET_36, false);
 pros::Motor intake(6, pros::E_MOTOR_GEARSET_06, true);
-pros::Imu imu(9);
-pros::ADIEncoder transverseEncoder(1, 2, false);
-pros::ADIEncoder radialEncoder(3, 4, false);
+pros::Imu imu(20);
+pros::ADIEncoder transverseEncoder(1, 2, true);
+pros::ADIEncoder radialEncoder(3, 4, true);
 pros::ADIDigitalIn cata_limit(5);
+pros::Motor roller(18, pros::E_MOTOR_GEARSET_36, false);
+pros::ADIDigitalOut endgame_release(8);
 // pros::ADIPotentiometer catpot(8, pros::E_ADI_POT_V2);

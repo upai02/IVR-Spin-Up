@@ -1,13 +1,11 @@
 #include "main.h"
 #include "auton.h"
-#include <array>
-#include <cmath>
-#include <map>
 #include <vector>
 #include "controls.h"
+#include "pros/rtos.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "misc/PositionTracker.h"
-#include "movement.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -28,6 +26,26 @@ void initialize() {
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	transverseEncoder.reset();
 	radialEncoder.reset();
+
+	// ROLLER AUTO
+	std::vector<double> starting_position = {0.9, 0.41}; // 35in, 16in
+	// // Edges to walls: 7.5in Y, 29in X
+	initTracker(starting_position[0], starting_position[1]);
+
+
+	// // SKILLS
+	// std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
+	// // starting x is with front of robot on opponent low goal plane, y is against wall.
+	// initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
+
+	// ENDGAME SKILLS AUTO
+    // std::vector<double> start_position = {0.89, 0.4}; // 7 inches (0.18 meters) off wall
+    // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+	// initTracker(start_position[0], start_position[1]);
+
+
+	// STRAIGHT PATH TEST
+	// initTracker();
 }
 
 /**
@@ -60,63 +78,15 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	imu.reset();
+	// ROLLER AUTO
+	rollerAuto();
 
-	left_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    left_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_front_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_front_bottom_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-    right_back_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	pros::delay(5000);
+	// SKILLS AUTO
+	// boltEndgameAuto();
+	// boltSkillsAuto();
 
-	std::vector<std::vector<double>> skillsPathSeg1 = {{1.45, 3.45}, {1.8, 3.45}}; // reversed, facing 270
-	// starting x is with front of robot on opponent low goal plane, y is against wall.
-
-	initTracker(skillsPathSeg1[0][0], skillsPathSeg1[0][1]);
-
-	// initTracker(0.0, 0.0);
-	// pros::delay(1000);
-	// SmartStop();
-
-	imu.set_heading(270);
-
-	// Figure 8
-	// x = goes to the right (relative to starting facing forward), y = goes forward
-	// clockwise increases angle value 
-	std::vector<std::vector<double>> appPath = {
-		{0, 0}, {-1, 1}, {0, 2}, {1, 3}, {0, 4}, {-1, 3}, {0, 2}, {1, 1}, {0, 0}
-	};
-	// followPath(appPath, 0.5, 150.0, 200, 270, false, true);
-
-	std::vector<std::vector<double>> reverseTestPath {
-		{0, 0}, {1, 0}, {2, 1}, {2, 0}, {1, 0}, {0, 0}
-	};
-	// followPath(reverseTestPath, 89.0, true);
-
-
-	std::vector<std::vector<double>> skillsPathSeg2 = {{skillsPathSeg1.back()}, {1.52, 3.2}}; // forward, end facing 270. Turn to 0 after shooting.
-	std::vector<std::vector<double>> skillsPathSeg3 = {{skillsPathSeg2.back()}, {1.46, 2.42}, {1.46, 2.17}}; // reversed, end facing 315
-	std::vector<std::vector<double>> skillsPathSeg4 = {{skillsPathSeg3.back()}, {1.22, 1.83}, {0.7, 1.3}, {0.4, 2.11}}; // end facing goal (spin on spot)
-	std::vector<std::vector<double>> skillsPathSeg5 = {{skillsPathSeg4.back()}, {1.46, 2.26}}; // pick up 3 and drive back to center shooting spot again
-	// std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {1.9, 2.7}}; // go get first set of 3
-	std::vector<std::vector<double>> skillsPathSeg6 = {{skillsPathSeg5.back()}, {2.1, 2.7}}; // go get first set of 3	
-	// std::vector<std::vector<double>> skillsPathSeg7 = {{skillsPathSeg6.back()}, {1.83, 3.05}}; // go closer and shoot first set of 3
-	std::vector<std::vector<double>> skillsPathSeg8 = {{skillsPathSeg6.back()}, {2.54, 2.7}}; // go get 2nd set of 3
-
-	followPath(skillsPathSeg1, 270, true);
-	followPath(skillsPathSeg2, calcGoalAngle(skillsPathSeg2.back()), false);
-	// shoot
-	turnToAngle(0.0, 2.0);
-	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true);
-	// shoot
-	followPath(skillsPathSeg4, calcGoalAngle(skillsPathSeg4.back()), true);
-	turnToAngle(270.0, 2.0);
-	followPath(skillsPathSeg5, calcGoalAngle(skillsPathSeg5.back()), true);
-	followPath(skillsPathSeg6, calcGoalAngle(skillsPathSeg6.back()), true);
-	// followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false);
-	followPath(skillsPathSeg8, 270.0, true, true, 0.5, 45.0);
-	stopMotors();
+	// STRAIGHT PATH TEST
+	// StraightPathTest();
 }
 
 /**
