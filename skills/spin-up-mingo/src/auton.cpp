@@ -152,9 +152,9 @@ void boltSkillsAuto() {
 
     pros::Task position_updater(update_position);
     pros::Task shooter_reseter(ResetShooterLoop);
+    /* initialize and reset catapult once */
     resetCata_ptr = new pros::Task(resetCata, nullptr, "resetCata_task");
-    // cata_reset_sem = pros::sem_binary_create();
-    // pros::Task resetCata_task(resetCata, nullptr, "resetCata_task");
+    resetCata_ptr->notify(); // reset the catapult
 
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
@@ -192,13 +192,6 @@ void boltSkillsAuto() {
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
 	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
 
-    /* set catapult to ready */
-    while (cata_limit.get_value() == 0) {
-        catapult.move_velocity(65);
-        pros::delay(20);
-    }
-    catapult.brake();
-
 	// intake on
 	intake.move_voltage(12000);
 	followPath(skillsPathSeg1, 270, true);
@@ -209,6 +202,7 @@ void boltSkillsAuto() {
 
     // intake.move_velocity(12000);
 	// shoot
+    // cata_reset_sem = pros::c::sem_create(1,1);
     singleShot();
 	turnToAngle(350.0, 2.0);
 	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true, false, true, 0.5, 3.0, 100, 200);

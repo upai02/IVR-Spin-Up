@@ -150,6 +150,15 @@ void wannabeSwerve() {
 
 /*
     Description: Task for resetting catapult to default position
+    Inputs: 
+            void* param -- not used
+    Outputs:
+            None
+    Returns:
+            None
+    Effects:
+            Runs as a task until catapult is fully reset
+            Creates and posts to cata_reset_sem semaphore
 */
 bool resetCata_run = false;
 void resetCata (void* param) {
@@ -175,13 +184,26 @@ void resetCata (void* param) {
     }
 }
 
+/*
+    Description: Shoots a disk once and stalls if catapult is not ready. After it is done
+                 shooting, it wakes up the resetCata task so that the catapult can be reset while performing other 
+                 tasks.
+    Inputs: None
+    Outputs: None
+    Returns: None
+    Effects: Deletes cata_reset_sem and invokes resetCata task
+*/
 void singleShot() {
     /* do not run intake while shooting */
     intake.move_voltage(0);
 
-    /* wait for resetCata to post semaphore indicating the catapult has been reset */
-    while (pros::c::sem_wait (cata_reset_sem, 20)) {}
-    pros::c::sem_delete(cata_reset_sem);
+    /* Checks if semaphore has been instantiated other will case SEGFAULT.
+    ** If properly initialized and using singleShot() method, cata_reset_sem should never be NULL
+     */
+    if (cata_reset_sem != nullptr) {
+        while (!pros::c::sem_wait (cata_reset_sem, 20)) {}
+        pros::c::sem_delete(cata_reset_sem);
+    }
 
     /* shoot disk */
     while (cata_limit.get_value() == 1) {
