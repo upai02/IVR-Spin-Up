@@ -1,5 +1,6 @@
-#include "misc/rasppi_comms.h"
-#include "pros/rtos.h"
+// #include "misc/rasppi_comms.h"
+#include "../../include/misc/rasppi_comms.h"
+// #include "pros/rtos.h"
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
@@ -50,8 +51,6 @@ Effects: Ends thread responsible for listening from serial port
 */
 RasppiComms::~RasppiComms() {
     stopListen();
-    // delete[] __tag;
-    // delete[] __buffer;
 };
 
 /*
@@ -65,12 +64,12 @@ bool RasppiComms::listen() {
     __listen_active = true;
     // return (pthread_create(&__listen1, NULL, __listen, this) == 0);
 
-    // if(__comm_ways == 1) {
+    if(__comm_ways == 1) {
         pros::Task my_task(__listen_1way, (void *)this, "ListenTask");
-    // }
-    // else if (__comm_ways == 2) {
-    //     pros::Task my_task(__listen_2way, (void *)this, "ListenTask");
-    // }
+    }
+    else if (__comm_ways == 2) {
+        pros::Task my_task(__listen_2way, (void *)this, "ListenTask");
+    }
     
     return 1;
 };
@@ -309,7 +308,7 @@ void RasppiComms::__listen_1way(void *context) {
     /* main work that does not end until __listen_active is lowered */
     // while (obj_inst->__listen_active) {
     while(1) {
-        cout<<"IVRR"; // for some reason only gets read once
+        // cout<<"IVRR"; // for some reason only gets read once
 
         /* take lock */
         take = obj_inst->__mtx->take();

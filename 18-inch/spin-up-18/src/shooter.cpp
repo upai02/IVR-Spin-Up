@@ -1,7 +1,8 @@
-#include "shooter.h"
-#include "intake.h"
+// #include "shooter.h"
+#include "../include/shooter.h"
+#include "../include/intake.h"
 #include <string>
-#include "main.h"
+#include "../include/main.h"
 #include <pthread.h>
 #include <vector>
 
@@ -30,13 +31,18 @@ void run_flywheel() {
 // terminates when the heading error is low enough
 void auto_aim() {
   // send signal to r-pi to start tracking
-  start_algo();
+  /* NOTE: Trouble sending consistent message to Rasppi for starting algo except when Rasppi is instantiated.
+  ** I need to figure out why sending data to Rasppi is possible in 2 way communication thread, but not in any other scenario. 
+  ** For now, starting and stopping tracking involves instantiating and destroying a RasppiComms object
+  */
+  // start_algo();
 
   // initialize stuff
   pros::c::serctl(SERCTL_DISABLE_COBS,NULL);
   char buffer[256];
 	RasppiComms comms = RasppiComms(1);
-  comms.startModel();
+  // comms.startModel(); // blank function that will get implemented later
+  /* size of four since rasppi sends x, y, w, h */
   vector<double> coords(4,0);
 	int coords_idx = 0;
 
@@ -65,7 +71,12 @@ void auto_aim() {
   }
 
   // tell r-pi to stop
-  end_algo();
+  // end_algo(); // don't stop the program for now
+  /* 'Stopping' the tracking algorithm involves destroying instance of RasppiComms. 
+  ** If a reliable manner of sending a message to Rasppi is found, then would be preferred. For now, just create and 
+  ** destroy RasppiComms objects
+  */
+  comms.~RasppiComms();
 }
 void start_algo() {}
 void end_algo() {}

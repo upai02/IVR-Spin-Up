@@ -152,6 +152,9 @@ void boltSkillsAuto() {
 
     pros::Task position_updater(update_position);
     pros::Task shooter_reseter(ResetShooterLoop);
+    resetCata_ptr = new pros::Task(resetCata, nullptr, "resetCata_task");
+    // cata_reset_sem = pros::sem_binary_create();
+    // pros::Task resetCata_task(resetCata, nullptr, "resetCata_task");
 
 	std::vector<std::vector<double>> skillsPathSeg1 = {{1.42, 3.4}, {1.8, 3.4}}; // reversed, facing 270
 	// starting x is with front of robot on opponent low goal plane, y is against wall.
@@ -189,6 +192,7 @@ void boltSkillsAuto() {
 	std::vector<std::vector<double>> skillsPathSeg10 = {{skillsPathSeg9.back()}, {2.1, 2.1}}; // get first solo on diagonal
 	std::vector<std::vector<double>> skillsPathSeg11 = {{skillsPathSeg10.back()}, {2.7, 2.7}, {1.8, 3.4}, {1.5, 3.356}}; // get 2nd on solo diagonal + back to drop spot
 
+    /* set catapult to ready */
     while (cata_limit.get_value() == 0) {
         catapult.move_velocity(65);
         pros::delay(20);
@@ -198,29 +202,33 @@ void boltSkillsAuto() {
 	// intake on
 	intake.move_voltage(12000);
 	followPath(skillsPathSeg1, 270, true);
+    /* resume task to reset catapult */
+
 	followPath(skillsPathSeg2, calcGoalAngle(skillsPathSeg2.back()), false, false, true);
+    /* suspend task for resetting catapult */
+
     // intake.move_velocity(12000);
 	// shoot
-	shootAndWait();
+    singleShot();
 	turnToAngle(350.0, 2.0);
 	followPath(skillsPathSeg3, calcGoalAngle(skillsPathSeg3.back()), true, false, true, 0.5, 3.0, 100, 200);
     // shoot
-    shootAndWait();
+    singleShot();
     // intake.move_voltage(12000);
 	followPath(skillsPathSeg4, calcGoalAngle(skillsPathSeg4.back()), true, false, true, 0.3, 3.0, 150, 200);
 	// shoot
-    shootAndWait();
+    singleShot();
     // intake.move_voltage(12000);
 	turnToAngle(265.0, 2.0);
 	followPath(skillsPathSeg5, calcGoalAngle(skillsPathSeg5.back()), true, false, true, 0.3, 3.0, 150, 200);
 	// shoot    
-    shootAndWait();
+    singleShot();
 	followPath(skillsPathSeg6, 230, true, false, false, 0.3, 20);
 
     getOneFromStack();
 
 	followPath(skillsPathSeg7, calcGoalAngle(skillsPathSeg7.back()), false, false, true);
-    shootAndWait();
+    singleShot();
     // shoot
 
     /*
@@ -243,6 +251,7 @@ void boltSkillsAuto() {
 
     position_updater.suspend();
     shooter_reseter.suspend();
+    resetCata_ptr->suspend();
 }
 
 void boltEndgameAuto() {

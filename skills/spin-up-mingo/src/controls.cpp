@@ -19,6 +19,11 @@ const double VOLTAGE_SCALE = 11000;
 const double INPUT_SCALE_POWER = 1.5;
 const double VOLTAGE_DEADZONE = 400;
 
+/* task pointers */
+pros::Task *resetCata_ptr = nullptr;
+/* semaphores */
+pros::c::sem_t cata_reset_sem = nullptr;
+
 double normalize_joystick(double input) {
   return input / 127.0;
 }
@@ -143,14 +148,68 @@ void wannabeSwerve() {
     right_back_mtr.move(-power + desiredTranslation);
 }
 
-void shootAndWait() {
+/*
+    Description: Task for resetting catapult to default position
+*/
+bool resetCata_run = false;
+void resetCata (void* param) {
+    while(true) {
+        /* block up to 20 ms waiting for notification and only set to true if awoken by notification, not timeout */
+        if (pros::Task::notify_take(true, 20))
+            resetCata_run = true;
+
+        /* only run if flag says this task should run */
+        if (resetCata_run) {
+            /* take semaphore which indicates catapult is currently resetting */
+            cata_reset_sem = pros::c::sem_create(1,1);
+            /* run until catapult has been reset to ready position */
+            while (cata_limit.get_value() == 0) {
+                catapult.move_velocity(CATAPULT_VELOCITY);
+                pros::delay(20);
+            }
+            /* finished running task, brake catapult and set back to idle */
+            catapult.brake();
+            resetCata_run = false;
+        }
+        /* no need to delay because notify_take blocks */
+    }
+}
+
+void singleShot() {
+    /* do not run intake while shooting */
     intake.move_voltage(0);
+
+    /* wait for resetCata to post semaphore indicating the catapult has been reset */
+    while (pros::c::sem_wait (cata_reset_sem, 20)) {}
+    pros::c::sem_delete(cata_reset_sem);
+
+    /* shoot disk */
     while (cata_limit.get_value() == 1) {
         catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
+    }
+    
+    /* start up intake again */
+    intake.move_voltage(12000);
+
+    /* assuming we want to reset catapult right away after shooting */
+    resetCata_ptr->notify();
+}
+
+/* current function to render as a task */
+void shootAndWait() {
+    /* stop running motor for bringing in disks */
+    intake.move_voltage(0);
+
+    while (cata_limit.get_value() == 1) {
+        catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
     }
     while (cata_limit.get_value() == 0) {
         catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
     } 
+    /* stop running catapult and turn intake back on for collecting more disks */
     catapult.brake();
     intake.move_voltage(12000);
 }

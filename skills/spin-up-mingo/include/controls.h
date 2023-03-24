@@ -2,6 +2,14 @@
 #include "api.h"
 #include "pros/motors.h"
 #include "robot.h"
+#include "pros/apix.h" // to include semaphores
+
+/* tasks and semaphores to be defined in controls.cpp*/
+extern pros::Task *resetCata_ptr;
+extern pros::c::sem_t cata_reset_sem;
+
+void resetCata (void* param);
+void singleShot();
 
 double normalize_joysticks(double input);
 double sin_scale(double input);

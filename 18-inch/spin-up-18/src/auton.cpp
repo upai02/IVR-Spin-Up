@@ -1,5 +1,5 @@
-#include "auton.h"
-#include "main.h"
+#include "../include/auton.h"
+#include "../include/main.h"
 
 void drivePID(double inches) {
     left_side.tare_position();

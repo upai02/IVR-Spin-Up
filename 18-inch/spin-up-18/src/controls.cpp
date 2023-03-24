@@ -3,12 +3,22 @@
 #include "robot.h"
 #include "drive.h"
 #include "intake.h"
-#include "shooter.h"
+// #include "shooter.h"
+#include "../include/shooter.h"
 
 using namespace pros;
 
+RasppiComms * comms;
+bool comms_init = false;
+
 void controls()
 {
+  if (comms_init == false) {
+    pros::c::serctl(SERCTL_DISABLE_COBS,NULL);
+    char buffer[256];
+    comms = new RasppiComms(1);
+    comms_init = true;
+  }
   master.clear();
   while (1)
   {
@@ -23,36 +33,39 @@ void controls()
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       outtake();
     } else {
-      intake_mtr.move_voltage(0);
-      rai_mtr.move_voltage(0);
+      // intake_mtr.move_voltage(0);
+      // rai_mtr.move_voltage(0);
     }
     // intake pistons
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      toggle_intake_piston();
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+      std::cout<<"IVRREADY";
+      // toggle_intake_piston();
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      toggle_mag_piston();
+      // toggle_mag_piston();
     }
     // toggle shooter mode
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      activate_close_range();
+      // activate_close_range();
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      activate_long_range();
+      // activate_long_range();
     }
     // run flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      run_flywheel();
+      // run_flywheel();
     } else {
       flywheel_mtr.move_voltage(0);
     }
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      release_discs();
+      // release_discs();
     }
     // auto aim while button is held
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      auto_aim();
+      // auto_aim();
+      std::cout<< "IVRSTART";
     }
 
 

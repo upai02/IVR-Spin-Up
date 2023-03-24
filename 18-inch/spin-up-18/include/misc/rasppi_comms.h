@@ -1,6 +1,6 @@
 #ifndef _RASPPI_COMMS_H_
 #define _RASPPI_COMMS_H_
-#include "api.h"
+#include "../api.h"
 
 class RasppiComms {
     public:

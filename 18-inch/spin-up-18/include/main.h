@@ -39,6 +39,8 @@
 #include "auton.h"
 #include "controls.h"
 #include "movement.h"
+/* to use pros::c::* tools in files */
+#include "pros/apix.h"
 
 /**
  * You should add more #includes here
