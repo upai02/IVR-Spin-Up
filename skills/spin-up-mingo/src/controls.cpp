@@ -147,9 +147,11 @@ void shootAndWait() {
     intake.move_voltage(0);
     while (cata_limit.get_value() == 1) {
         catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
     }
     while (cata_limit.get_value() == 0) {
         catapult.move_velocity(CATAPULT_VELOCITY);
+        pros::delay(20);
     } 
     catapult.brake();
     intake.move_voltage(12000);
