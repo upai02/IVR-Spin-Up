@@ -21,6 +21,9 @@ double positionX = 0;
 double positionY = 0;
 bool tracker_initialized = false;
 
+int32_t distance_sensor_reading = 0;
+int32_t distance_sensor_confidence = 0;
+
 double toMeters(double value, double wheelRadius) {
     return (value / ticks_per_rot) * 2 * M_PI * wheelRadius;
 }
@@ -79,6 +82,10 @@ void update_position() {
         positionX += deltaX; // - (x_tracking_offset - last_x_tracking_offset);
         positionY += deltaY; // + (y_tracking_offset - last_y_tracking_offset);
 
+        /* get reading from the distance sensor */
+        distance_sensor_reading = distance_sensor.get();
+        distance_sensor_confidence = distance_sensor.get_confidence();
+
         // last_x_tracking_offset = x_tracking_offset;
         // last_y_tracking_offset = y_tracking_offset;
 
@@ -86,6 +93,8 @@ void update_position() {
         pros::lcd::set_text(5, "Position X: " + std::to_string(positionX));
         pros::lcd::set_text(6, "Position Y: " + std::to_string(positionY));
         pros::lcd::set_text(7, "Heading: " + std::to_string(heading));
+        pros::lcd::set_text(1, "distance mm: " + std::to_string(distance_sensor_reading));
+        pros::lcd::set_text(2, "distance con: " + std::to_string(distance_sensor_confidence));
         // pros::lcd::set_text(4, "Transverse Raw Val: " + std::to_string(transverseEncoder.get_value()));
         // pros::lcd::set_text(5, "Transverse Val: " + std::to_string(currentTransverseValue));
         // pros::lcd::set_text(6, "Radial Raw Val: " + std::to_string(radialEncoder.get_value()));

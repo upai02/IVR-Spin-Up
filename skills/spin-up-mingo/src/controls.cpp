@@ -205,6 +205,9 @@ void controls() {
 	catapult.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
+    /* to read encoders and distance sensor on the lcd display */
+    pros::Task position_updater(update_position);
+
     while(1) {
         // positionX_mutex.take();
         arcade_drive(false);
