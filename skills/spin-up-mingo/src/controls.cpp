@@ -53,6 +53,7 @@ void arcade_drive(bool shooterForward) {
   double leftInput = (shooterForward) ? voltage_deadzone((forward + turn) * VOLTAGE_SCALE) : -voltage_deadzone((forward - turn) * VOLTAGE_SCALE);
   double rightInput = (shooterForward) ? voltage_deadzone((forward - turn) * VOLTAGE_SCALE) : -voltage_deadzone((forward + turn) * VOLTAGE_SCALE);
   left_side.move_voltage(leftInput);
+//   left_front_top_mtr.move_voltage(leftInput);
   right_side.move_voltage(rightInput);
 }
 // Hybrid arcade drive with square scaling

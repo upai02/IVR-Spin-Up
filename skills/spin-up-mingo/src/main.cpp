@@ -7,6 +7,9 @@
 #include "robot.h"
 #include "misc/PositionTracker.h"
 
+/* temp import */
+#include "movement.h"
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -78,8 +81,10 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	pros::Task position_updater(update_position);
+	SmartStop();
 	// ROLLER AUTO
-	rollerAuto();
+	// rollerAuto();
 
 	// SKILLS AUTO
 	// boltEndgameAuto();
@@ -107,6 +112,6 @@ void opcontrol() {
 
 	// imu.reset();
 	// pros::delay(5000);
-
+	pros::Task position_updater(update_position);
 	controls();
 }
