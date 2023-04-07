@@ -30,6 +30,9 @@ void initialize() {
 	transverseEncoder.reset();
 	radialEncoder.reset();
 
+	/* initialization for writing to SD card */
+	// usd_file_write = fopen("/usd/encoder_positions.csv", "w");
+
 	// ROLLER AUTO
 	std::vector<double> starting_position = {0.9, 0.41}; // 35in, 16in
 	// // Edges to walls: 7.5in Y, 29in X

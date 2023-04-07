@@ -81,8 +81,19 @@ void update_position() {
         positionX += deltaX; // - (x_tracking_offset - last_x_tracking_offset);
         positionY += deltaY; // + (y_tracking_offset - last_y_tracking_offset);
 
-        std::cout << pros::c::millis() << ',' << transverseEncoderValue << ',' << positionY << ',' << radialEncoderValue << ',' << positionX << std::endl;
-
+        std::string curr_line = std::to_string(pros::c::millis()) + ',' + std::to_string(transverseEncoderValue) + ',' + std::to_string(positionY) + ',' + std::to_string(radialEncoderValue) + ',' + std::to_string(positionX);
+        char curr_line_array[curr_line.length() + 2]; // create char type to hold string
+        strcpy(curr_line_array, curr_line.c_str()); // copy over string to char array
+        curr_line_array[curr_line.length()] = '\n'; // replace null terminator with newline character
+        curr_line_array[curr_line.length() + 1] = '\0'; // replace null terminator with newline character
+        std::cout << curr_line; // print to terminal
+        // std::cout << pros::c::millis() << ',' << transverseEncoderValue << ',' << positionY << ',' << radialEncoderValue << ',' << positionX << std::endl;
+        if (usd_file_write != nullptr) {
+            fputs(curr_line_array, usd_file_write); // write to file
+        }
+        else {
+            std::cout << "NO SD CARD" << std::endl;
+        }
 
         // last_x_tracking_offset = x_tracking_offset;
         // last_y_tracking_offset = y_tracking_offset;

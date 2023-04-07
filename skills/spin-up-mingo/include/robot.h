@@ -21,3 +21,6 @@ extern pros::ADIDigitalIn cata_limit;
 extern pros::ADIPotentiometer catpot;
 extern pros::Motor roller;
 extern pros::ADIDigitalOut endgame_release;
+
+/* pointer to be initialized */
+extern FILE* usd_file_write;
