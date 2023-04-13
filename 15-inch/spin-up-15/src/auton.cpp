@@ -192,6 +192,12 @@ void auton_thread() {
 
 pros::Task auton_task(auton_thread);
 
+void test_auton() {
+    std::vector<std::vector<double>> path = {{0, 0}, {-2, 0}, {-2, -2}};
+    followPath(path, 0, true, false, 0.5, 10.0, 150.0, 300.0, false);
+    stopMotors();
+}
+
 void auton() {
 
     discs_in_mag = 2;

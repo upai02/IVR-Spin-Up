@@ -73,7 +73,7 @@ void controls()
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
     //   turnPID(90);
     // }
-    pros::lcd::print(6, "heading: %f", imu.get_heading());
+    // pros::lcd::print(6, "heading: %f", imu.get_heading());
 
 
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

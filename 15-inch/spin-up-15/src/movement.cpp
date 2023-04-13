@@ -125,13 +125,14 @@ void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double
     double degFromFinalAngle = desiredAngleDeg - currentHeading;
     degFromFinalAngle = optimizeAngle(degFromFinalAngle);
     while (std::abs(degFromFinalAngle) > toleranceDeg) {
-        updatePosition();
+        // updatePosition();
         degFromFinalAngle = optimizeAngle(desiredAngleDeg - currentHeading);
         double rotRPM = degFromFinalAngle * p;
         moveMotors(rotRPM, -rotRPM);
         if (debug) pros::lcd::set_text(4, "Robot angle: " + std::to_string(currentHeading));
         pros::delay(50);
     }
+    stopMotors();
 }
 
 double calcGoalAngle(std::vector<double> vect) {
@@ -361,7 +362,7 @@ void turnToPoint(double pointX, double pointY) {
     if (desiredAngle < 0) desiredAngle += 360;
 
     while (std::abs(optimizeAngle(desiredAngle - currentHeading)) > FINAL_ANGLE_TOLERANCE) {
-        updatePosition();
+        // updatePosition();
         desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
         if (desiredAngle < 0) desiredAngle += 360;
         double rotationalRPM = getRotationalRPM(desiredAngle, false);
@@ -369,4 +370,5 @@ void turnToPoint(double pointX, double pointY) {
 
         pros::delay(50);
     }
+    stopMotors();
 }
