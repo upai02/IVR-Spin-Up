@@ -27,11 +27,11 @@ void initialize() {
 	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	flywheel_left_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	flywheel_right_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	set_mag_piston(true);
-	set_intake_piston(true);
 	init_endgame(false);
 	// flywheel_task.suspend();
 
@@ -104,6 +104,6 @@ void opcontrol() {
   auton_sel = 'E';
   intake_mtr.move_voltage(0);
   rai_mtr.move_voltage(0);
-  flywheel_mtr.move_voltage(0);
+  flywheel.move_voltage(0);
 	controls();
 }

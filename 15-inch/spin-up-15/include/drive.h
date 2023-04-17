@@ -12,6 +12,7 @@ void tank_drive();
 void arcade_drive();
 void hybrid_drive();
 void dylan_drive();
+void akap_drive();
 void prav_drive();
 
 extern std::vector<std::pair<std::string,std::function<void()>>> drive_modes;

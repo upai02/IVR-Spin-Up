@@ -2,6 +2,7 @@
 #include "intake.h"
 #include "auton.h"
 #include "pros/rtos.h"
+#include <vector>
 
 int flywheel_rpm = close_range_rpm;
 
@@ -13,6 +14,15 @@ void activate_long_range() {
 }
 void set_flywheel_rpm(int rpm) {
   flywheel_rpm = rpm;
+}
+
+double get_flywheel_rpm() {
+  std::vector<double> velocities = flywheel.get_actual_velocities();
+  double avg = 0.0;
+  for (int i = 0; i < velocities.size(); i++) {
+    avg += velocities[i];
+  }
+  return avg / velocities.size();
 }
 
 pros::Task flywheel_task(shoot_thread);
@@ -30,7 +40,7 @@ bool flywheel_running = false;
 
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel_mtr.move_voltage(8000);
+    flywheel.move_voltage(8000);
     soft_spinning = true;
   }
 }
@@ -45,7 +55,7 @@ void run_flywheel() {
   }
 
   // if flywheel is close to target rpm, then rumble controller
-  if (abs(flywheel_mtr.get_actual_velocity() - flywheel_rpm) < 20) {
+  if (abs(get_flywheel_rpm() - flywheel_rpm) < 20) {
     master.rumble("-");
   }
 
@@ -55,7 +65,7 @@ void run_flywheel() {
 void stop_flywheel() {
   if (!soft_spinning) {
     flywheel_task.suspend();
-    flywheel_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
     flywheel_running = false;
   }
 }

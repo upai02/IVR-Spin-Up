@@ -34,9 +34,9 @@ void controls()
       rai_mtr.move_voltage(0);
     }
     // intake pistons
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      toggle_intake_piston();
-    }
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    //   toggle_intake_piston();
+    // }
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
     //   toggle_mag_piston();
     // }

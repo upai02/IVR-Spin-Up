@@ -18,17 +18,16 @@ extern pros::Motor_Group right_side;
 extern pros::Motor intake_mtr;
 extern pros::Motor rai_mtr;
 extern pros::ADIDigitalOut mag_piston;
-extern pros::ADIDigitalOut intake_piston;
 // Shooter 
-extern pros::Motor flywheel_mtr;
+extern pros::Motor flywheel_left_mtr;
+extern pros::Motor flywheel_right_mtr;
+extern pros::Motor_Group flywheel;
 // Endgame
-extern pros::ADIDigitalOut endgame_piston;
+extern pros::ADIDigitalOut blocker_piston;
+extern pros::ADIDigitalOut string_release_piston;
 // Sensors
 extern pros::Imu imu;
 extern pros::Distance disc_dist;
 extern pros::Optical roller_opt;
 extern pros::ADIEncoder vertical_track; // tracking wheel #1
 extern pros::ADIEncoder horizontal_track; // tracking wheel #2
-// extern pros::ADIEncoder flywheel_enc;
-
-extern pros::GPS gps;

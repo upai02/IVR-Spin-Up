@@ -23,4 +23,6 @@ void activate_close_range();
 void activate_long_range();
 void set_flywheel_rpm(int rpm);
 
+double get_flywheel_rpm();
+
 void soft_spin();

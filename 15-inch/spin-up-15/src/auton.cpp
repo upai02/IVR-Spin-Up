@@ -153,12 +153,12 @@ double getAngleError(double target, double currHeading) {
 void shootPF(double rpm) {
     double kF = 20.8;
     double kP = 0.49;
-    double error = rpm - flywheel_mtr.get_actual_velocity();
+    double error = rpm - get_flywheel_rpm();
     double power = kF * rpm + kP * error;
     while (std::abs(error) > 10) {
-        error = rpm - flywheel_mtr.get_actual_velocity();
+        error = rpm - get_flywheel_rpm();
         power = kF * rpm + kP * error;
-        flywheel_mtr.move_voltage(power);
+        flywheel.move_voltage(power);
         pros::delay(20);
     }
 }
@@ -257,7 +257,7 @@ void auton() {
     auton_sel = 'E';
     intake_mtr.move_voltage(0);
     rai_mtr.move_voltage(0);
-    flywheel_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
 }
 
 void skill_auton() {

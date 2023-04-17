@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "spin-up-15",
+    "project_name": "worlds-15",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -308,8 +308,9 @@
       }
     },
     "upload_options": {
-      "icon": "pros",
-      "slot": 6
+      "icon": "planet",
+      "slot": 7,
+      "description": "we better win tho"
     }
   }
 }

@@ -45,18 +45,18 @@ void outtake() {
   last_disc_dist = distance;
 }
 
-void toggle_intake_piston() {
-  intake_out = !intake_out;
-  intake_piston.set_value(intake_out);
-}
+// void toggle_intake_piston() {
+//   intake_out = !intake_out;
+//   intake_piston.set_value(intake_out);
+// }
 void toggle_mag_piston() {
   mag_down = !mag_down;
   mag_piston.set_value(mag_down);
 }
-void set_intake_piston(bool value) {
-  intake_out = !value;
-  intake_piston.set_value(intake_out);
-}
+// void set_intake_piston(bool value) {
+//   intake_out = !value;
+//   intake_piston.set_value(intake_out);
+// }
 void set_mag_piston(bool value) {
   mag_down = value;
   mag_piston.set_value(mag_down);

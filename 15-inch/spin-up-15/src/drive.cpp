@@ -2,15 +2,14 @@
 
 int drive_mode_idx = 0;
 
-std::vector<std::pair<std::string,std::function<void()>>> drive_modes = {{"Dylan_Drive", dylan_drive}, {"Prav_Drive", prav_drive}, {"Tank_Drive", tank_drive}, {"Arcade_Drive", arcade_drive}, {"Hybrid_Drive", hybrid_drive}};
+std::vector<std::pair<std::string,std::function<void()>>> drive_modes = {{"Dylan_Drive", dylan_drive}, {"akap.site Drive", akap_drive}};
 
 
 double normalize_joystick(double input) {
   return input / 127.0;
 }
 
-const double sin_scale_factor = 2.9;
-double sin_scale(double input) {
+double sin_scale(double input, double sin_scale_factor) {
   return copysign(pow(sin((M_PI/2) * fabs(input)), sin_scale_factor), input);
 }
 
@@ -54,19 +53,20 @@ void hybrid_drive() {
   right_side.move_voltage((forward + turn) * 12000);
 }
 // Dylan's Drive
+const double dylan_sin_scale_factor = 2.9;
 void dylan_drive() {
-  double left = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)));
-  double right = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)));
-  // slow turn adjustments
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-    double turn = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)));
-    left_side.move_voltage(turn * 4000);
-    right_side.move_voltage(-turn * 4000);
-  } else {
-    // normal usage
-    left_side.move_voltage(left * 12000);
-    right_side.move_voltage(right * 12000);
-  }
+  double left = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), dylan_sin_scale_factor);
+  double right = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)), dylan_sin_scale_factor);
+  left_side.move_voltage(left * 12000);
+  right_side.move_voltage(right * 12000);
+}
+// Akap.site's Drive
+const double akap_sin_scale_factor = 2.5;
+void akap_drive() {
+  double left = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), akap_sin_scale_factor);
+  double right = sin_scale(normalize_joystick(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)), akap_sin_scale_factor);
+  left_side.move_voltage(left * 12000);
+  right_side.move_voltage(right * 12000);
 }
 
 
