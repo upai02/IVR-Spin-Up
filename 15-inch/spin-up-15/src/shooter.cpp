@@ -45,7 +45,7 @@ void run_flywheel() {
   }
 
   // if flywheel is close to target rpm, then rumble controller
-  if (abs(flywheel_mtr.get_actual_velocity() - flywheel_rpm) < 20) {
+  if (std::abs(flywheel_mtr.get_actual_velocity() - flywheel_rpm) < 20) {
     master.rumble("-");
   }
 

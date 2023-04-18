@@ -3,7 +3,6 @@
 #include "shooter.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
-#include "movement.h"
 #include "roller.h"
 #include "endgame.h"
 
@@ -194,7 +193,7 @@ pros::Task auton_task(auton_thread);
 
 void test_auton() {
     std::vector<std::vector<double>> path = {{0, 0}, {-2, 0}, {-2, -2}};
-    followPath(path, 0, true, false, 0.5, 10.0, 150.0, 300.0, false);
+    followPath(path, 0, true, false, false, 0.5, 10.0, 150.0, 300.0, false);
     stopMotors();
 }
 
