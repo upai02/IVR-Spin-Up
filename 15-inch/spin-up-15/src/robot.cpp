@@ -22,7 +22,7 @@ pros::Motor flywheel_left_mtr(14, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor flywheel_right_mtr(15, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor_Group flywheel({flywheel_left_mtr, flywheel_right_mtr});
 // Endgame
-pros::ADIDigitalOut blocker_piston('f', false); // blocker deploy piston
+pros::ADIDigitalOut eg_deploy_piston('f', false); // blocker deploy piston
 pros::ADIDigitalOut string_release_piston('g', false); // string release piston
 // Sensors
 pros::Imu imu(8);

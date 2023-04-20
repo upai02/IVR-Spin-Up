@@ -4,6 +4,8 @@
 #include "intake.h"
 #include "endgame.h"
 #include "shooter.h"
+#include "roller.h"
+#include "vision_tracking.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -13,14 +15,22 @@
  */
 void initialize() {
 	pros::lcd::initialize();
+
+	// ENCODER / SENSOR SETUP
 	horizontal_track.reset();
 	vertical_track.reset();
+	imu.reset();
+	imu.set_heading(90);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
+	pros::delay(2500);
+
+	// TASK VARIABLE SETUP
 	char auton_sel = 'E'; 
-	// flywheel_task.suspend();
-	pros::delay(1500);
 	flywheel_task.suspend();
-	auton_task.suspend();
-	// imu.reset(true);
+	auto_aim_task.suspend();
+
+	// MOTOR MODES SETUP
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -31,17 +41,13 @@ void initialize() {
 	flywheel_right_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	set_mag_piston(true);
-	init_endgame(false);
-	// flywheel_task.suspend();
 
-	imu.reset();
-	imu.set_heading(90);
-	// initTracker(0, 0);
-	// pros::Task odom(updatePosition);
+	// INIT FUNCTIONS
+	init_endgame();
+	init_intake();
+	init_roller();
 
 	pros::delay(2000);
-
 	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
 
@@ -80,8 +86,6 @@ void autonomous() {
 	// initialize();
 	imu.set_heading(90);
 	pros::lcd::print(6, "heading: %f", imu.get_heading());
-	// pros::delay(100000);
-	// skill_auton();
 	auton();
 }
 
@@ -100,10 +104,10 @@ void autonomous() {
  */
 void opcontrol() {
 	flywheel_task.suspend();
-  auton_task.suspend();
   auton_sel = 'E';
   intake_mtr.move_voltage(0);
   rai_mtr.move_voltage(0);
   flywheel.move_voltage(0);
+	start_endgame_timer();
 	controls();
 }

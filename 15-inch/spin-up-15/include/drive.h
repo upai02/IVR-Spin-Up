@@ -4,8 +4,8 @@
 
 extern int drive_mode_idx;
 
-void op_drive();
-void toggle_drive_mode();
+void op_drive(); // Called in opcontrol
+void toggle_drive_mode(); // toggles between drive modes(akaash and dylan)
 std::string get_drive_name();
 
 void tank_drive();
@@ -13,7 +13,7 @@ void arcade_drive();
 void hybrid_drive();
 void dylan_drive();
 void akap_drive();
-void prav_drive();
+
 
 extern std::vector<std::pair<std::string,std::function<void()>>> drive_modes;
 
