@@ -1,10 +1,12 @@
 #include "auton.h"
 #include "main.h"
+#include "pros/rtos.hpp"
 #include "shooter.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
 #include "roller.h"
 #include "endgame.h"
+#include <vector>
 
 char auton_sel = 'E';
 
@@ -273,4 +275,107 @@ void skill_auton() {
     pros::delay(20*1000);
     activate_endgame();
 
+}
+
+void rollerAutoPATH() {
+    // robot center: 35in x, 16in y
+
+    // pros::Task position_updater(updatePosition);
+
+    const double SPIN_TICKS_FIRST = -800;
+    const double SPIN_TICKS_SECOND = -800;
+    const double ROLLER_MOVE_VEL = -30;
+    const double WALL_WAIT_MILLISECONDS = 4000;
+    // -2900 per spin in correct direction
+    // drive up to roller:
+    // catapult.brake();
+    moveMotors(-60, -60);
+    pros::delay(WALL_WAIT_MILLISECONDS / 2);
+
+    std::vector<double> starting_position = {0.9, 0.21}; // 7 inches (0.18 meters) off wall
+    // - back of robot touching vertical plane created by furthest edge of the 2nd foam tile into the field
+    // const double ROLLER_START_POSITION = roller.get_position();
+
+    // while (std::abs(SPIN_TICKS_FIRST) > std::abs(roller.get_position() - ROLLER_START_POSITION)) {
+    //     roller.move_velocity(ROLLER_MOVE_VEL);
+    //     pros::delay(50);
+    // }
+    moveMotors(0, 0);
+    // roller.move_velocity(0);
+
+    std::vector<std::vector<double>> path_to_other_roller = {{starting_position}, {1.2, 0.6}, {2.4, 0.25}, {3.0, 0.6}, {3.2, 1.2}, {3.0, 1.6}, {3.1, 2.67}};
+    
+    followPath(path_to_other_roller, 270, false, true, false, 0.5, 3.0); //200, 275
+    moveMotors(-30, -30);
+    pros::delay(WALL_WAIT_MILLISECONDS);
+
+    // double roller_second_start_pos = roller.get_position();
+    // while (std::abs(SPIN_TICKS_SECOND) > std::abs(roller.get_position() - roller_second_start_pos)) {
+    //     roller.move_velocity(ROLLER_MOVE_VEL);
+    //     pros::delay(50);
+    // }
+    moveMotors(30, 30);
+    // roller.move_velocity(0);
+    pros::delay(2000);
+    stopMotors();
+
+    // position_updater.suspend();
+    // done!
+    // pros::lcd::set_text(3, "Done!");
+}
+
+void compAutonLeftRobot() {
+    // Robo dims: 15.5 (0.4) length by 12.5 (0.31) inches (width)
+    // Starting pos: (1.02, 0.4)
+
+    std::vector<double> starting_pos = {1.02, 0.4};
+    std::vector<std::vector<double>> get_midline_three = {starting_pos, {1.02, 0.75}};
+    followPath(get_midline_three, 0, false, false, true);
+    // shoot
+    pros::delay(2000);
+    moveMotors(-50, -50);
+    pros::delay(2000);
+    std::vector<std::vector<double>> get_central_three = {{1.15, 0.5}, {1.5, 0.9}};
+    followPath(get_central_three, 45, false, false, true);
+    // shoot
+    pros::delay(2000);
+    std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.4, 0.0}, {2.3, 1.2}};
+    followPath(get_side_three, 0, false, true, true);
+    // shoot
+}
+
+
+void compAutonRightRobot() {
+    // Robo dims: 15.5 length by 12.5 inches (width)
+    // Starting pos: (3.25, 2.15) facing 315 deg
+
+    std::vector<double> starting_pos = {3.25, 2.15};
+    // intake on 
+    std::vector<std::vector<double>> to_mid_line_three = {starting_pos, {2.8, 2.6}};
+    followPath(to_mid_line_three, 315.0, false);
+    pros::delay(200);
+    pros::delay(2000);
+    std::vector<std::vector<double>> to_shoot_pos_one = {to_mid_line_three.back(), {3.0, 2.4}};
+    followPath(to_shoot_pos_one, 315.0, true, false, true);
+    pros::delay(2000);
+    // shoot
+    turnToAngle(225.0, 7.0);
+
+    std::vector<std::vector<double>> to_shoot_pos_two = {to_shoot_pos_one.back(), {2.1, 1.5}};
+    followPath(to_shoot_pos_two, 225, false, false, true);
+    pros::delay(2000);
+    // shoot
+    turnToPoint(3.6, 0.6);
+    std::vector<std::vector<double>> get_goal_bar_three = {to_shoot_pos_two.back(), {2.9, 1.0}, {3.3, 1.4}, {3.1, 2.7}};
+    followPath(get_goal_bar_three, 280, false, false, true);
+    pros::delay(2000);
+    // shoot
+    turnToAngle(270, 2.0);
+
+    moveMotors(-60, -60);
+    pros::delay(1000);
+    // roller
+    moveMotors(60, 60);
+    pros::delay(500);
+    stopMotors();
 }

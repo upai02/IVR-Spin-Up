@@ -68,6 +68,11 @@ void controls()
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) && master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       activate_endgame();
     }
+
+    // hold button
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      turnToPoint();
+    }
   
     // turn pid test
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

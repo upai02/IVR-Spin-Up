@@ -4,6 +4,7 @@
 #include "intake.h"
 #include "endgame.h"
 #include "shooter.h"
+#include <vector>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -35,8 +36,17 @@ void initialize() {
 	// init_endgame(false);
 	// flywheel_task.suspend();
 
-	initTracker(0, 0, 90);
-	pros::Task odom(updatePosition);
+	// Default/normal testing
+	// initTracker(0, 0,0);
+
+	// RollerAutoPATH
+	// initTracker(0.9, 0.4, 0);
+
+	// Left side COMP auto
+	initTracker(1.02, 0.4, 0);
+
+	// Right side COMP auto
+	// initTracker(3.25, 2.15, 315);
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
@@ -71,6 +81,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	pros::Task odom(updatePosition);
 	// initTracker(0, 0);
 	// SmartStop();
 	// initialize();
@@ -82,7 +93,15 @@ void autonomous() {
 	// pros::lcd::set_text(6, "Heading: " + std::to_string(currentHeading));
 	// turnToAngle(270, 3, true, 1.5); this works now
 	// turnToPoint(1, 1); this works now
-	test_auton();
+	// test_auton();
+	// rollerAutoPATH();
+
+	// test auton:
+	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
+	// followPath(straight_path, 0, true, false, true);
+	// moveMotors(50, 50);
+	compAutonLeftRobot();
+	odom.suspend();
 }
 
 /**
@@ -105,5 +124,6 @@ void opcontrol() {
   	// intake_mtr.move_voltage(0);
   	// rai_mtr.move_voltage(0);
   	// flywheel_mtr.move_voltage(0);
+	pros::Task odom(updatePosition);
 	controls();
 }

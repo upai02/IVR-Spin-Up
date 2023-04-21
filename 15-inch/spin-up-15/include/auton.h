@@ -12,5 +12,8 @@ void auton_thread();
 void test_auton();
 void auton();
 void skill_auton();
+void rollerAutoPATH();
+void compAutonLeftRobot();
+void compAutonRightRobot();
 
 extern pros::Task auton_task;
