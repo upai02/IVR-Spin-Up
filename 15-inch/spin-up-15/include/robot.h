@@ -23,11 +23,10 @@ extern pros::Motor flywheel_left_mtr;
 extern pros::Motor flywheel_right_mtr;
 extern pros::Motor_Group flywheel;
 // Endgame
-extern pros::ADIDigitalOut eg_deploy_piston; // deploys endgame/blocker
-extern pros::ADIDigitalOut string_release_piston; // releases string
+extern pros::ADIDigitalOut string_release_piston_1; // releases string 1 
+extern pros::ADIDigitalOut string_release_piston_2; // releases string 2
 // Sensors
 extern pros::Imu imu;
 extern pros::Distance disc_dist;
-extern pros::Optical roller_opt;
 extern pros::ADIEncoder vertical_track; // tracking wheel #1
 extern pros::ADIEncoder horizontal_track; // tracking wheel #2

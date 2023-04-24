@@ -45,7 +45,6 @@ void initialize() {
 	// INIT FUNCTIONS
 	init_endgame();
 	init_intake();
-	init_roller();
 	
 	// TASK VARIABLE SETUP
 	char auton_sel = 'E';
@@ -117,12 +116,12 @@ void autonomous() {
 	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
-	compAutonLeftRobot();
-	odom.suspend();
+	// compAutonLeftRobot();
 
-	// imu.set_heading(90);
-	// pros::lcd::print(6, "heading: %f", imu.get_heading());
-	// auton();
+	imu.set_heading(90);
+	pros::lcd::print(6, "heading: %f", imu.get_heading());
+	auton();
+	odom.suspend();
 }
 
 /**

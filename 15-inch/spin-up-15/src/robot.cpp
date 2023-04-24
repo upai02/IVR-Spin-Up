@@ -22,11 +22,10 @@ pros::Motor flywheel_left_mtr(14, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor flywheel_right_mtr(10, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor_Group flywheel({flywheel_left_mtr, flywheel_right_mtr});
 // Endgame
-pros::ADIDigitalOut eg_deploy_piston('f', false); // blocker deploy piston
-pros::ADIDigitalOut string_release_piston('g', false); // string release piston
+pros::ADIDigitalOut string_release_piston_1('f', false); // string release piston
+pros::ADIDigitalOut string_release_piston_2('g', false); // blocker deploy piston
 // Sensors
 pros::Imu imu(8);
 pros::Distance disc_dist(6);
-pros::Optical roller_opt(9);
 pros::ADIEncoder vertical_track(3, 4, true); // tracking wheel #1
 pros::ADIEncoder horizontal_track(1, 2, true); // tracking wheel #2
