@@ -56,6 +56,8 @@ void controls()
     }
 
     // if discs in mag is greater than 0, soft spin
+    // note that there is a bug where if we outtake discs after they've been detected
+    // the discs_in_mag variables does not decrement.
     if (discs_in_mag > 0) {
       soft_spin();
     }
@@ -66,16 +68,16 @@ void controls()
     }
 
     // auto-aim
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      auto_aim_task.resume();
-    } else {
-      auto_aim_task.suspend();
-    }
+    // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   auto_aim_task.resume();
+    // } else {
+    //   auto_aim_task.suspend();
+    // }
 
-    // hold button
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      turnToPoint();
-    }
+    // hold button - needs more testing/debugging
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   turnToPoint();
+    // }
   
     // turn pid test
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

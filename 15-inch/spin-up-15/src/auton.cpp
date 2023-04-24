@@ -357,7 +357,7 @@ void rollerAutoPATH() {
 
 void compAutonLeftRobot() {
     // Robo dims: 15.5 (0.4) length by 12.5 (0.31) inches (width)
-    // Starting pos: (1.02, 0.4)
+    // Starting pos: (1.02, 0.4)'
 
     std::vector<double> starting_pos = {1.02, 0.4};
     std::vector<std::vector<double>> get_midline_three = {starting_pos, {1.02, 0.75}};
@@ -381,7 +381,8 @@ void compAutonRightRobot() {
     // Starting pos: (3.25, 2.15) facing 315 deg
 
     std::vector<double> starting_pos = {3.25, 2.15};
-    // intake on 
+    // intake on
+     
     std::vector<std::vector<double>> to_mid_line_three = {starting_pos, {2.8, 2.6}};
     followPath(to_mid_line_three, 315.0, false);
     pros::delay(200);
