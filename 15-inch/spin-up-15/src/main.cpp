@@ -15,21 +15,6 @@
  */
 void initialize() {
 	pros::lcd::initialize();
-
-	// ENCODER / SENSOR SETUP
-	horizontal_track.reset();
-	vertical_track.reset();
-	imu.reset();
-	imu.set_heading(90);
-	// initTracker(0, 0);
-	// pros::Task odom(updatePosition);
-	pros::delay(2500);
-
-	// TASK VARIABLE SETUP
-	char auton_sel = 'E'; 
-	flywheel_task.suspend();
-	auto_aim_task.suspend();
-
 	// MOTOR MODES SETUP
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -46,8 +31,27 @@ void initialize() {
 	init_endgame();
 	init_intake();
 	init_roller();
+	
+	// TASK VARIABLE SETUP
+	char auton_sel = 'E';
+	// pros::delay(2000);
+	// stop_flywheel();
+	flywheel_task.suspend();
+	auto_aim_task.suspend();
+	target_flywheel_rpm = close_range_rpm;
 
-	pros::delay(2000);
+	// ENCODER / SENSOR SETUP
+	horizontal_track.reset();
+	vertical_track.reset();
+	imu.reset();
+	imu.set_heading(90);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
+	pros::delay(2500);
+
+
+
+	pros::delay(500);
 	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
 

@@ -8,6 +8,10 @@ int bbox_y2 = 0;
 int cx_offset = 0;
 int cy_offset = 0;
 
+char data_received [NUM_INTS * 10];
+char previous_data_received [NUM_INTS * 10];
+int rasppi_ret_vals [NUM_INTS];
+
 pros::Task auto_aim_task(auto_aim);
 
 // parses raw data and seperates by delimiter(,)

@@ -181,8 +181,8 @@ double getAngleError(double target, double currHeading) {
 
 // control loop to keep flywheel at a certain rpm
 void shootPF(double rpm) {
-    const double kF = 20.8;
-    const double kP = 0.49;
+    const double kF = 24.7;
+    const double kP = 0.1;
     double error = rpm - get_flywheel_rpm();
     double power = kF * rpm + kP * error;
     while (std::abs(error) > 10) {

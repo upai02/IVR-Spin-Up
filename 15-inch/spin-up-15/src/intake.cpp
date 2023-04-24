@@ -21,14 +21,14 @@ void intake() {
   // also updates discs_in_mag variable
   int distance = disc_dist.get();
   if (distance < 15) {
-    rai_counter = 15;
-    rai_mtr.move_voltage(6000);
+    rai_counter = 18;
+    rai_mtr.move_voltage(8000);
     if (last_disc_dist - distance > 50) {
       discs_in_mag++;
     }
   } else if (rai_counter > 0) {
     rai_counter--;
-    rai_mtr.move_voltage(6000);
+    rai_mtr.move_voltage(8000);
   } else {
     rai_mtr.move_voltage(0);
   }

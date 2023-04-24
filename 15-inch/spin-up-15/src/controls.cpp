@@ -41,8 +41,8 @@ void controls()
       activate_close_range();
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      // activate_long_range();
-      deploy_endgame();
+      activate_long_range();
+      // deploy_endgame();
     }
     // run flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
@@ -76,7 +76,7 @@ void controls()
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
     //   turnPID(90);
     // }
-    pros::lcd::print(6, "heading: %f", imu.get_heading());
+    // pros::lcd::print(6, "heading: %f", imu.get_heading());
 
 
     // pros terminal printing ------------
@@ -93,6 +93,9 @@ void controls()
     // pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
     // print to controller ------------
     master.print(0, 0, "d_m: %s", get_drive_name().c_str());
+    pros::lcd::print(1, "Flywheel RPM: %lf", get_flywheel_rpm());
+    pros::lcd::print(2, "target rpm: %d", target_flywheel_rpm);
+    pros::lcd::print(3, "discs in mag: %d", discs_in_mag);
     // master.print(2, 0, "fly_rpm: %d", flywheel_rpm);
     // pros::lcd::print(2, "Vertical Encoder: %lf", (vertical_track.get_value()/5120.0)*360.0);
     // master.print(2, 0, "Vertical Encoder: %lf", vertical_track.get_value());

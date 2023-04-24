@@ -7,16 +7,16 @@
 #include <algorithm>
 
 // initialize target flywheel rpm
-int target_flywheel_rpm = close_range_rpm;
+int target_flywheel_rpm = 0;
 // initialize main task to run flywheel
 pros::Task flywheel_task(shoot_thread);
 
 // this thread runs the flywheel at the target flywheel rpm
 void shoot_thread() {
-    while (true) {
-      shootPF(target_flywheel_rpm);
-      pros::delay(20);
-    }
+  while (true) {
+    shootPF(target_flywheel_rpm);
+    pros::delay(20);
+  }
 }
 
 void activate_close_range() {
@@ -63,7 +63,7 @@ void run_flywheel() {
   }
 
   // if flywheel is close to target rpm, then rumble controller
-  if (abs(get_flywheel_rpm() - target_flywheel_rpm) < 15) {
+  if (abs(get_flywheel_rpm() - target_flywheel_rpm) < 6) {
     master.rumble("-");
   }
 
