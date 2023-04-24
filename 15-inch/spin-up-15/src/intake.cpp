@@ -1,43 +1,47 @@
 #include "intake.h"
 #include "robot.h"
 
-bool intake_out = true;
-bool mag_down = false;
+bool mag_piston_state = false;
 
 int discs_in_mag = 0;
 int last_disc_dist = 0;
-
 int rai_counter = 0;
 
+void init_intake() {
+  set_mag_piston(false);
+}
+
 void intake() {
-  // add code here to sense disc and run rai motor
-  // and update discs_in_mag
-  // make sure that mag is up before running intake
-  if (mag_down) {
+  // make sure mag piston is not engaged
+  if (mag_piston_state) {
     toggle_mag_piston();
   }
   intake_mtr.move_voltage(12000);
+  // below is logic to sense disc and spin the rai motor when needed
+  // also updates discs_in_mag variable
   int distance = disc_dist.get();
   if (distance < 15) {
-    rai_counter = 15;
-    rai_mtr.move_voltage(6000);
+    rai_counter = 18;
+    rai_mtr.move_voltage(8000);
     if (last_disc_dist - distance > 50) {
       discs_in_mag++;
     }
   } else if (rai_counter > 0) {
     rai_counter--;
-    rai_mtr.move_voltage(6000);
+    rai_mtr.move_voltage(8000);
   } else {
     rai_mtr.move_voltage(0);
   }
   last_disc_dist = distance;
 }
 void outtake() {
-  // add code here to sense disc and update discs_in_mag
-  if (mag_down) {
+  // make sure mag piston is not engaged
+  if (mag_piston_state) {
     toggle_mag_piston();
   }
   intake_mtr.move_voltage(-6500);
+  // below is logic to sense if disc is being outtaked
+  // updates discs_in_mag variable accordingly
   int distance = disc_dist.get();
   if (distance - last_disc_dist > 50) {
     discs_in_mag--;
@@ -45,21 +49,13 @@ void outtake() {
   last_disc_dist = distance;
 }
 
-void toggle_intake_piston() {
-  intake_out = !intake_out;
-  intake_piston.set_value(intake_out);
-}
 void toggle_mag_piston() {
-  mag_down = !mag_down;
-  mag_piston.set_value(mag_down);
+  set_mag_piston(!mag_piston_state);
 }
-void set_intake_piston(bool value) {
-  intake_out = !value;
-  intake_piston.set_value(intake_out);
-}
+
 void set_mag_piston(bool value) {
-  mag_down = value;
-  mag_piston.set_value(mag_down);
+  mag_piston_state = value;
+  mag_piston.set_value(mag_piston_state);
 }
 
 void reset_discs_in_mag() {

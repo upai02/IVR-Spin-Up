@@ -5,6 +5,8 @@
 #include "endgame.h"
 #include "shooter.h"
 #include <vector>
+#include "roller.h"
+#include "vision_tracking.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -14,27 +16,13 @@
  */
 void initialize() {
 	pros::lcd::initialize();
-	horizontal_track.reset();
-	vertical_track.reset();
-	char auton_sel = 'E'; 
-	// flywheel_task.suspend();
-	// pros::delay(1500);
-	// flywheel_task.suspend();
-	// auton_task.suspend();
-	imu.reset(true);
+	// MOTOR MODES SETUP
 	left_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	left_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	// flywheel_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	// rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	// intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-	// set_mag_piston(true);
-	// set_intake_piston(true);
-	// init_endgame(false);
-	// flywheel_task.suspend();
 
 	// Default/normal testing
 	// initTracker(0, 0,0);
@@ -49,6 +37,35 @@ void initialize() {
 	// initTracker(3.25, 2.15, 315);
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
+	flywheel_left_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	flywheel_right_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	intake_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+	// INIT FUNCTIONS
+	init_endgame();
+	init_intake();
+	init_roller();
+	
+	// TASK VARIABLE SETUP
+	char auton_sel = 'E';
+	// pros::delay(2000);
+	// stop_flywheel();
+	flywheel_task.suspend();
+	auto_aim_task.suspend();
+	target_flywheel_rpm = close_range_rpm;
+
+	// ENCODER / SENSOR SETUP
+	horizontal_track.reset();
+	vertical_track.reset();
+	imu.reset();
+	imu.set_heading(90);
+	// initTracker(0, 0);
+	// pros::Task odom(updatePosition);
+	pros::delay(2500);
+
+	pros::delay(500);
+	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 }
 
 /**
@@ -102,6 +119,10 @@ void autonomous() {
 	// moveMotors(50, 50);
 	compAutonLeftRobot();
 	odom.suspend();
+
+	// imu.set_heading(90);
+	// pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// auton();
 }
 
 /**
@@ -118,12 +139,12 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	// flywheel_task.suspend();
-  	// auton_task.suspend();
-  	// auton_sel = 'E';
-  	// intake_mtr.move_voltage(0);
-  	// rai_mtr.move_voltage(0);
-  	// flywheel_mtr.move_voltage(0);
 	pros::Task odom(updatePosition);
+	flywheel_task.suspend();
+	auton_sel = 'E';
+	intake_mtr.move_voltage(0);
+	rai_mtr.move_voltage(0);
+	flywheel.move_voltage(0);
+	start_endgame_timer();
 	controls();
 }

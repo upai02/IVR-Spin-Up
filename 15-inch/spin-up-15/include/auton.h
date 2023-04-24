@@ -1,6 +1,7 @@
 #pragma once
 #include "api.h"
 #include "robot.h"
+#include "shooter.h"
 
 extern char auton_sel;
 
@@ -16,4 +17,6 @@ void rollerAutoPATH();
 void compAutonLeftRobot();
 void compAutonRightRobot();
 
-extern pros::Task auton_task;
+void turnP(double deg, double kp, double min_speed, double max_speed);
+void assign_min_speed(double &speed, double min_speed);
+void assign_max_speed(double &speed, double max_speed);

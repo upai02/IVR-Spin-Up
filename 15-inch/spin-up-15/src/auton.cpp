@@ -1,14 +1,14 @@
-#include "auton.h"
 #include "main.h"
 #include "pros/rtos.hpp"
 #include "shooter.h"
+#include "main.h"
 #include "misc/PositionTracker.h"
 #include "intake.h"
 #include "roller.h"
 #include "endgame.h"
 #include <vector>
 
-char auton_sel = 'E';
+char auton_sel = 'E'; // initialize auton_sel to E (do nothing)
 
 template <typename T>
 int sgn (T num) {
@@ -20,6 +20,7 @@ int sgn (T num) {
     }
 }
 
+// pid to drive straight, just uses motor encoders
 void drivePID(double inches) {
     left_side.tare_position();
     right_side.tare_position();
@@ -75,17 +76,45 @@ void drivePID(double inches) {
     right_side.brake();
 }
 
-void assign_min_speed (double& speed, double min_speed) {
-    if (speed < 0) {
-        if (fabs(speed) < min_speed) {
-            speed = -min_speed;
-        }
+// constrains speed to be above the min_speed
+void assign_min_speed(double& speed, double min_speed) {
+    if (fabs(speed) < min_speed) {
+        speed = min_speed * sgn(speed);
     }
-    if (speed > 0) {
-        if (fabs(speed) < min_speed) {
-            speed = min_speed;
-        }
+}
+// constrains speed to be below the max_speed
+void assign_max_speed(double& speed, double max_speed) {
+    if (fabs(speed) > max_speed) {
+        speed = max_speed * sgn(speed);
     }
+}
+
+// simpler turn control loop using imu
+void turnP(double deg, double kp, double min_speed, double max_speed) {
+    double target = deg;
+    double error = getAngleError(target, imu.get_heading());
+    double speed = 0;
+
+    int stop_counter = 0;
+    while (stop_counter < 15) {
+        error = getAngleError(target, imu.get_heading());
+        speed = error * kp;
+        assign_min_speed(speed, min_speed);
+        assign_max_speed(speed, max_speed);
+
+        left_side.move(speed);
+        right_side.move(-speed);
+
+        if (fabs(error) < 3) {
+            stop_counter++;
+        } else {
+            stop_counter = 0;
+        }
+
+        pros::delay(20);
+    }
+    left_side.brake();
+    right_side.brake();
 }
 
 // could change currentHeading with imu.get_heading()
@@ -151,19 +180,21 @@ double getAngleError(double target, double currHeading) {
     return error;
 }
 
+// control loop to keep flywheel at a certain rpm
 void shootPF(double rpm) {
-    double kF = 20.8;
-    double kP = 0.49;
-    double error = rpm - flywheel_mtr.get_actual_velocity();
+    const double kF = 24.7;
+    const double kP = 0.1;
+    double error = rpm - get_flywheel_rpm();
     double power = kF * rpm + kP * error;
     while (std::abs(error) > 10) {
-        error = rpm - flywheel_mtr.get_actual_velocity();
+        error = rpm - get_flywheel_rpm();
         power = kF * rpm + kP * error;
-        flywheel_mtr.move_voltage(power);
+        flywheel.move_voltage(power);
         pros::delay(20);
     }
 }
 
+// helpful functions for auton
 void auton_thread() {
     while(1) {
         switch (auton_sel) {
@@ -191,7 +222,6 @@ void auton_thread() {
     }
 }
 
-pros::Task auton_task(auton_thread);
 
 void test_auton() {
     std::vector<std::vector<double>> path = {{0, 0}, {-2, 0}, {-2, -2}};
@@ -201,6 +231,7 @@ void test_auton() {
 
 void auton() {
 
+    pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
 
     set_flywheel_rpm(515);
@@ -264,7 +295,7 @@ void auton() {
     auton_sel = 'E';
     intake_mtr.move_voltage(0);
     rai_mtr.move_voltage(0);
-    flywheel_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
 }
 
 void skill_auton() {
@@ -273,7 +304,7 @@ void skill_auton() {
     drivePID(40);
     turnPID(125, 1, 0, 0, 30, 15);
     pros::delay(20*1000);
-    activate_endgame();
+    // activate_endgame();
 
 }
 

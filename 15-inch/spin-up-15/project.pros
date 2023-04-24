@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "worlds_comp_testing",
+    "project_name": "worlds-15",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -308,9 +308,9 @@
       }
     },
     "upload_options": {
-      "icon": "pros",
-      "slot": 4,
-      "description": "worlds_comp_testing"
+      "icon": "planet",
+      "slot": 7,
+      "description": "we better win tho"
     }
   }
 }
