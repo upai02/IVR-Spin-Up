@@ -106,14 +106,14 @@ void updatePosition() {
         // last_x_tracking_offset = x_tracking_offset;
         // last_y_tracking_offset = y_tracking_offset;
 
-        pros::lcd::set_text(3, "Position X: " + std::to_string(positionX));
-        pros::lcd::set_text(4, "Position Y: " + std::to_string(positionY));
+        pros::lcd::set_text(5, "Position X: " + std::to_string(positionX));
+        pros::lcd::set_text(6, "Position Y: " + std::to_string(positionY));
         // pros::lcd::set_text(2, "Position X: " + std::to_string(horizontal_track.get_value()/1.0));
         // pros::lcd::set_text(3, "Position Y: " + std::to_string(vertical_track.get_value()/4.0));
-        pros::lcd::set_text(5, "Heading: " + std::to_string(currentHeading));
+        // pros::lcd::set_text(7, "Heading: " + std::to_string(currentHeading));
 
-        pros::lcd::set_text(6, "Transverse Val: " + std::to_string(currentTransverseValue));
-        pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));
+        // pros::lcd::set_text(6, "Transverse Val: " + std::to_string(currentTransverseValue));
+        // pros::lcd::set_text(7, "Radial Val: " + std::to_string(currentRadialValue));
         
         // std::cout << "cur heading: " << currentHeading << std::endl;
         // std::cout << "x: " << positionX << std::endl;

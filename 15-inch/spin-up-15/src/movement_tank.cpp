@@ -272,7 +272,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
         pros::lcd::set_text(2, "remaining dist: " + std::to_string(remaining_dist));
         // pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
-        double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM);
+        double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM, distances_to_end[0]);
         // pros::lcd::set_text(3, "trans RPM: " + std::to_string(translationalRPM));
 
         if (desiredAngle < 0) desiredAngle += 360;

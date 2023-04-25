@@ -25,7 +25,7 @@ pros::Motor_Group flywheel({flywheel_left_mtr, flywheel_right_mtr});
 pros::ADIDigitalOut string_release_piston_1('f', false); // string release piston
 pros::ADIDigitalOut string_release_piston_2('g', false); // blocker deploy piston
 // Sensors
-pros::Imu imu(8);
+pros::Imu imu(4);
 pros::Distance disc_dist(6);
-pros::ADIEncoder vertical_track(3, 4, true); // tracking wheel #1
+pros::ADIEncoder vertical_track(3, 4, false); // tracking wheel #1
 pros::ADIEncoder horizontal_track(1, 2, true); // tracking wheel #2

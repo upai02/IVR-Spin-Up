@@ -208,10 +208,11 @@ void auton_thread() {
                 intake_mtr.move_voltage(0);
                 // rai_mtr.move_voltage(0);
                 break;
-            case 'm':
-                toggle_mag_piston();
             case 'R':
                 release_sequence();
+                break;
+            case 'r':
+                release_discs();
                 break;
             default:
                 intake_mtr.move_voltage(0);
@@ -359,20 +360,40 @@ void compAutonLeftRobot() {
     // Robo dims: 15.5 (0.4) length by 12.5 (0.31) inches (width)
     // Starting pos: (1.02, 0.4)'
 
+    pros::Task auton_task(auton_thread);
+    discs_in_mag = 0;
+    set_flywheel_rpm(350);
+    flywheel_task.resume();
+
+    auton_sel = 'I';
     std::vector<double> starting_pos = {1.02, 0.4};
     std::vector<std::vector<double>> get_midline_three = {starting_pos, {1.02, 0.75}};
-    followPath(get_midline_three, 0, false, false, true);
+    followPath(get_midline_three, 0, false, false, false);
     // shoot
-    pros::delay(2000);
+    // pros::delay(2000);
     moveMotors(-50, -50);
     pros::delay(2000);
-    std::vector<std::vector<double>> get_central_three = {{1.15, 0.5}, {1.5, 0.9}};
+    turnToPoint();
+    auton_sel = 'r';
+    pros::delay(1000);
+    auton_sel = 'I';
+    std::vector<std::vector<double>> get_central_three = {{1.15, 0.5}, {1.5, 0.8}};
     followPath(get_central_three, 45, false, false, true);
     // shoot
-    pros::delay(2000);
-    std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.4, 0.0}, {2.3, 1.2}};
-    followPath(get_side_three, 0, false, true, true);
+    auton_sel = 'r';
+    pros::delay(1000);
+    // pros::delay(2000);
+    auton_sel = 'I';
+    std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.2, 0.0}, {2.28, 0.6}, {2.4, 1.2}};
+    followPath(get_side_three, 0, false, true, true, 0.5, 3.0, 125.0);
     // shoot
+    auton_sel = 'r';
+    pros::delay(1000);
+    // go to default
+    auton_sel = 'E';
+    flywheel_task.suspend();
+    set_flywheel_rpm(0);
+    auton_task.suspend();
 }
 
 

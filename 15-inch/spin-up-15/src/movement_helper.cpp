@@ -1,4 +1,6 @@
 #include <cmath>
+#include <string>
+#include "pros/llemu.hpp"
 #include "robot.h"
 #include "movement_helper.h"
 
@@ -54,8 +56,26 @@ double getRotationalRPM(double desiredAngleDeg, bool reversed, double p) {
     }
 }
 
-double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double rpm_per_meter) { // 540
+double getTranslationalRPM(double dist_to_goal_meters, double max_translational_rpm, double total_path_distance, double rpm_per_meter) { // 540
     double MIN_RPM = 40.0;
+    if ((total_path_distance / 3) < dist_to_goal_meters) {
+        // less than 2 thirds through path
+        MIN_RPM = 125.0;
+        // pros::lcd::set_text(7, "First 2/3");
+    } else {
+        // pros::lcd::set_text(7, "total dist: " + std::to_string(total_path_distance));
+    }
+    pros::lcd::set_text(7, "total dist: " + std::to_string(dist_to_goal_meters));
+    // double NOT_TURNING_CONST = 20.0;
+    // double INACCURACY_THRESHOLD = 0.75;
+    // double left_avg = (left_front_mtr.get_actual_velocity() + left_back_bot_mtr.get_actual_velocity() + left_back_top_mtr.get_actual_velocity()) / 3;
+    // double right_avg = (right_front_mtr.get_actual_velocity() + right_back_bot_mtr.get_actual_velocity() + right_back_top_mtr.get_actual_velocity()) / 3;
+    // double desired_rpm = std::min(std::max(dist_to_goal_meters * rpm_per_meter, MIN_RPM), max_translational_rpm);
+    // if ((std::abs(left_avg - right_avg) < NOT_TURNING_CONST) && (std::abs((left_avg + right_avg) / 2) < (desired_rpm) * INACCURACY_THRESHOLD) {
+    //     // robot is not turning and going significantly less speed than it should then
+    //     // so we should give it a boost
+    //     // percent error calculation 
+    // }
     return std::min(std::max(dist_to_goal_meters * rpm_per_meter, MIN_RPM), max_translational_rpm);
 }
 

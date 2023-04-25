@@ -3,6 +3,7 @@
 #include "misc/PositionTracker.h"
 #include "intake.h"
 #include "endgame.h"
+#include "pros/rtos.hpp"
 #include "shooter.h"
 #include <vector>
 #include "roller.h"
@@ -116,11 +117,11 @@ void autonomous() {
 	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
-	// compAutonLeftRobot();
+	compAutonLeftRobot();
 
-	imu.set_heading(90);
-	pros::lcd::print(6, "heading: %f", imu.get_heading());
-	auton();
+	// imu.set_heading(90);
+	// pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// auton();
 	odom.suspend();
 }
 
