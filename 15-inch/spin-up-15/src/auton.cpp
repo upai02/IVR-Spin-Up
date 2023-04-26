@@ -384,6 +384,7 @@ void compAutonLeftRobot() {
 
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;
+    // should update to use shootPF function and thread
     set_flywheel_rpm(330);
     flywheel_task.resume();
 
