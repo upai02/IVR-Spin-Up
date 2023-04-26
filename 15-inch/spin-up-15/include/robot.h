@@ -17,7 +17,6 @@ extern pros::Motor_Group right_side;
 // Intake 
 extern pros::Motor intake_mtr;
 extern pros::Motor rai_mtr;
-extern pros::ADIDigitalOut mag_piston;
 // Shooter 
 extern pros::Motor flywheel_left_mtr;
 extern pros::Motor flywheel_right_mtr;

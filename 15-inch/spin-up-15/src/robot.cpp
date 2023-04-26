@@ -1,4 +1,5 @@
 #include "robot.h"
+#include "pros/adi.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 // Drive
@@ -16,11 +17,11 @@ pros::Motor_Group right_side({right_front_mtr, right_back_top_mtr, right_back_bo
 // Intake
 pros::Motor intake_mtr(16, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor rai_mtr(15, pros::E_MOTOR_GEARSET_06, false); // indexer + roller mech 
-pros::ADIDigitalOut mag_piston('h', true); // mag piston
 // Shooter
 pros::Motor flywheel_left_mtr(14, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor flywheel_right_mtr(10, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor_Group flywheel({flywheel_left_mtr, flywheel_right_mtr});
+// pros::ADIDigitalOut angle_changer()
 // Endgame
 pros::ADIDigitalOut string_release_piston_1('f', false); // string release piston
 pros::ADIDigitalOut string_release_piston_2('g', false); // blocker deploy piston

@@ -32,7 +32,7 @@ void initialize() {
 	// initTracker(0.9, 0.4, 0);
 
 	// Left side COMP auto
-	initTracker(1.02, 0.4, 0);
+	initTracker(0.93, 0.46, 0);
 
 	// Right side COMP auto
 	// initTracker(3.25, 2.15, 315);

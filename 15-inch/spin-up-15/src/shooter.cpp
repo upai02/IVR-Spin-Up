@@ -58,9 +58,6 @@ void run_flywheel() {
   // if running flywheel, then mag should be down to be able to release discs
   soft_spinning = false;
   flywheel_running = true;
-  if (!mag_piston_state) {
-    toggle_mag_piston();
-  }
 
   // if flywheel is close to target rpm, then rumble controller
   if (abs(get_flywheel_rpm() - target_flywheel_rpm) < 6) {
@@ -81,17 +78,12 @@ void stop_flywheel() {
 
 // release discs from mag into shooter
 void release_discs() {
-  rai_mtr.move_voltage(-12000);
+  rai_mtr.move_voltage(-9000);
   reset_discs_in_mag();
 }
 
 // auton release sequence for getting discs through mag/shooter
 void release_sequence() {
-
-  if (!mag_piston_state) {
-    toggle_mag_piston();
-  }
-
   while (get_flywheel_rpm() < 300) {
     pros::delay(20);
   }

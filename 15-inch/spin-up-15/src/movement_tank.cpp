@@ -81,7 +81,7 @@ void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double
     }
 }
 
-void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, bool goal_at_end, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, bool printMessages) {    
+void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, bool goal_at_end, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, double minTransRPM, bool printMessages) {    
     double firstX = path[0][0];
     double firstY = path[0][1];
     double currentIndex = 0;
@@ -272,7 +272,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
         pros::lcd::set_text(2, "remaining dist: " + std::to_string(remaining_dist));
         // pros::lcd::set_text(2, "dist_to_end: " + std::to_string(distances_to_end[currentIndex]));
-        double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM, distances_to_end[0]);
+        double translationalRPM = getTranslationalRPM(remaining_dist, MAX_TRANSLATIONAL_RPM, distances_to_end[0], minTransRPM);
         // pros::lcd::set_text(3, "trans RPM: " + std::to_string(translationalRPM));
 
         if (desiredAngle < 0) desiredAngle += 360;

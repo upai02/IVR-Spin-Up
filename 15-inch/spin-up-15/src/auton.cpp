@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pros/rtos.hpp"
+#include "robot.h"
 #include "shooter.h"
 #include "main.h"
 #include "misc/PositionTracker.h"
@@ -214,6 +215,13 @@ void auton_thread() {
             case 'r':
                 release_discs();
                 break;
+            case 'o':
+                release_discs();
+                outtake();
+                break;
+            case 'O':
+                outtake();
+                break;
             default:
                 intake_mtr.move_voltage(0);
                 rai_mtr.move_voltage(0);
@@ -358,41 +366,62 @@ void rollerAutoPATH() {
 
 void compAutonLeftRobot() {
     // Robo dims: 15.5 (0.4) length by 12.5 (0.31) inches (width)
-    // Starting pos: (1.02, 0.4)'
+    // Starting pos: (0.93, 0.46)'
 
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;
-    set_flywheel_rpm(350);
+    set_flywheel_rpm(330);
     flywheel_task.resume();
 
     auton_sel = 'I';
-    std::vector<double> starting_pos = {1.02, 0.4};
-    std::vector<std::vector<double>> get_midline_three = {starting_pos, {1.02, 0.75}};
-    followPath(get_midline_three, 0, false, false, false);
+    std::vector<double> starting_pos = {0.93, 0.46};
+    std::vector<std::vector<double>> get_midline_three = {starting_pos, {starting_pos[0], 0.75}};
+    followPath(get_midline_three, 0, false, false, false, 0.5, 3.0, 200.0, 450.0, 25.0);
     // shoot
     // pros::delay(2000);
-    moveMotors(-50, -50);
-    pros::delay(2000);
+    moveMotors(-100, -100);
+    pros::delay(1200);
+    auton_sel = 'O';
     turnToPoint();
-    auton_sel = 'r';
+    auton_sel = 'o';
     pros::delay(1000);
     auton_sel = 'I';
-    std::vector<std::vector<double>> get_central_three = {{1.15, 0.5}, {1.5, 0.8}};
+    std::vector<std::vector<double>> get_central_three = {{starting_pos[0], 0.5}, {1.55, 0.95}};
     followPath(get_central_three, 45, false, false, true);
     // shoot
-    auton_sel = 'r';
+    auton_sel = 'o';
     pros::delay(1000);
     // pros::delay(2000);
+    auton_sel = 'E';
+    turnToAngle(135, 10.0);
     auton_sel = 'I';
-    std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.2, 0.0}, {2.28, 0.6}, {2.4, 1.2}};
-    followPath(get_side_three, 0, false, true, true, 0.5, 3.0, 125.0);
+    std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.05, 0.1}, {2.05, 0.6}, {2.27, 1.3}};
+    followPath(get_side_three, 0, false, false, false, 0.5, 3.0, 125.0);
+    auton_sel = 'O';
+    turnToPoint();
     // shoot
-    auton_sel = 'r';
+    auton_sel = 'o';
     pros::delay(1000);
     // go to default
+    auton_sel = 'O';
+    // do roller
+    std::vector<std::vector<double>> to_roller = {get_side_three.back(), {1.5, 0.8}, {1.0, 0.6}};
+    followPath(to_roller, 235, false, false, false, 0.5, 20.0);
+    turnToAngle(0, 4.0);
+    moveMotors(-75, -75);
+    pros::delay(1000);
+    moveMotors(-50, -50);
+    auton_sel = 'S';
+    pros::delay(250);
+    auton_sel = 'E';
+    moveMotors(75, 75);
+    pros::delay(750);
+    stopMotors();
+
     auton_sel = 'E';
     flywheel_task.suspend();
     set_flywheel_rpm(0);
+    rai_mtr.move_voltage(0);
     auton_task.suspend();
 }
 

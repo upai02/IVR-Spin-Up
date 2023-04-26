@@ -36,8 +36,14 @@ double toMeters(double value, double wheelRadius) {
 }
 
 void initTracker(double initial_X, double initial_Y, double initial_heading) {
-    lastTransverseValue = toMeters(horizontal_track.get_value()*4.0, transverseWheelRad);
-    lastRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
+    // TEAL ROBOT:
+    double currentTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad); // 1.0
+    double currentRadialValue = toMeters(vertical_track.get_value()*4.0, radialWheelRad); // *4.0
+
+    // PINK ROBOT:
+    // double currentTransverseValue = toMeters(horizontal_track.get_value()*4.0, transverseWheelRad); //*4.0
+    // double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad); // *1.0
+    
     positionX = initial_X;
     positionY = initial_Y;
     initHeading = initial_heading;
@@ -66,8 +72,13 @@ double headingCorrection (double currentRotation) {
 void updatePosition() {
     imu.set_rotation(0);
     while (true) {
-        double currentTransverseValue = toMeters(horizontal_track.get_value()*4.0, transverseWheelRad);
-        double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad);
+        // TEAL ROBOT:
+        double currentTransverseValue = toMeters(horizontal_track.get_value(), transverseWheelRad); //*1.0
+        double currentRadialValue = toMeters(vertical_track.get_value()*4.0, radialWheelRad); // *4.0
+
+        // PINK ROBOT:
+        // double currentTransverseValue = toMeters(horizontal_track.get_value()*4.0, transverseWheelRad); //*4.0
+        // double currentRadialValue = toMeters(vertical_track.get_value(), radialWheelRad); // *1.0
 
         currentHeading = headingCorrection(imu.get_rotation());
 
@@ -106,8 +117,8 @@ void updatePosition() {
         // last_x_tracking_offset = x_tracking_offset;
         // last_y_tracking_offset = y_tracking_offset;
 
-        pros::lcd::set_text(5, "Position X: " + std::to_string(positionX));
-        pros::lcd::set_text(6, "Position Y: " + std::to_string(positionY));
+        // pros::lcd::set_text(5, "Position X: " + std::to_string(positionX));
+        // pros::lcd::set_text(6, "Position Y: " + std::to_string(positionY));
         // pros::lcd::set_text(2, "Position X: " + std::to_string(horizontal_track.get_value()/1.0));
         // pros::lcd::set_text(3, "Position Y: " + std::to_string(vertical_track.get_value()/4.0));
         // pros::lcd::set_text(7, "Heading: " + std::to_string(currentHeading));
