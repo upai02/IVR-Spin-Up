@@ -118,6 +118,7 @@ void autonomous() {
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
 	compAutonLeftRobot();
+	// compAutonRightRobot();
 
 	// imu.set_heading(90);
 	// pros::lcd::print(6, "heading: %f", imu.get_heading());
