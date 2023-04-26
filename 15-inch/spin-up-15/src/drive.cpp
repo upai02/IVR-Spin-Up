@@ -2,7 +2,7 @@
 
 int drive_mode_idx = 0;
 
-std::vector<std::pair<std::string,std::function<void()>>> drive_modes = {{"Dylan_Drive", dylan_drive}, {"akap.site Drive", akap_drive}, {"Arcade_drive", arcade_drive}};
+std::vector<std::pair<std::string,std::function<void()>>> drive_modes = {{"dyl", dylan_drive}, {"aka", akap_drive}, {"arc", arcade_drive}};
 
 // normalize joystick values to -1 to 1
 double normalize_joystick(double input) {

@@ -21,9 +21,9 @@ extern pros::Motor rai_mtr;
 extern pros::Motor flywheel_left_mtr;
 extern pros::Motor flywheel_right_mtr;
 extern pros::Motor_Group flywheel;
+extern pros::ADIDigitalOut angle_changer_piston;
 // Endgame
-extern pros::ADIDigitalOut string_release_piston_1; // releases string 1 
-extern pros::ADIDigitalOut string_release_piston_2; // releases string 2
+extern pros::ADIDigitalOut string_release_piston;
 // Sensors
 extern pros::Imu imu;
 extern pros::Distance disc_dist;

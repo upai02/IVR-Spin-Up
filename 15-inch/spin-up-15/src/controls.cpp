@@ -63,9 +63,14 @@ void controls()
     }
 
     // endgame!
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) && master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       release_string();
     }
+
+    // // angle changer
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   toggle_angle_changer();
+    // }
 
     // auto-aim
     // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -105,7 +110,8 @@ void controls()
     // pros::lcd::print(5, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
     // pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
     // print to controller ------------
-    master.print(0, 0, "d_m: %s", get_drive_name().c_str());
+    std::string controller_text = "drive: " + get_drive_name() + "mode: " + get_rpm_state_string();
+    master.print(0, 0, controller_text.c_str());
     pros::lcd::print(1, "Flywheel RPM: %lf", get_flywheel_rpm());
     pros::lcd::print(2, "target rpm: %d", target_flywheel_rpm);
     pros::lcd::print(3, "discs in mag: %d", discs_in_mag);

@@ -21,10 +21,9 @@ pros::Motor rai_mtr(15, pros::E_MOTOR_GEARSET_06, false); // indexer + roller me
 pros::Motor flywheel_left_mtr(14, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor flywheel_right_mtr(10, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor_Group flywheel({flywheel_left_mtr, flywheel_right_mtr});
-// pros::ADIDigitalOut angle_changer()
+pros::ADIDigitalOut angle_changer_piston('e', false); // angle changer piston
 // Endgame
-pros::ADIDigitalOut string_release_piston_1('f', false); // string release piston
-pros::ADIDigitalOut string_release_piston_2('g', false); // blocker deploy piston
+pros::ADIDigitalOut string_release_piston('f', false); // string release piston
 // Sensors
 pros::Imu imu(4);
 pros::Distance disc_dist(6);

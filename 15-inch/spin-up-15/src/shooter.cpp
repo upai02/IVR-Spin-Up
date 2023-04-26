@@ -6,6 +6,9 @@
 #include <vector>
 #include <algorithm>
 
+bool angle_changer_state = true;
+bool overflow = false;
+
 // initialize target flywheel rpm
 int target_flywheel_rpm = 0;
 // initialize main task to run flywheel
@@ -20,11 +23,31 @@ void shoot_thread() {
 }
 
 void activate_close_range() {
-  target_flywheel_rpm = close_range_rpm;
+  overflow = !overflow;
+  target_flywheel_rpm = overflow ? overflow_rpm : close_range_rpm;
+  if (!angle_changer_state) {
+    toggle_angle_changer();
+  }
 }
 void activate_long_range() {
   target_flywheel_rpm = long_range_rpm;
+  if (angle_changer_state) {
+    toggle_angle_changer();
+  }
 }
+
+std::string get_rpm_state_string() {
+  if (overflow) {
+    return "Overflow";
+  } else if (target_flywheel_rpm == close_range_rpm) {
+    return "Close Range";
+  } else if (target_flywheel_rpm == long_range_rpm) {
+    return "Long Range";
+  } else {
+    return "Unknown";
+  }
+}
+
 void set_flywheel_rpm(int rpm) {
   target_flywheel_rpm = rpm;
 }
@@ -55,13 +78,12 @@ void soft_spin() {
 
 // runs flywheel when shooting discs (mostly used in teleop)
 void run_flywheel() {
-  // if running flywheel, then mag should be down to be able to release discs
   soft_spinning = false;
   flywheel_running = true;
 
   // if flywheel is close to target rpm, then rumble controller
-  if (abs(get_flywheel_rpm() - target_flywheel_rpm) < 6) {
-    master.rumble("-");
+  if (abs(get_flywheel_rpm() - target_flywheel_rpm) < 9) {
+    master.rumble("-"); 
   }
 
   flywheel_task.resume();
@@ -78,8 +100,22 @@ void stop_flywheel() {
 
 // release discs from mag into shooter
 void release_discs() {
-  rai_mtr.move_voltage(-9000);
+  rai_mtr.move_voltage(-12000);
   reset_discs_in_mag();
+}
+
+// toggle angler changer piston
+void toggle_angle_changer() {
+  angle_changer_state = !angle_changer_state;
+  angle_changer_piston.set_value(angle_changer_state);
+}
+
+// initialize angle changer piston
+void init_shooter() {
+  angle_changer_state = true;
+  angle_changer_piston.set_value(angle_changer_state);
+  target_flywheel_rpm = close_range_rpm;
+  overflow = false;
 }
 
 // auton release sequence for getting discs through mag/shooter

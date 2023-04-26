@@ -1,6 +1,5 @@
 #include "endgame.h"
 
-bool eg_deploy_piston_state = false;
 bool string_release_piston_state = false;
 int eg_timer = 0;
 /*
@@ -9,7 +8,7 @@ endgame period is last 10 seconds.
 */
 
 void init_endgame() {
-  set_string_release_pistons(false);
+  set_string_release_piston(false);
 }
 
 void start_endgame_timer() {
@@ -19,17 +18,16 @@ void start_endgame_timer() {
 void release_string() {
   // only activate when there are 10 seconds left
   if (pros::millis() - eg_timer > 65000) {
-    toggle_string_release_pistons();
+    toggle_string_release_piston();
   }
 }
 
 // piston stuff
-void toggle_string_release_pistons() {
-  set_string_release_pistons(!string_release_piston_state);
+void toggle_string_release_piston() {
+  set_string_release_piston(!string_release_piston_state);
 }
 
-void set_string_release_pistons(bool value) {
+void set_string_release_piston(bool value) {
   string_release_piston_state = value;
-  string_release_piston_1.set_value(string_release_piston_state);
-  string_release_piston_2.set_value(string_release_piston_state);
+  string_release_piston.set_value(string_release_piston_state);
 }

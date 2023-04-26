@@ -45,7 +45,7 @@ void initialize() {
 
 	// INIT FUNCTIONS
 	init_endgame();
-	init_intake();
+	init_shooter();
 	
 	// TASK VARIABLE SETUP
 	char auton_sel = 'E';
@@ -53,7 +53,7 @@ void initialize() {
 	// stop_flywheel();
 	flywheel_task.suspend();
 	auto_aim_task.suspend();
-	target_flywheel_rpm = close_range_rpm;
+	// target_flywheel_rpm = close_range_rpm;
 
 	// ENCODER / SENSOR SETUP
 	horizontal_track.reset();
