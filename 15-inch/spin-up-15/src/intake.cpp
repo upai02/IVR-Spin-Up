@@ -69,7 +69,7 @@ void intake() {
 
 
 void outtake() {
-  intake_mtr.move_voltage(-8500);
+  intake_mtr.move_voltage(-10000);
   // below is logic to sense if disc is being outtaked
   // updates discs_in_mag variable accordingly
   int distance = disc_dist.get();
