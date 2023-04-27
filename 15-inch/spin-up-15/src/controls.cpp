@@ -110,7 +110,7 @@ void controls()
     // pros::lcd::print(5, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
     // pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
     // print to controller ------------
-    std::string controller_text = "drive: " + get_drive_name() + "mode: " + get_rpm_state_string();
+    std::string controller_text = "d: " + get_drive_name() + " s: " + get_rpm_state_string();
     master.print(0, 0, controller_text.c_str());
     pros::lcd::print(1, "Flywheel RPM: %lf", get_flywheel_rpm());
     pros::lcd::print(2, "target rpm: %d", target_flywheel_rpm);
