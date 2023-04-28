@@ -72,11 +72,13 @@ void SmartStop() {
 void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
     double degFromFinalAngle = desiredAngleDeg - imu.get_heading();
     degFromFinalAngle = optimizeAngle(degFromFinalAngle);
+    int start_time = pros::millis();
     while (std::abs(degFromFinalAngle) > toleranceDeg) {
         degFromFinalAngle = optimizeAngle(desiredAngleDeg - imu.get_heading());
         double rotRPM = degFromFinalAngle * p;
         moveMotors(rotRPM, -rotRPM);
         if (debug) pros::lcd::set_text(4, "Robot angle: " + std::to_string(imu.get_heading()));
+        if (pros::millis() - start_time > 5000) break;
         pros::delay(50);
     }
 }

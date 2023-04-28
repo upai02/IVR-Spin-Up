@@ -517,18 +517,18 @@ void SAFEcompLeftAuton() {
     pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    // set_flywheel_rpm(325.0);
+    set_flywheel_rpm(325.0);
     flywheel_task.resume();
     pros::delay(500);
     // rollers first
     toggle_angle_changer();
-    set_flywheel_rpm(325.0);
+    // set_flywheel_rpm(325.0);
 
     turnToPoint();
     pros::delay(5000);
     stopMotors();
     // release_sequence();
-    auton_sel = 'o';
+    auton_sel = 'r';
     pros::delay(2000);
 
     turnToAngle(0, 3.5);
@@ -554,7 +554,7 @@ void SAFEcompRightAuton() {
 
     toggle_angle_changer();
     turnToPoint();
-    auton_sel = 'o';
+    auton_sel = 'r';
     pros::delay(2000);
     // release_sequence();
 
