@@ -110,7 +110,7 @@ void release_discs() {
 }
 
 void release_discs_auton() {
-  rai_mtr.move_voltage(-7000);
+  rai_mtr.move_voltage(-3000);
   reset_discs_in_mag();
 }
 

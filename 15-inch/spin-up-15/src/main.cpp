@@ -31,11 +31,18 @@ void initialize() {
 	// RollerAutoPATH
 	// initTracker(0.9, 0.4, 0);
 
-	// Left side COMP auto
+	// Left side COMP auto (TEAL)
 	//initTracker(0.93, 0.46, 0);
 
-	// Right side COMP auto
-	initTracker(3.25, 2.15, 315);
+	// Right side COMP auto (PINK)
+	// initTracker(3.25, 2.15, 315);
+
+	// Left side SAFE AUTON (TEAL)
+	initTracker(0.9, 0.3, 0);
+
+	// RIGHT SAFE Auton (PINK)
+	// initTracker(3.14, 2.07, 270);  
+
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 	flywheel_left_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -118,7 +125,9 @@ void autonomous() {
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
 	// compAutonLeftRobot();
-	compAutonRightRobot();
+	// compAutonRightRobot();
+	// SAFEcompRightAuton();
+	SAFEcompLeftAuton();
 
 	// imu.set_heading(90);
 	// pros::lcd::print(6, "heading: %f", imu.get_heading());

@@ -321,7 +321,7 @@ void skill_auton() {
 void spin_roller_auton() {
     auton_sel = 'E';
     moveMotors(-75, -75);
-    pros::delay(1000);
+    pros::delay(2000);
     moveMotors(-50, -50);
     auton_sel = 'S';
     pros::delay(250);
@@ -502,6 +502,63 @@ void compAutonRightRobot() {
     turnToAngle(270, 2.0);
 
     // roller
+    spin_roller_auton();
+
+    stopMotors();
+    auton_sel = 'E';
+    flywheel_task.suspend();
+    set_flywheel_rpm(0);
+    rai_mtr.move_voltage(0);
+    auton_task.suspend();
+}
+
+void SAFEcompLeftAuton() {
+    // starting pos: (0.9, 0.3);
+    pros::Task auton_task(auton_thread);
+    discs_in_mag = 2;
+    toggle_angle_changer(); // first call, put intake out
+    set_flywheel_rpm(325.0);
+    flywheel_task.resume();
+
+    // rollers first
+    spin_roller_auton();
+
+    toggle_angle_changer();
+
+    turnToPoint();
+    stopMotors();
+    // release_sequence();
+    auton_sel = 'o';
+    pros::delay(2000);
+
+    stopMotors();
+    auton_sel = 'E';
+    flywheel_task.suspend();
+    set_flywheel_rpm(0);
+    rai_mtr.move_voltage(0);
+    auton_task.suspend();
+}
+
+void SAFEcompRightAuton() {
+    // starting pos: (3.14, 2.07)
+    pros::Task auton_task(auton_thread);
+    discs_in_mag = 2;
+    // toggle_angle_changer(); // first call, put intake out
+    set_flywheel_rpm(300.0);
+    flywheel_task.resume();
+    pros::delay(5000);
+
+    turnToPoint();
+    auton_sel = 'o';
+    pros::delay(2000);
+    // release_sequence();
+
+    turnToPoint(3.0, 3.6);
+
+    std::vector<std::vector<double>> to_roller_safe = {{3.14, 2.07}, {3.2, 2.55}};
+    followPath(to_roller_safe, 20, false, true);
+    turnToAngle(280, 2.0);
+
     spin_roller_auton();
 
     stopMotors();

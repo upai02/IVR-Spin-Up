@@ -16,6 +16,8 @@ void skill_auton();
 void rollerAutoPATH();
 void compAutonLeftRobot();
 void compAutonRightRobot();
+void SAFEcompLeftAuton();
+void SAFEcompRightAuton();
 
 void turnP(double deg, double kp, double min_speed, double max_speed);
 void assign_min_speed(double &speed, double min_speed);
