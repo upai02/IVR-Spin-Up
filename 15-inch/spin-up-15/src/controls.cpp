@@ -1,4 +1,5 @@
 #include "controls.h"
+#include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "robot.h"
 #include "drive.h"
@@ -9,6 +10,7 @@
 #include "auton.h"
 #include "movement_tank.h"
 #include "vision_tracking.h"
+#include <string>
 
 using namespace pros;
 using namespace pros::c;
@@ -66,6 +68,14 @@ void controls()
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       release_string();
     }
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      target_flywheel_rpm += 2;
+    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      target_flywheel_rpm -= 2;
+    }
+
+    pros::lcd::set_text(3, "flywheel target: " + std::to_string(target_flywheel_rpm));
 
     // // angle changer
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

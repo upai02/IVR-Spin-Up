@@ -32,10 +32,10 @@ void initialize() {
 	// initTracker(0.9, 0.4, 0);
 
 	// Left side COMP auto
-	initTracker(0.93, 0.46, 0);
+	//initTracker(0.93, 0.46, 0);
 
 	// Right side COMP auto
-	// initTracker(3.25, 2.15, 315);
+	initTracker(3.25, 2.15, 315);
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 	flywheel_left_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -117,8 +117,8 @@ void autonomous() {
 	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
-	compAutonLeftRobot();
-	// compAutonRightRobot();
+	// compAutonLeftRobot();
+	compAutonRightRobot();
 
 	// imu.set_heading(90);
 	// pros::lcd::print(6, "heading: %f", imu.get_heading());

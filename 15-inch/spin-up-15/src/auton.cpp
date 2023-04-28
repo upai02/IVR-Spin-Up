@@ -10,6 +10,8 @@
 #include <vector>
 
 char auton_sel = 'E'; // initialize auton_sel to E (do nothing)
+const double BASE_FLYWHEEL_RPM = 300.0; // distance for 2 meters (need to update). going to assume rpm scales linearly with distance and hope
+const double BASE_RPM_DIST = 2.0;
 
 template <typename T>
 int sgn (T num) {
@@ -384,16 +386,21 @@ void compAutonLeftRobot() {
 
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;
+    toggle_angle_changer(); // first call, put intake out
     // should update to use shootPF function and thread
-    set_flywheel_rpm(330);
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM);
     flywheel_task.resume();
 
     auton_sel = 'I';
     std::vector<double> starting_pos = {0.93, 0.46};
     std::vector<std::vector<double>> get_midline_three = {starting_pos, {starting_pos[0], 0.75}};
     followPath(get_midline_three, 0, false, false, false, 0.5, 3.0, 200.0, 450.0, 25.0);
-    // shoot
+    toggle_angle_changer(); // second call, back to good position
+
+    // shoot, 2.85 meters
     // pros::delay(2000);
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.85/BASE_RPM_DIST));
+
     moveMotors(-100, -100);
     pros::delay(1200);
     auton_sel = 'O';
@@ -401,20 +408,22 @@ void compAutonLeftRobot() {
     auton_sel = 'o';
     pros::delay(1000);
     auton_sel = 'I';
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.55/BASE_RPM_DIST));
     std::vector<std::vector<double>> get_central_three = {{starting_pos[0], 0.5}, {1.55, 0.95}};
     followPath(get_central_three, 45, false, false, true);
-    // shoot
+    // shoot, 2.55 meters
     auton_sel = 'o';
     pros::delay(1000);
     // pros::delay(2000);
     auton_sel = 'E';
     turnToAngle(135, 10.0);
     auton_sel = 'I';
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.75/BASE_RPM_DIST));
     std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.05, 0.1}, {2.05, 0.6}, {2.27, 1.3}};
     followPath(get_side_three, 0, false, false, false, 0.5, 3.0, 125.0);
     auton_sel = 'O';
     turnToPoint();
-    // shoot
+    // shoot, 2.75 meters
     auton_sel = 'o';
     pros::delay(1000);
     // go to default
@@ -425,7 +434,7 @@ void compAutonLeftRobot() {
     turnToAngle(0, 4.0);
     // roller
     spin_roller_auton();
-
+    // if shot here it would be ~2.85 meters
     auton_sel = 'E';
     flywheel_task.suspend();
     set_flywheel_rpm(0);
@@ -441,32 +450,38 @@ void compAutonRightRobot() {
 
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;
-    set_flywheel_rpm(330);
+    toggle_angle_changer(); // first call, put intake out
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM);
     flywheel_task.resume();
 
     std::vector<double> starting_pos = {3.25, 2.15};
     // intake on
     auton_sel = 'I';
-    std::vector<std::vector<double>> to_mid_line_three = {starting_pos, {2.8, 2.6}};
+    std::vector<std::vector<double>> to_mid_line_three = {starting_pos, {2.83, 2.57}};
     followPath(to_mid_line_three, 315.0, false);
+    toggle_angle_changer(); // second call, back to good position
     pros::delay(200);
+    // no shoot call here
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.72/BASE_RPM_DIST));
     std::vector<std::vector<double>> to_shoot_pos_one = {to_mid_line_three.back(), {3.0, 2.4}};
     followPath(to_shoot_pos_one, 315.0, true, false, true);
-    // shoot
+    // shoot, 2.72 meters
     auton_sel = 'o';
     pros::delay(1000);
     turnToAngle(225.0, 7.0);
     auton_sel = 'I';
-    std::vector<std::vector<double>> to_shoot_pos_two = {to_shoot_pos_one.back(), {2.1, 1.5}};
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.4/BASE_RPM_DIST));
+    std::vector<std::vector<double>> to_shoot_pos_two = {to_shoot_pos_one.back(), {2.1, 1.65}};
     followPath(to_shoot_pos_two, 225, false, false, true);
-    // shoot
+    // shoot, 2.4 meters
     auton_sel = 'o';
     pros::delay(1000);
-    turnToPoint(3.6, 0.6);
+    turnToPoint(3.6, 1.6);
     auton_sel = 'I';
-    std::vector<std::vector<double>> get_goal_bar_three = {to_shoot_pos_two.back(), {2.9, 1.0}, {3.3, 1.4}, {3.1, 2.7}};
-    followPath(get_goal_bar_three, 280, false, false, true);
-    // shoot
+    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.74/BASE_RPM_DIST));
+    std::vector<std::vector<double>> get_goal_bar_three = {to_shoot_pos_two.back(), {2.9, 1.45}, {3.1, 1.6}, {3.3, 2.78}};
+    followPath(get_goal_bar_three, 280, false, true, true);
+    // shoot, 2.74 meters
     auton_sel = 'o';
     pros::delay(1000);
     // turn to roller

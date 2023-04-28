@@ -6,9 +6,9 @@
 
 extern int target_flywheel_rpm;
 
-const int close_range_rpm = 350;
+const int close_range_rpm = 310;
 const int long_range_rpm = 385;
-const int overflow_rpm = 230;
+const int overflow_rpm = 260;
 extern bool overflow;
 
 extern pros::Task flywheel_task;

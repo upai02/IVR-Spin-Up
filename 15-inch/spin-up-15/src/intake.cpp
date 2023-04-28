@@ -32,7 +32,7 @@ void intake_auton() {
   // also updates discs_in_mag variable
   int distance = disc_dist.get();
   if (distance < 15) {
-    rai_counter = (discs_in_mag > 0) ? 25 : 20;
+    rai_counter = (discs_in_mag > 0) ? 28 : 20;
     rai_mtr.move_voltage(8000);
     if (last_disc_dist - distance > 50) {
       discs_in_mag++;

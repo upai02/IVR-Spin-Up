@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm>
 
-bool angle_changer_state = true;
+bool angle_changer_state = false;
 bool overflow = false;
 
 // initialize target flywheel rpm
@@ -71,7 +71,7 @@ bool flywheel_running = false; // is flywheel is running for shooting discs?
 // aka less spin up time
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel.move_voltage(std::min(8000, 4000 * discs_in_mag));
+    flywheel.move_voltage(std::min(target_flywheel_rpm, (target_flywheel_rpm/2) * discs_in_mag));
     soft_spinning = true;
   }
 }
@@ -112,7 +112,7 @@ void toggle_angle_changer() {
 
 // initialize angle changer piston
 void init_shooter() {
-  angle_changer_state = true;
+  angle_changer_state = false;
   angle_changer_piston.set_value(angle_changer_state);
   target_flywheel_rpm = close_range_rpm;
   overflow = false;
