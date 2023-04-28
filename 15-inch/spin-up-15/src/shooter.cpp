@@ -110,14 +110,13 @@ void release_discs() {
 }
 
 void release_discs_auton() {
-  rai_mtr.move_voltage(-3000);
-  reset_discs_in_mag();
+  // rai_mtr.move_voltage(-3000);
 
   discs_in_mag = std::min(3, discs_in_mag);
   for (int i = 0; i < discs_in_mag; i++) {
-    if (i != 0) pros::delay(100);
-    // wait to ensure it has time to read dip
     rai_mtr.move_voltage(1000);
+    if (i != 0) pros::delay(1000);
+    // wait to ensure it has time to read dip
     while (!(abs(get_flywheel_rpm() - target_flywheel_rpm) < 9)) {
       pros::delay(25);
       // wait to get in range
@@ -126,6 +125,7 @@ void release_discs_auton() {
     rai_mtr.move_voltage(-12000);
     pros::delay(300);
   }
+  reset_discs_in_mag();
 }
 
 // toggle angler changer piston

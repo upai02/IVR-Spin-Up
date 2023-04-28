@@ -72,11 +72,11 @@ void controls()
       release_string();
     }
 
-    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-    //   target_flywheel_rpm += 2;
-    // } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-    //   target_flywheel_rpm -= 2;
-    // }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      target_flywheel_rpm += 2;
+    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      target_flywheel_rpm -= 2;
+    }
 
     // pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
 
