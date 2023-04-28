@@ -23,6 +23,7 @@ void init_shooter();
 void release_sequence();
 
 void release_discs();
+void release_discs_auton();
 void run_flywheel();
 void stop_flywheel();
 void shoot_thread();

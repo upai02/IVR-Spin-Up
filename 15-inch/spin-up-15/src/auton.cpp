@@ -139,7 +139,7 @@ void turnPID(double deg, double kp, double ki, double kd, double max_speed, doub
         error = getAngleError(target, imu.get_heading());
         
         // pros::lcd::print(6, "heading: %f", imu.get_heading());
-        pros::lcd::print(7, "turn PID error: %f", error);
+        // pros::lcd::print(7, "turn PID error: %f", error);
 
         std::cout << "turn PID error: " << error << std::endl;
         derivative = error - prev_error;
@@ -184,16 +184,14 @@ double getAngleError(double target, double currHeading) {
 }
 
 // control loop to keep flywheel at a certain rpm
-void shootPF(double rpm) {
-    const double kF = 26;
-    const double kP = 0.3;
+void shootPF(double rpm, const double kP, const double kF) {
     double error = rpm - get_flywheel_rpm();
     double power = kF * rpm + kP * error;
     while (std::abs(error) > 10) {
         error = rpm - get_flywheel_rpm();
-        power = kF * rpm + kP * error;
+        power = kF * rpm + (kP * error);
         flywheel.move_voltage(power);
-        pros::delay(20);
+        pros::delay(50);
     }
 }
 
@@ -215,10 +213,10 @@ void auton_thread() {
                 release_sequence();
                 break;
             case 'r':
-                release_discs();
+                release_discs_auton();
                 break;
             case 'o':
-                release_discs();
+                release_discs_auton();
                 outtake();
                 break;
             case 'O':
@@ -383,6 +381,14 @@ void rollerAutoPATH() {
 void compAutonLeftRobot() {
     // Robo dims: 15.5 (0.4) length by 12.5 (0.31) inches (width)
     // Starting pos: (0.93, 0.46)'
+
+    // shooter flywheel rpm/distance calc
+    // 2.5 meters -> 292 (pink), 294 (teal)
+    // 2.6 meters -> 300 (pink), 300 (teal)
+    // 2.7 meters -> 300 (pink), 310 (teal)
+    // 2.8 meters -> 302 (pink)
+    // 2.9 meters ->
+
 
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;

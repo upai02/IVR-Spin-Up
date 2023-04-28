@@ -54,7 +54,8 @@ void controls()
     }
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      release_discs();
+      // release_discs();
+      release_discs_auton();
     }
 
     // if discs in mag is greater than 0, soft spin
@@ -71,16 +72,16 @@ void controls()
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       target_flywheel_rpm += 2;
-    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       target_flywheel_rpm -= 2;
     }
 
-    pros::lcd::set_text(3, "flywheel target: " + std::to_string(target_flywheel_rpm));
+    pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
 
-    // // angle changer
-    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-    //   toggle_angle_changer();
-    // }
+    // angle changer
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      toggle_angle_changer();
+    }
 
     // auto-aim
     // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -124,7 +125,7 @@ void controls()
     master.print(0, 0, controller_text.c_str());
     pros::lcd::print(1, "Flywheel RPM: %lf", get_flywheel_rpm());
     pros::lcd::print(2, "target rpm: %d", target_flywheel_rpm);
-    pros::lcd::print(3, "discs in mag: %d", discs_in_mag);
+    // pros::lcd::print(3, "discs in mag: %d", discs_in_mag);
     // master.print(2, 0, "fly_rpm: %d", flywheel_rpm);
     // pros::lcd::print(2, "Vertical Encoder: %lf", (vertical_track.get_value()/5120.0)*360.0);
     // master.print(2, 0, "Vertical Encoder: %lf", vertical_track.get_value());

@@ -44,7 +44,7 @@ void intake_auton() {
     rai_mtr.move_voltage(0);
   }
   last_disc_dist = distance;
-  pros::lcd::set_text(4, "INTAKE jam counter: " + std::to_string(jamming_counter));
+  // pros::lcd::set_text(4, "INTAKE jam counter: " + std::to_string(jamming_counter));
 }
 
 void intake() {

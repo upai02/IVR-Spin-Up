@@ -1,8 +1,11 @@
 #include "shooter.h"
 #include "intake.h"
 #include "auton.h"
+#include "pros/llemu.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
+#include "robot.h"
+#include <string>
 #include <vector>
 #include <algorithm>
 
@@ -18,7 +21,9 @@ pros::Task flywheel_task(shoot_thread);
 void shoot_thread() {
   while (true) {
     shootPF(target_flywheel_rpm);
-    pros::delay(20);
+    // pros::lcd::set_text(2, "flywheel target: " + std::to_string(target_flywheel_rpm));
+    // pros::lcd::set_text(3, "flywheel actual: " + std::to_string(get_flywheel_rpm()));
+    pros::delay(50);
   }
 }
 
@@ -101,6 +106,11 @@ void stop_flywheel() {
 // release discs from mag into shooter
 void release_discs() {
   rai_mtr.move_voltage(-12000);
+  reset_discs_in_mag();
+}
+
+void release_discs_auton() {
+  rai_mtr.move_voltage(-7000);
   reset_discs_in_mag();
 }
 
