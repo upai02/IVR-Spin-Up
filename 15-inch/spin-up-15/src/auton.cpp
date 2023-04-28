@@ -405,7 +405,8 @@ void compAutonLeftRobot() {
 
     // shoot, 2.85 meters
     // pros::delay(2000);
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.85/BASE_RPM_DIST));
+    // set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.85/BASE_RPM_DIST));
+    set_flywheel_rpm(322.0);
 
     moveMotors(-100, -100);
     pros::delay(1200);
@@ -414,7 +415,7 @@ void compAutonLeftRobot() {
     auton_sel = 'o';
     pros::delay(1000);
     auton_sel = 'I';
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.55/BASE_RPM_DIST));
+    set_flywheel_rpm(297.0);
     std::vector<std::vector<double>> get_central_three = {{starting_pos[0], 0.5}, {1.55, 0.95}};
     followPath(get_central_three, 45, false, false, true);
     // shoot, 2.55 meters
@@ -424,7 +425,7 @@ void compAutonLeftRobot() {
     auton_sel = 'E';
     turnToAngle(135, 10.0);
     auton_sel = 'I';
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.75/BASE_RPM_DIST));
+    set_flywheel_rpm(312);
     std::vector<std::vector<double>> get_side_three = {get_central_three.back(), {2.05, 0.1}, {2.05, 0.6}, {2.27, 1.3}};
     followPath(get_side_three, 0, false, false, false, 0.5, 3.0, 125.0);
     auton_sel = 'O';
@@ -454,6 +455,13 @@ void compAutonRightRobot() {
     // Robo dims: 15.5 length by 12.5 inches (width)
     // Starting pos: (3.25, 2.15) facing 315 deg
 
+    // shooter flywheel rpm/distance calc
+    // 2.5 meters -> 292 (pink), 294 (teal)
+    // 2.6 meters -> 300 (pink), 300 (teal)
+    // 2.7 meters -> 300 (pink), 310 (teal)
+    // 2.8 meters -> 302 (pink)
+    // 2.9 meters ->
+
     pros::Task auton_task(auton_thread);
     discs_in_mag = 0;
     toggle_angle_changer(); // first call, put intake out
@@ -468,7 +476,7 @@ void compAutonRightRobot() {
     toggle_angle_changer(); // second call, back to good position
     pros::delay(200);
     // no shoot call here
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.72/BASE_RPM_DIST));
+    set_flywheel_rpm(300.0);
     std::vector<std::vector<double>> to_shoot_pos_one = {to_mid_line_three.back(), {3.0, 2.4}};
     followPath(to_shoot_pos_one, 315.0, true, false, true);
     // shoot, 2.72 meters
@@ -476,7 +484,7 @@ void compAutonRightRobot() {
     pros::delay(1000);
     turnToAngle(225.0, 7.0);
     auton_sel = 'I';
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.4/BASE_RPM_DIST));
+    set_flywheel_rpm(288.0);
     std::vector<std::vector<double>> to_shoot_pos_two = {to_shoot_pos_one.back(), {2.1, 1.65}};
     followPath(to_shoot_pos_two, 225, false, false, true);
     // shoot, 2.4 meters
@@ -484,7 +492,7 @@ void compAutonRightRobot() {
     pros::delay(1000);
     turnToPoint(3.6, 1.6);
     auton_sel = 'I';
-    set_flywheel_rpm(BASE_FLYWHEEL_RPM * static_cast<int>(2.74/BASE_RPM_DIST));
+    set_flywheel_rpm(300.0);
     std::vector<std::vector<double>> get_goal_bar_three = {to_shoot_pos_two.back(), {2.9, 1.45}, {3.1, 1.6}, {3.3, 2.78}};
     followPath(get_goal_bar_three, 280, false, true, true);
     // shoot, 2.74 meters
