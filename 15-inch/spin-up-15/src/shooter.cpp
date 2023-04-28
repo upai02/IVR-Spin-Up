@@ -76,7 +76,7 @@ bool flywheel_running = false; // is flywheel is running for shooting discs?
 // aka less spin up time
 void soft_spin() {
   if (!flywheel_running) {
-    flywheel.move_voltage(std::min(target_flywheel_rpm, (target_flywheel_rpm/2) * discs_in_mag));
+    flywheel.move_voltage(std::min(7000, 4000 * discs_in_mag));
     soft_spinning = true;
   }
 }

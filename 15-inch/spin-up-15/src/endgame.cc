@@ -17,9 +17,10 @@ void start_endgame_timer() {
 
 void release_string() {
   // only activate when there are 20 seconds left
-  if (pros::millis() - eg_timer > 55000) {
-    toggle_string_release_piston();
-  }
+  // if (pros::millis() - eg_timer > 55000) {
+  //   toggle_string_release_piston();
+  // }
+  toggle_string_release_piston();
 }
 
 // piston stuff

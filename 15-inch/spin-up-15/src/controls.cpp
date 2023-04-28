@@ -1,6 +1,7 @@
 #include "controls.h"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "drive.h"
 #include "intake.h"
@@ -63,6 +64,7 @@ void controls()
     // the discs_in_mag variables does not decrement.
     if (discs_in_mag > 0) {
       soft_spin();
+      pros::lcd::set_text(4, "time: " + std::to_string(pros::millis()));
     }
 
     // endgame!
@@ -70,13 +72,13 @@ void controls()
       release_string();
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      target_flywheel_rpm += 2;
-    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      target_flywheel_rpm -= 2;
-    }
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    //   target_flywheel_rpm += 2;
+    // } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   target_flywheel_rpm -= 2;
+    // }
 
-    pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
+    // pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
 
     // angle changer
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {

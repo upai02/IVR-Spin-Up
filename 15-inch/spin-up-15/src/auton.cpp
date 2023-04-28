@@ -519,11 +519,10 @@ void SAFEcompLeftAuton() {
     toggle_angle_changer(); // first call, put intake out
     // set_flywheel_rpm(325.0);
     flywheel_task.resume();
-
+    pros::delay(500);
     // rollers first
-    spin_roller_auton();
-    set_flywheel_rpm(325.0);
     toggle_angle_changer();
+    set_flywheel_rpm(325.0);
 
     turnToPoint();
     pros::delay(5000);
@@ -532,11 +531,15 @@ void SAFEcompLeftAuton() {
     auton_sel = 'o';
     pros::delay(2000);
 
+    turnToAngle(0, 3.5);
+    auton_spin_roller();
+
     stopMotors();
     auton_sel = 'E';
     flywheel_task.suspend();
-    set_flywheel_rpm(0);
     rai_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
+    intake_mtr.move_voltage(0);
     auton_task.suspend();
 }
 
@@ -559,14 +562,15 @@ void SAFEcompRightAuton() {
 
     std::vector<std::vector<double>> to_roller_safe = {{3.14, 2.07}, {3.2, 2.55}};
     followPath(to_roller_safe, 20, false, true);
-    turnToAngle(280, 2.0);
+    turnToAngle(280, 3.5);
 
     spin_roller_auton();
 
     stopMotors();
     auton_sel = 'E';
     flywheel_task.suspend();
-    set_flywheel_rpm(0);
     rai_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
+    intake_mtr.move_voltage(0);
     auton_task.suspend();
 }
