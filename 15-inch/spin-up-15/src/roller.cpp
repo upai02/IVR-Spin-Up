@@ -5,6 +5,10 @@ void spin_roller() {
   rai_mtr.move_voltage(12000);
 }
 
+void auton_spin_roller() {
+  rai_mtr.move_voltage(-12000);
+}
+
 void stop_roller() {
   rai_mtr.move_voltage(0);
 }

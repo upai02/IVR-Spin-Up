@@ -203,7 +203,7 @@ void auton_thread() {
                 intake_auton();
                 break;
             case 'S':
-                spin_roller();
+                auton_spin_roller();
                 break;
             case 'M':
                 intake_mtr.move_voltage(0);
@@ -517,15 +517,16 @@ void SAFEcompLeftAuton() {
     pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    set_flywheel_rpm(325.0);
+    // set_flywheel_rpm(325.0);
     flywheel_task.resume();
 
     // rollers first
     spin_roller_auton();
-
+    set_flywheel_rpm(325.0);
     toggle_angle_changer();
 
     turnToPoint();
+    pros::delay(5000);
     stopMotors();
     // release_sequence();
     auton_sel = 'o';
@@ -543,11 +544,12 @@ void SAFEcompRightAuton() {
     // starting pos: (3.14, 2.07)
     pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
-    // toggle_angle_changer(); // first call, put intake out
+    toggle_angle_changer(); // first call, put intake out
     set_flywheel_rpm(300.0);
     flywheel_task.resume();
     pros::delay(5000);
 
+    toggle_angle_changer();
     turnToPoint();
     auton_sel = 'o';
     pros::delay(2000);

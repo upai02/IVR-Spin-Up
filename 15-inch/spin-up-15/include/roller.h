@@ -11,3 +11,4 @@ const double RED_ROLLER_UPPER_HUE = 50;
 void spin_roller();
 void spin_roller(double rotations_to_spin);
 void stop_roller();
+void auton_spin_roller();
