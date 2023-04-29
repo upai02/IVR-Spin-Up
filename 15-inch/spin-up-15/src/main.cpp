@@ -38,10 +38,10 @@ void initialize() {
 	// initTracker(3.25, 2.15, 315);
 
 	// Left side SAFE AUTON (TEAL)
-	// initTracker(0.9, 0.3, 0);
+	initTracker(0.9, 0.3, 0);
 
 	// RIGHT SAFE Auton (PINK)
-	initTracker(3.14, 2.07, 270);  
+	// initTracker(3.14, 2.07, 270);
 
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
@@ -126,8 +126,8 @@ void autonomous() {
 	// moveMotors(50, 50);
 	// compAutonLeftRobot();
 	// compAutonRightRobot();
-	SAFEcompRightAuton();
-	// SAFEcompLeftAuton();
+	// SAFEcompRightAuton();
+	SAFEcompLeftAuton();
 	// testShotAuton();
 
 	// imu.set_heading(90);

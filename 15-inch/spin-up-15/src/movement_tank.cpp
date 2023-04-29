@@ -350,5 +350,5 @@ void turnToPoint(double pointX, double pointY) {
 
         pros::delay(50);
     }
-    // stopMotors();
+    stopMotors();
 }
