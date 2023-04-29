@@ -19,6 +19,7 @@ using namespace pros::c;
 void controls()
 {
   master.clear();
+  double turn_p = 2.5;
   while (1)
   {
     op_drive();
@@ -72,11 +73,19 @@ void controls()
       release_string();
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      target_flywheel_rpm += 2;
-    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      target_flywheel_rpm -= 2;
-    }
+    // TESTING
+
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    //   // target_flywheel_rpm += 2;
+    //   turn_p += 0.25;
+    // } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   // target_flywheel_rpm -= 2;
+    //   turn_p -= 0.25;
+    // }
+
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   turnToAngle(0.0, 3.0, false, turn_p);
+    // }
 
     // pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
 
@@ -84,6 +93,8 @@ void controls()
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       toggle_angle_changer();
     }
+
+    pros::lcd::set_text(4, "turn_p: " + std::to_string(turn_p));
 
     // auto-aim
     // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {

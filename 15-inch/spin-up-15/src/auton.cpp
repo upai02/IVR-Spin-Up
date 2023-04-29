@@ -517,7 +517,7 @@ void SAFEcompLeftAuton() {
     pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    set_flywheel_rpm(325.0);
+    set_flywheel_rpm(306.0);
     flywheel_task.resume();
     pros::delay(500);
     // rollers first
@@ -531,8 +531,8 @@ void SAFEcompLeftAuton() {
     auton_sel = 'r';
     pros::delay(2000);
 
-    turnToAngle(0, 3.5);
-    auton_spin_roller();
+    turnToAngle(0, 8);
+    spin_roller_auton();
 
     stopMotors();
     auton_sel = 'E';
@@ -548,7 +548,7 @@ void SAFEcompRightAuton() {
     pros::Task auton_task(auton_thread);
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    set_flywheel_rpm(300.0);
+    set_flywheel_rpm(295.0);
     flywheel_task.resume();
     pros::delay(5000);
 
@@ -565,6 +565,29 @@ void SAFEcompRightAuton() {
     turnToAngle(280, 3.5);
 
     spin_roller_auton();
+
+    stopMotors();
+    auton_sel = 'E';
+    flywheel_task.suspend();
+    rai_mtr.move_voltage(0);
+    flywheel.move_voltage(0);
+    intake_mtr.move_voltage(0);
+    auton_task.suspend();
+}
+
+void testShotAuton() {
+    pros::Task auton_task(auton_thread);
+    pros::Task flywheel_task(shoot_thread);
+    discs_in_mag = 2;
+    toggle_angle_changer(); // first call, put intake out
+    set_flywheel_rpm(300.0);
+    flywheel_task.resume();
+    pros::delay(5000);
+
+    toggle_angle_changer();
+
+    auton_sel = 'r';
+    pros::delay(150);
 
     stopMotors();
     auton_sel = 'E';
