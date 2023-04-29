@@ -12,7 +12,7 @@ char data_received [NUM_INTS * 10];
 char previous_data_received [NUM_INTS * 10];
 int rasppi_ret_vals [NUM_INTS];
 
-pros::Task auto_aim_task(auto_aim);
+// pros::Task auto_aim_task(auto_aim);
 
 // parses raw data and seperates by delimiter(,)
 void parse_data(int* read_out_values, char* read_in_str, int read_out_size, int read_in_str_size, int &num_elements) {

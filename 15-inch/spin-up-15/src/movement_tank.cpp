@@ -334,7 +334,7 @@ void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bo
 
 // default x, y coords are the goal/net
 void turnToPoint(double pointX, double pointY) {
-    double FINAL_ANGLE_TOLERANCE = 2.0;
+    double FINAL_ANGLE_TOLERANCE = 3.0;
     double desiredAngle = atan2(pointX - positionX, pointY - positionY) * 180 / M_PI;
     if (desiredAngle < 0) desiredAngle += 360;
 
@@ -350,4 +350,5 @@ void turnToPoint(double pointX, double pointY) {
 
         pros::delay(50);
     }
+    // stopMotors();
 }

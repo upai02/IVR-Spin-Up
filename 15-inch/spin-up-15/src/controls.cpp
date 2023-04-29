@@ -63,7 +63,7 @@ void controls()
     // if discs in mag is greater than 0, soft spin
     // note that there is a bug where if we outtake discs after they've been detected
     // the discs_in_mag variables does not decrement.
-    if (discs_in_mag > 0) {
+    if (discs_in_mag >= 0) {
       soft_spin();
       // pros::lcd::set_text(4, "time: " + std::to_string(pros::millis()));
     }

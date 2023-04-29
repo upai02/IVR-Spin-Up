@@ -555,6 +555,7 @@ void SAFEcompRightAuton() {
     toggle_angle_changer();
     turnToPoint();
     auton_sel = 'r';
+    // release_discs_auton();
     pros::delay(2000);
     // release_sequence();
 
