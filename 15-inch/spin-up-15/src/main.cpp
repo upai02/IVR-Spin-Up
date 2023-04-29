@@ -156,6 +156,5 @@ void opcontrol() {
 	rai_mtr.move_voltage(0);
 	flywheel.move_voltage(0);
 	start_endgame_timer();
-	// flywheel_task.resume(); we should have the flywheel task for tele right?
 	controls();
 }

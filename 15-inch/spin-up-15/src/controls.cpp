@@ -56,7 +56,7 @@ void controls()
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       // release_discs();
-      release_discs_auton();
+      release_discs();
     }
 
     // if discs in mag is greater than 0, soft spin
@@ -64,7 +64,7 @@ void controls()
     // the discs_in_mag variables does not decrement.
     if (discs_in_mag > 0) {
       soft_spin();
-      pros::lcd::set_text(4, "time: " + std::to_string(pros::millis()));
+      // pros::lcd::set_text(4, "time: " + std::to_string(pros::millis()));
     }
 
     // endgame!
