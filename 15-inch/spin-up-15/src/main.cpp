@@ -59,7 +59,8 @@ void initialize() {
 	// pros::delay(2000);
 	// stop_flywheel();
 	flywheel_task.suspend();
-	auto_aim_task.suspend();
+	auton_task.suspend();
+	// auto_aim_task.suspend();
 	// target_flywheel_rpm = close_range_rpm;
 
 	// ENCODER / SENSOR SETUP
@@ -133,6 +134,7 @@ void autonomous() {
 	// pros::lcd::print(6, "heading: %f", imu.get_heading());
 	// auton();
 	odom.suspend();
+	odom.remove();
 }
 
 /**
@@ -150,6 +152,8 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Task odom(updatePosition);
+	auton_task.suspend();
+	auton_task.remove();
 	flywheel_task.suspend();
 	auton_sel = 'E';
 	intake_mtr.move_voltage(0);

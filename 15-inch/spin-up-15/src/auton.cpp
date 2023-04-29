@@ -13,6 +13,8 @@ char auton_sel = 'E'; // initialize auton_sel to E (do nothing)
 const double BASE_FLYWHEEL_RPM = 300.0; // distance for 2 meters (need to update). going to assume rpm scales linearly with distance and hope
 const double BASE_RPM_DIST = 2.0;
 
+pros::Task auton_task(auton_thread);
+
 template <typename T>
 int sgn (T num) {
     if (num >= 0) {
@@ -324,7 +326,7 @@ void spin_roller_auton() {
     pros::delay(2000);
     moveMotors(-50, -50);
     auton_sel = 'S';
-    pros::delay(250);
+    pros::delay(400);
     auton_sel = 'E';
     moveMotors(75, 75);
     pros::delay(750);
@@ -462,7 +464,7 @@ void compAutonRightRobot() {
     // 2.8 meters -> 302 (pink)
     // 2.9 meters ->
 
-    pros::Task auton_task(auton_thread);
+    auton_task.resume();
     discs_in_mag = 0;
     toggle_angle_changer(); // first call, put intake out
     set_flywheel_rpm(BASE_FLYWHEEL_RPM);
@@ -510,14 +512,15 @@ void compAutonRightRobot() {
     set_flywheel_rpm(0);
     rai_mtr.move_voltage(0);
     auton_task.suspend();
+    auton_task.remove();
 }
 
 void SAFEcompLeftAuton() {
     // starting pos: (0.9, 0.3);
-    pros::Task auton_task(auton_thread);
+    auton_task.resume();
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    set_flywheel_rpm(325.0);
+    set_flywheel_rpm(306.0);
     flywheel_task.resume();
     pros::delay(500);
     // rollers first
@@ -532,7 +535,7 @@ void SAFEcompLeftAuton() {
     pros::delay(2000);
 
     turnToAngle(0, 3.5);
-    auton_spin_roller();
+    spin_roller_auton();
 
     stopMotors();
     auton_sel = 'E';
@@ -541,14 +544,15 @@ void SAFEcompLeftAuton() {
     flywheel.move_voltage(0);
     intake_mtr.move_voltage(0);
     auton_task.suspend();
+    auton_task.remove();
 }
 
 void SAFEcompRightAuton() {
     // starting pos: (3.14, 2.07)
-    pros::Task auton_task(auton_thread);
+    auton_task.suspend();
     discs_in_mag = 2;
     toggle_angle_changer(); // first call, put intake out
-    set_flywheel_rpm(300.0);
+    set_flywheel_rpm(282.0);
     flywheel_task.resume();
     pros::delay(5000);
 
@@ -573,4 +577,5 @@ void SAFEcompRightAuton() {
     flywheel.move_voltage(0);
     intake_mtr.move_voltage(0);
     auton_task.suspend();
+    auton_task.remove();
 }

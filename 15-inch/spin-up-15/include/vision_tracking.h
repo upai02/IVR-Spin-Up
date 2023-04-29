@@ -13,7 +13,7 @@ extern int cx_offset;
 extern int cy_offset;
 
 // auto aim task
-extern pros::Task auto_aim_task;
+// extern pros::Task auto_aim_task;
 
 // stores the values from the rasppi
 extern char data_received [NUM_INTS * 10];

@@ -4,6 +4,7 @@
 #include "shooter.h"
 
 extern char auton_sel;
+extern pros::Task auton_task;
 
 void drivePID(double inches);
 double getAngleError(double target, double currHeading);

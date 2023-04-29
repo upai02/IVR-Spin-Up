@@ -6,7 +6,7 @@
 
 extern int target_flywheel_rpm;
 
-const int close_range_rpm = 310; // 310 both? untested
+const int close_range_rpm = 275; // 310 both? untested
 const int long_range_rpm = 306; // 282 pink, 306 teal
 const int overflow_rpm = 260;
 extern bool overflow;
