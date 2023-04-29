@@ -69,10 +69,11 @@ void SmartStop() {
     }
 }
 
+// to be used exclusively when only turning (no translation)
 void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double p) {
     double degFromFinalAngle = desiredAngleDeg - imu.get_heading();
     degFromFinalAngle = optimizeAngle(degFromFinalAngle);
-    int start_time = pros::millis();
+    double start_time = pros::millis();
     while (std::abs(degFromFinalAngle) > toleranceDeg) {
         degFromFinalAngle = optimizeAngle(desiredAngleDeg - imu.get_heading());
         double rotRPM = degFromFinalAngle * p;
@@ -81,6 +82,8 @@ void turnToAngle(double desiredAngleDeg, double toleranceDeg, bool debug, double
         if (pros::millis() - start_time > 5000) break;
         pros::delay(50);
     }
+    // need to stop motors in case of break statement
+    stopMotors();
 }
 
 void followPath(std::vector<std::vector<double>>& path, double finalAngleDeg, bool reversed, bool spinAtEnd, bool goal_at_end, double lookForwardRadius, double final_angle_tolerance_deg, double MAX_TRANSLATIONAL_RPM, double maxRPM, double minTransRPM, bool printMessages) {    

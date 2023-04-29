@@ -56,7 +56,7 @@ void controls()
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       // release_discs();
-      release_discs();
+      release_discs_auton();
     }
 
     // if discs in mag is greater than 0, soft spin

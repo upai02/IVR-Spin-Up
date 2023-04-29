@@ -480,7 +480,7 @@ void compAutonRightRobot() {
     std::vector<std::vector<double>> to_shoot_pos_one = {to_mid_line_three.back(), {3.0, 2.4}};
     followPath(to_shoot_pos_one, 315.0, true, false, true);
     // shoot, 2.72 meters
-    auton_sel = 'o';
+    auton_sel = 'r';
     pros::delay(1000);
     turnToAngle(225.0, 7.0);
     auton_sel = 'I';

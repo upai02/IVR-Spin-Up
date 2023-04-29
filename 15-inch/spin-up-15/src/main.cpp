@@ -38,10 +38,10 @@ void initialize() {
 	// initTracker(3.25, 2.15, 315);
 
 	// Left side SAFE AUTON (TEAL)
-	initTracker(0.9, 0.3, 0);
+	// initTracker(0.9, 0.3, 0);
 
 	// RIGHT SAFE Auton (PINK)
-	// initTracker(3.14, 2.07, 270);  
+	initTracker(3.14, 2.07, 270);  
 
 
 	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
@@ -156,5 +156,6 @@ void opcontrol() {
 	rai_mtr.move_voltage(0);
 	flywheel.move_voltage(0);
 	start_endgame_timer();
+	// flywheel_task.resume(); we should have the flywheel task for tele right?
 	controls();
 }

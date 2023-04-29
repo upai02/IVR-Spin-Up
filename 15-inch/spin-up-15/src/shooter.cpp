@@ -112,8 +112,8 @@ void release_discs() {
 void release_discs_auton() {
   // rai_mtr.move_voltage(-3000);
 
-  discs_in_mag = std::min(3, discs_in_mag);
-  for (int i = 0; i < discs_in_mag; i++) {
+  int temp = std::min(3, discs_in_mag);
+  for (int i = 0; i < temp; i++) {
     rai_mtr.move_voltage(1000);
     if (i != 0) pros::delay(1000);
     // wait to ensure it has time to read dip
