@@ -117,7 +117,8 @@ void release_discs_auton() {
     rai_mtr.move_voltage(1000);
     if (i != 0) pros::delay(1000);
     // wait to ensure it has time to read dip
-    while (!(abs(get_flywheel_rpm() - target_flywheel_rpm) < 9)) {
+    int start_time = pros::millis();
+    while ((!(abs(get_flywheel_rpm() - target_flywheel_rpm) < 5)) && (pros::millis() - start_time < 5000)) {
       pros::delay(25);
       // wait to get in range
     }  
