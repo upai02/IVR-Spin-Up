@@ -3,7 +3,9 @@
 #include "misc/PositionTracker.h"
 #include "intake.h"
 #include "endgame.h"
+#include "pros/rtos.hpp"
 #include "shooter.h"
+#include <vector>
 #include "roller.h"
 #include "vision_tracking.h"
 
@@ -22,6 +24,27 @@ void initialize() {
 	right_front_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_top_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	right_back_bot_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+	// Default/normal testing
+	// initTracker(0, 0,0);
+
+	// RollerAutoPATH
+	// initTracker(0.9, 0.4, 0);
+
+	// Left side COMP auto (TEAL)
+	//initTracker(0.93, 0.46, 0);
+
+	// Right side COMP auto (PINK)
+	// initTracker(3.25, 2.15, 315);
+
+	// Left side SAFE AUTON (TEAL)
+	initTracker(0.9, 0.3, 0);
+
+	// RIGHT SAFE Auton (PINK)
+	// initTracker(3.14, 2.07, 270);
+
+
+	// std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
 	flywheel_left_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	flywheel_right_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	rai_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -29,16 +52,15 @@ void initialize() {
 
 	// INIT FUNCTIONS
 	init_endgame();
-	init_intake();
-	init_roller();
+	init_shooter();
 	
 	// TASK VARIABLE SETUP
 	char auton_sel = 'E';
 	// pros::delay(2000);
 	// stop_flywheel();
 	flywheel_task.suspend();
-	auto_aim_task.suspend();
-	target_flywheel_rpm = close_range_rpm;
+	// auto_aim_task.suspend();
+	// target_flywheel_rpm = close_range_rpm;
 
 	// ENCODER / SENSOR SETUP
 	horizontal_track.reset();
@@ -48,8 +70,6 @@ void initialize() {
 	// initTracker(0, 0);
 	// pros::Task odom(updatePosition);
 	pros::delay(2500);
-
-
 
 	pros::delay(500);
 	std::cout << "DFDLFOSJFLKSDJLFJDSFLJ" << std::endl;
@@ -85,12 +105,52 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	pros::Task odom(updatePosition);
 	// initTracker(0, 0);
 	// SmartStop();
 	// initialize();
-	imu.set_heading(90);
-	pros::lcd::print(6, "heading: %f", imu.get_heading());
-	auton();
+	// imu.set_heading(90);
+	// pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// pros::delay(100000);
+	// skill_auton();
+	// auton();
+	// pros::lcd::set_text(6, "Heading: " + std::to_string(currentHeading));
+	// turnToAngle(270, 3, true, 1.5); this works now
+	// turnToPoint(1, 1); this works now
+	// test_auton();
+	// rollerAutoPATH();
+
+	// test auton:
+	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
+	// followPath(straight_path, 0, true, false, true);
+	// moveMotors(50, 50);
+
+
+
+
+
+	/**
+	 * Worlds autons. Note that we never had a proper chance to test many of these and due us selecting the program 
+	 * before we plugged the controller in (causing teleop to run before auton and break quite literally everything).
+	 * We figured out this was our issue right before our last match. We wanted to use our more complete versions 
+	 * compAutonLeftRobot and compAutonRightRobot that use pure pursuit but due to the above issue and severe lack of 
+	 * time with the robot before competition our best reasonable option was to use the simpler code.
+	*/
+	// compAutonLeftRobot();
+	// compAutonRightRobot();
+	// SAFEcompRightAuton();
+	SAFEcompLeftAuton();
+
+
+
+
+
+
+	// testShotAuton();
+	// imu.set_heading(90);
+	// pros::lcd::print(6, "heading: %f", imu.get_heading());
+	// auton();
+	odom.suspend();
 }
 
 /**
@@ -107,11 +167,12 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	pros::Task odom(updatePosition);
 	flywheel_task.suspend();
-  auton_sel = 'E';
-  intake_mtr.move_voltage(0);
-  rai_mtr.move_voltage(0);
-  flywheel.move_voltage(0);
+	auton_sel = 'E';
+	intake_mtr.move_voltage(0);
+	rai_mtr.move_voltage(0);
+	flywheel.move_voltage(0);
 	start_endgame_timer();
 	controls();
 }

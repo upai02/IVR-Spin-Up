@@ -1,5 +1,7 @@
 #include "controls.h"
+#include "pros/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "robot.h"
 #include "drive.h"
 #include "intake.h"
@@ -7,8 +9,9 @@
 #include "endgame.h"
 #include "shooter.h"
 #include "auton.h"
-#include "movement.h"
+#include "movement_tank.h"
 #include "vision_tracking.h"
+#include <string>
 
 using namespace pros;
 using namespace pros::c;
@@ -16,6 +19,7 @@ using namespace pros::c;
 void controls()
 {
   master.clear();
+  double turn_p = 2.5;
   while (1)
   {
     op_drive();
@@ -52,25 +56,57 @@ void controls()
     }
     // release discs into flywheel
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      // release_discs();
       release_discs();
     }
 
     // if discs in mag is greater than 0, soft spin
-    if (discs_in_mag > 0) {
+    // note that there is a bug where if we outtake discs after they've been detected
+    // the discs_in_mag variables does not decrement.
+    if (discs_in_mag >= 0) {
       soft_spin();
+      // pros::lcd::set_text(4, "time: " + std::to_string(pros::millis()));
     }
 
     // endgame!
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) && master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       release_string();
     }
 
-    // auto-aim
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      auto_aim_task.resume();
-    } else {
-      auto_aim_task.suspend();
+    // TESTING
+
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+    //   // target_flywheel_rpm += 2;
+    //   turn_p += 0.25;
+    // } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   // target_flywheel_rpm -= 2;
+    //   turn_p -= 0.25;
+    // }
+
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   turnToAngle(0.0, 3.0, false, turn_p);
+    // }
+
+    // pros::lcd::set_text(4, "temp: " + std::to_string(flywheel_left_mtr.get_temperature()));
+
+    // angle changer
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      toggle_angle_changer();
     }
+
+    pros::lcd::set_text(4, "turn_p: " + std::to_string(turn_p));
+
+    // auto-aim
+    // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   auto_aim_task.resume();
+    // } else {
+    //   auto_aim_task.suspend();
+    // }
+
+    // hold button - needs more testing/debugging
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   turnToPoint();
+    // }
   
     // turn pid test
     // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
@@ -78,6 +114,12 @@ void controls()
     // }
     // pros::lcd::print(6, "heading: %f", imu.get_heading());
 
+
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   target_flywheel_rpm += 10;
+    // } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   target_flywheel_rpm -= 10;
+    // }
 
     // pros terminal printing ------------
     // std::cout << "target rpm: " << flywheel_rpm << "----- actual: " << flywheel_mtr.get_actual_velocity() << "------ error: " << flywheel_rpm - flywheel_mtr.get_actual_velocity() << std::endl;
@@ -92,10 +134,11 @@ void controls()
     // pros::lcd::print(5, "flywheel error rpm: %lf", flywheel_rpm - flywheel_mtr.get_actual_velocity());
     // pros::lcd::print(6, "discs in mag: %d", discs_in_mag);
     // print to controller ------------
-    master.print(0, 0, "d_m: %s", get_drive_name().c_str());
+    std::string controller_text = "d: " + get_drive_name() + " s: " + get_rpm_state_string();
+    master.print(0, 0, controller_text.c_str());
     pros::lcd::print(1, "Flywheel RPM: %lf", get_flywheel_rpm());
     pros::lcd::print(2, "target rpm: %d", target_flywheel_rpm);
-    pros::lcd::print(3, "discs in mag: %d", discs_in_mag);
+    // pros::lcd::print(3, "discs in mag: %d", discs_in_mag);
     // master.print(2, 0, "fly_rpm: %d", flywheel_rpm);
     // pros::lcd::print(2, "Vertical Encoder: %lf", (vertical_track.get_value()/5120.0)*360.0);
     // master.print(2, 0, "Vertical Encoder: %lf", vertical_track.get_value());
