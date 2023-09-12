@@ -27,7 +27,7 @@ int sgn (T num) {
 void drivePID(double inches) {
     left_side.tare_position();
     right_side.tare_position();
-    double target = inches * 360 / (2.75 * M_PI);
+    double target = inches * 360 / (2.75 * 3.14159);
     double left_error = target - ((left_side.get_positions()[0] + left_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
     double right_error = target - ((right_side.get_positions()[0] + right_side.get_positions()[1] + left_side.get_positions()[2]) / 3);
     double left_derivative = 0;

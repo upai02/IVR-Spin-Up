@@ -124,12 +124,29 @@ void autonomous() {
 	// std::vector<std::vector<double>> straight_path = {{-2, 0}, {-2, -0.2}};
 	// followPath(straight_path, 0, true, false, true);
 	// moveMotors(50, 50);
+
+
+
+
+
+	/**
+	 * Worlds autons. Note that we never had a proper chance to test many of these and due us selecting the program 
+	 * before we plugged the controller in (causing teleop to run before auton and break quite literally everything).
+	 * We figured out this was our issue right before our last match. We wanted to use our more complete versions 
+	 * compAutonLeftRobot and compAutonRightRobot that use pure pursuit but due to the above issue and severe lack of 
+	 * time with the robot before competition our best reasonable option was to use the simpler code.
+	*/
 	// compAutonLeftRobot();
 	// compAutonRightRobot();
 	// SAFEcompRightAuton();
 	SAFEcompLeftAuton();
-	// testShotAuton();
 
+
+
+
+
+
+	// testShotAuton();
 	// imu.set_heading(90);
 	// pros::lcd::print(6, "heading: %f", imu.get_heading());
 	// auton();
